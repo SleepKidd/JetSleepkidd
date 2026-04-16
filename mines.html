@@ -7,37 +7,57 @@
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { --primary: #bc13fe; --bg: #030303; --win: #00ff88; --lose: #ff4d4d; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        
         .logo-box { margin: 20px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; }
-        .logo-box .top { font-size: 24px; color: var(--primary); display: block; }
-        .logo-box .bot { font-size: 36px; color: #fff; }
-
-        .container { width: 95%; max-width: 420px; background: rgba(15, 15, 15, 0.95); border: 2px solid var(--primary); border-radius: 50px; padding: 20px; text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.2); position: relative; }
-        .back-nav { position: absolute; top: 25px; left: 25px; text-decoration: none; color: #555; font-size: 0.7rem; font-weight: 900; }
+        .logo-box .top { font-size: 20px; color: var(--primary); display: block; }
+        .logo-box .bot { font-size: 30px; color: #fff; }
+        .container { width: 95%; max-width: 420px; background: rgba(15, 15, 15, 0.95); border: 2px solid var(--primary); border-radius: 40px; padding: 20px; text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.2); position: relative; }
         
-        .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 20px 0; }
-        .cell { aspect-ratio: 1/1; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: 0.3s; }
+        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
+        .back-nav { text-decoration: none; color: #555; font-size: 0.7rem; font-weight: 900; padding: 5px 10px; border-radius: 10px; background: rgba(255,255,255,0.02); }
+
+        .game-info { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 15px; padding: 0 5px; }
+        .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 15px 0; }
+        .cell { aspect-ratio: 1/1; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: 0.2s; }
         .cell.open-win { background: rgba(0, 255, 136, 0.2); border-color: var(--win); box-shadow: 0 0 15px var(--win); }
-        .cell.open-lose { background: rgba(255, 77, 77, 0.2); border-color: var(--lose); }
-        input { background: #000; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 10px; width: 100%; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
+        .cell.open-lose { background: rgba(255, 77, 77, 0.2); border-color: var(--lose); box-shadow: 0 0 15px var(--lose); }
+        
+        .control-group { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; margin-bottom: 10px; }
+        .mine-selector { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.7rem; color: #888; }
+        select { background: #000; color: #fff; border: 1px solid var(--primary); padding: 5px; border-radius: 5px; font-family: 'Orbitron'; }
+        
+        input { background: #000; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 12px; width: 100%; text-align: center; font-family: 'Orbitron'; margin-bottom: 10px; }
         .main-btn { width: 100%; padding: 18px; background: var(--primary); color: #fff; border: none; border-radius: 15px; font-weight: 900; font-size: 1.2rem; text-transform: uppercase; cursor: pointer; }
         .cashout-btn { background: var(--win); color: #000; display: none; }
     </style>
 </head>
 <body>
-    <div class="logo-box"><span class="top">JET</span><span class="bot">SLEEPKIDD</span></div>
+    <div class="logo-box"><span class="top">CYBER</span><span class="bot">MINES</span></div>
     <div class="container">
-        <a href="index.html" class="back-nav">← НАЗАД</a>
-        <div style="display:flex; justify-content:space-between; font-size:0.8rem; padding: 0 10px;">
-            <span id="u-nick" style="color: #666">PLAYER</span>
+        <div class="nav-bar"><a href="index.html" class="back-nav">← МЕНЮ</a></div>
+        <div class="game-info">
+            <span id="u-nick" style="color:#666">PLAYER</span>
             <span style="color:var(--win); font-weight:900" id="u-bal">0₽</span>
         </div>
         <div class="mines-grid" id="grid"></div>
-        <input type="number" id="bet-amount" value="50" inputmode="numeric">
-        <button class="main-btn" id="btn-start" onclick="startGame()">ИГРАТЬ</button>
-        <button class="main-btn cashout-btn" id="btn-cash" onclick="cashOut()">ЗАБРАТЬ <br> <small id="win-preview">0</small></button>
+        
+        <div class="control-group">
+            <div class="mine-selector">
+                <span>КОЛ-ВО МИН:</span>
+                <select id="mines-count">
+                    <option value="1">1</option>
+                    <option value="3" selected>3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="24">24</option>
+                </select>
+            </div>
+            <input type="number" id="bet-amount" value="50" inputmode="numeric">
+            <button class="main-btn" id="btn-start" onclick="startGame()">ИГРАТЬ</button>
+            <button class="main-btn cashout-btn" id="btn-cash" onclick="cashOut()">ЗАБРАТЬ <br> <small id="win-preview">0</small></button>
+        </div>
     </div>
 
     <script>
@@ -58,26 +78,51 @@
                 c.onclick = () => openCell(i, c); g.appendChild(c);
             }
         }
+        function getMult() {
+            let mCount = parseInt(document.getElementById('mines-count').value);
+            let n = 25; let k = mCount; let j = opened;
+            if (j === 0) return 1;
+            let res = 1;
+            for (let i = 0; i < j; i++) { res *= (n - i) / (n - k - i); }
+            return res * 0.97; // Комиссия казино 3%
+        }
         function startGame() {
             currentBet = parseInt(document.getElementById('bet-amount').value);
             if(currentBet > balance || currentBet <= 0) return alert("Мало кэша!");
             balance -= currentBet; active = true; opened = 0; mines = [];
-            while(mines.length < 3) { let r = Math.floor(Math.random()*25); if(!mines.includes(r)) mines.push(r); }
+            let mCount = parseInt(document.getElementById('mines-count').value);
+            while(mines.length < mCount) { let r = Math.floor(Math.random()*25); if(!mines.includes(r)) mines.push(r); }
             createGrid(); save();
             document.getElementById('btn-start').style.display = 'none';
             document.getElementById('btn-cash').style.display = 'block';
+            document.getElementById('mines-count').disabled = true;
+            document.getElementById('bet-amount').disabled = true;
         }
         function openCell(i, c) {
             if(!active || c.classList.contains('open-win')) return;
-            if(mines.includes(i)) { c.classList.add('open-lose'); c.innerText = '💣'; active = false; setTimeout(reset, 2000); }
-            else { c.classList.add('open-win'); c.innerText = '💎'; opened++; document.getElementById('win-preview').innerText = Math.floor(currentBet * (1 + opened*0.5)) + "₽"; }
+            if(mines.includes(i)) { 
+                c.classList.add('open-lose'); c.innerText = '💣'; active = false; 
+                mines.forEach(m => document.getElementById('grid').children[m].innerText = '💣');
+                setTimeout(reset, 2000); 
+            } else { 
+                c.classList.add('open-win'); c.innerText = '💎'; opened++; 
+                let win = Math.floor(currentBet * getMult());
+                document.getElementById('win-preview').innerText = win + "₽";
+            }
         }
         function cashOut() {
             if(!active || opened === 0) return;
-            balance += Math.floor(currentBet * (1 + opened*0.5)); active = false; save(); reset();
+            balance += Math.floor(currentBet * getMult()); active = false; save(); reset();
         }
-        function reset() { document.getElementById('btn-start').style.display = 'block'; document.getElementById('btn-cash').style.display = 'none'; createGrid(); }
+        function reset() { 
+            document.getElementById('btn-start').style.display = 'block'; 
+            document.getElementById('btn-cash').style.display = 'none'; 
+            document.getElementById('mines-count').disabled = false;
+            document.getElementById('bet-amount').disabled = false;
+            createGrid(); 
+        }
         function save() { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); document.getElementById('u-bal').innerText = Math.floor(balance) + "₽"; }
     </script>
 </body>
 </html>
+
