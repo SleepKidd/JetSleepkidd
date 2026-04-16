@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JET SLEEPKIDD — ПОЛЕТ</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root { --primary: #bc13fe; --bg: #030303; --win: #00ff88; --lose: #ff4d4d; --accent: #ffcc00; --glass: rgba(255, 255, 255, 0.05); --star-speed: 4s; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        
+        .logo-box { margin: 20px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; }
+        .logo-box .top { font-size: 24px; color: var(--primary); display: block; }
+        .logo-box .bot { font-size: 36px; color: #fff; }
+
+        .container { width: 95%; max-width: 420px; background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(25px); border: 2px solid var(--primary); border-radius: 50px; padding: 20px; text-align: center; box-shadow: 0 0 60px rgba(188, 19, 254, 0.2); position: relative; }
+        
+        .back-nav { position: absolute; top: 25px; left: 25px; text-decoration: none; color: #555; font-size: 0.7rem; font-weight: 900; transition: 0.3s; }
+        .back-nav:hover { color: #fff; }
+
+        .rank-bar { width: 100%; height: 5px; background: #1a1a1a; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .rank-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--win)); transition: 1s ease; }
+        
+        input:disabled { opacity: 0.5; }
+        input { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 15px; width: 100%; text-align: center; font-family: 'Orbitron'; margin-bottom: 10px; }
+        .main-btn { width: 100%; padding: 18px; background: var(--primary); color: #fff; border: none; border-radius: 18px; font-weight: 900; font-size: 1.2rem; text-transform: uppercase; cursor: pointer; }
+        .cashout-btn { background: var(--win); color: #000; display: none; }
+        .game-area { height: 230px; background: #000; border-radius: 25px; position: relative; overflow: hidden; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .multiplier { font-size: 3.5rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; color: var(--win); text-shadow: 0 0 30px rgba(0,255,136,0.5); }
+        .hero-wrap { position: absolute; bottom: 20px; left: 20px; z-index: 5; transition: 0.1s linear; }
+        .character { font-size: 50px; filter: drop-shadow(0 0 10px var(--primary)); }
+        .history-row { display: flex; gap: 5px; justify-content: center; margin-bottom: 10px; height: 25px; }
+        .hist-chip { font-size: 0.6rem; padding: 4px 8px; border-radius: 8px; background: var(--glass); font-weight: bold; }
+        .crashed { filter: grayscale(1) sepia(1) hue-rotate(-50deg) saturate(5) !important; }
+    </style>
+</head>
+<body>
+    <div class="logo-box"><span class="top">JET</span><span class="bot">SLEEPKIDD</span></div>
+    
+    <div class="container">
+        <a href="index.html" class="back-nav">← НАЗАД</a>
+        <div class="rank-bar"><div class="rank-fill" id="rank-ui"></div></div>
+        <div class="history-row" id="hist-list"></div>
+        <div style="display:flex; justify-content:space-between; font-size:0.7rem; margin-bottom:10px; padding: 0 10px;">
+            <span id="ui-nick" style="color:#666">---</span>
+            <span id="ui-bal" style="color:var(--win); font-weight:900">0₽</span>
+        </div>
+        <div class="game-area">
+            <div class="multiplier" id="mult">1.00x</div>
+            <div class="hero-wrap" id="hero-wrap"><div class="character">🚀</div></div>
+        </div>
+        <input type="number" id="bet" value="50" inputmode="numeric">
+        <button class="main-btn" id="btn-start" onclick="fly()">СТАВКА</button>
+        <button class="main-btn cashout-btn" id="btn-cash" onclick="collect()">ЗАБРАТЬ <br> <small id="win-sum">0</small></button>
+        <div id="msg" style="margin-top:10px; font-weight:bold; height:20px; font-size:0.8rem;"></div>
+    </div>
+
+    <script>
+        let balance, user, users, currentBet, isFlying = false, currentX = 1.00, timer, crashAt, history = [];
+
+        window.onload = () => {
+            user = localStorage.getItem('current_user');
+            if(!user) return location.href = 'index.html';
+            users = JSON.parse(localStorage.getItem('users_jet'));
+            balance = users[user].bal;
+            history = users[user].hist || [];
+            document.getElementById('ui-nick').innerText = user.toUpperCase();
+            updateUI(); renderHist();
+        };
+
+        function fly() {
+            if (isFlying) return;
+            currentBet = parseInt(document.getElementById('bet').value);
+            if(currentBet > balance || currentBet <= 0) return alert("Мало кэша!");
+            document.getElementById('bet').disabled = true;
+            balance -= currentBet; updateUI(); saveDB();
+            isFlying = true; currentX = 1.00;
+            let rand = Math.random() * 100;
+            if (rand < 32) crashAt = (Math.random() * 0.99 + 1.01).toFixed(2);
+            else if (rand < 77) crashAt = (Math.random() * 18 + 2.01).toFixed(2);
+            else crashAt = (Math.random() * 400 + 100).toFixed(2);
+            document.getElementById('btn-start').style.display = 'none';
+            document.getElementById('btn-cash').style.display = 'block';
+            document.getElementById('msg').innerText = "";
+            const h = document.getElementById('hero-wrap');
+            h.classList.remove('crashed'); h.style.opacity = "1";
+            timer = setInterval(() => {
+                currentX += 0.01;
+                document.getElementById('mult').innerText = currentX.toFixed(2) + "x";
+                document.getElementById('win-sum').innerText = Math.floor(currentBet * currentX) + "₽";
+                h.style.left = Math.min(20 + (currentX - 1) * 60, 310) + 'px';
+                h.style.bottom = Math.min(20 + (currentX - 1) * 45, 180) + 'px';
+                if(currentX >= crashAt) crash();
+            }, 80);
+        }
+
+        function crash() {
+            clearInterval(timer); isFlying = false;
+            document.getElementById('mult').style.color = 'var(--lose)';
+            document.getElementById('msg').innerHTML = "УЛЕТЕЛ!";
+            document.getElementById('hero-wrap').classList.add('crashed');
+            addHist(currentX.toFixed(2)); setTimeout(reset, 2000);
+        }
+
+        function collect() {
+            if(!isFlying) return;
+            clearInterval(timer);
+            balance += Math.floor(currentBet * currentX); updateUI(); saveDB();
+            addHist(currentX.toFixed(2)); document.getElementById('msg').innerHTML = "ВИН!";
+            isFlying = false; setTimeout(reset, 2000);
+        }
+
+        function reset() {
+            document.getElementById('btn-start').style.display = 'block';
+            document.getElementById('btn-cash').style.display = 'none';
+            document.getElementById('mult').innerText = "1.00x";
+            document.getElementById('mult').style.color = "var(--win)";
+            document.getElementById('bet').disabled = false;
+            document.getElementById('hero-wrap').style.cssText = "left: 20px; bottom: 20px; opacity: 1;";
+        }
+
+        function addHist(x) { history.unshift(x); if(history.length > 5) history.pop(); renderHist(); saveDB(); }
+        function renderHist() { document.getElementById('hist-list').innerHTML = history.map(h => `<div class="hist-chip">${h}x</div>`).join(''); }
+        function updateUI() { 
+            document.getElementById('ui-bal').innerText = Math.floor(balance) + "₽";
+            document.getElementById('rank-ui').style.width = Math.min((balance/5000)*100, 100) + "%";
+        }
+        function saveDB() { users[user].bal = balance; users[user].hist = history; localStorage.setItem('users_jet', JSON.stringify(users)); }
+    </script>
+</body>
+</html>
