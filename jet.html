@@ -3,60 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — FIXED</title>
+    <title>JET SLEEPKIDD — FINAL</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #bc13fe; --bg: #030303; --win: #00ff88; --lose: #ff4d4d; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        :root { --primary: #bc13fe; --bg: #030303; --win: #00ff88; --lose: #ff4d4d; --fire: #ff6a00; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        .container { width: 95%; max-width: 420px; background: #0a0a0a; border: 2px solid var(--primary); border-radius: 40px; padding: 20px; text-align: center; margin-top: 10px; box-shadow: 0 0 30px rgba(188, 19, 254, 0.3); }
+        .container { width: 95%; max-width: 420px; background: #0a0a0a; border: 2px solid var(--primary); border-radius: 35px; padding: 15px; text-align: center; margin-top: 10px; box-shadow: 0 0 30px rgba(188, 19, 254, 0.2); }
         
-        /* История */
-        .history-line { display: flex; gap: 8px; overflow-x: hidden; height: 40px; justify-content: center; margin-bottom: 10px; }
-        .hist-item { background: rgba(188, 19, 254, 0.1); border: 1px solid var(--primary); padding: 5px 12px; border-radius: 15px; color: var(--win); font-weight: 900; font-size: 0.9rem; height: fit-content; }
+        /* Кнопка Назад */
+        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
+        .back-nav { text-decoration: none; color: #666; font-size: 0.7rem; font-weight: 900; padding: 8px 15px; border-radius: 12px; background: rgba(255,255,255,0.05); transition: 0.3s; }
+        .back-nav:hover { color: #fff; background: var(--primary); }
 
-        /* Игровое поле */
-        .game-area { height: 230px; background: #000; border-radius: 25px; position: relative; overflow: hidden; margin-bottom: 15px; border: 1px solid #222; }
+        /* История без вылетов за экран */
+        .history-line { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px; min-height: 30px; }
+        .hist-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(188, 19, 254, 0.5); padding: 3px 10px; border-radius: 10px; color: var(--win); font-weight: 900; font-size: 0.75rem; }
+
+        .game-area { height: 220px; background: #000; border-radius: 20px; position: relative; overflow: hidden; margin-bottom: 15px; border: 1px solid #1a1a1a; }
         #star-canvas { position: absolute; top:0; left:0; width:100%; height:100%; }
-        .multiplier { font-size: 4rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; color: var(--win); }
+        .multiplier { font-size: 3.5rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; color: var(--win); text-shadow: 0 0 20px rgba(0,255,136,0.3); }
 
-        /* Ракета и Пламя */
-        .hero-wrap { position: absolute; bottom: 20px; left: 20px; z-index: 5; }
-        .character { font-size: 50px; position: relative; z-index: 2; }
+        /* Ракета и Оранжевое Пламя */
+        .hero-wrap { position: absolute; bottom: 20px; left: 20px; z-index: 5; display: flex; align-items: center; }
+        .character { font-size: 45px; position: relative; z-index: 2; transform: rotate(-10deg); }
         .rocket-fire { 
-            position: absolute; left: -40px; top: 50%; transform: translateY(-50%);
-            width: 50px; height: 20px; 
-            background: linear-gradient(to left, #bc13fe, #ff00ff, transparent);
-            filter: blur(8px); border-radius: 50%; display: none;
+            position: absolute; 
+            left: -35px; /* Смещено четко под сопло */
+            top: 60%; 
+            transform: translateY(-50%);
+            width: 45px; height: 18px; 
+            background: radial-gradient(ellipse at right, #fff, #ffcc00, var(--fire), transparent);
+            filter: blur(4px); border-radius: 50% 20% 20% 50%;
+            display: none;
+            box-shadow: -5px 0 15px var(--fire);
         }
-        .is-flying .rocket-fire { display: block; animation: flameMove 0.1s infinite alternate; }
-        @keyframes flameMove { from { width: 45px; opacity: 0.7; } to { width: 65px; opacity: 1; } }
+        .is-flying .rocket-fire { display: block; animation: flamePulse 0.1s infinite alternate; }
+        @keyframes flamePulse { from { width: 40px; opacity: 0.8; transform: translateY(-50%) scaleY(0.9); } to { width: 55px; opacity: 1; transform: translateY(-50%) scaleY(1.1); } }
 
         /* Управление */
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; font-size: 0.7rem; color: #666; margin-bottom: 5px; margin-left: 10px; }
+        .controls-grid { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        input[type="number"] { width: 100%; background: #151515; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 15px; font-size: 1.1rem; font-family: 'Orbitron'; font-weight: 900; text-align: center; }
         
-        input[type="number"] { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 15px; font-size: 1.2rem; font-family: 'Orbitron'; font-weight: 900; text-align: center; }
+        .auto-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .auto-card { background: #111; padding: 10px; border-radius: 15px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .auto-card span { font-size: 0.65rem; font-weight: 900; color: #666; margin-bottom: 5px; }
         
-        .auto-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .auto-btn { background: #111; padding: 10px; border-radius: 15px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
-        .auto-btn span { font-size: 0.6rem; font-weight: 900; }
-        .auto-btn input { transform: scale(1.5); }
+        .main-btn { width: 100%; padding: 20px; background: var(--primary); color: #fff; border: none; border-radius: 18px; font-weight: 900; font-size: 1.3rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(188, 19, 254, 0.3); }
+        .cashout-btn { background: var(--win); color: #000; display: none; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3); }
+        .main-btn:active { transform: scale(0.98); }
 
-        .main-btn { width: 100%; padding: 22px; background: var(--primary); color: #fff; border: none; border-radius: 20px; font-weight: 900; font-size: 1.4rem; cursor: pointer; }
-        .cashout-btn { background: var(--win); color: #000; display: none; }
-        
-        .crashed { filter: grayscale(1) blur(2px); opacity: 0.5; }
+        .crashed { filter: grayscale(1) opacity(0.4); transition: 0.5s; }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- КНОПКА МЕНЮ ВЕРНУЛАСЬ -->
+        <div class="nav-bar"><a href="index.html" class="back-nav">← МЕНЮ</a></div>
+        
         <div class="history-line" id="history"></div>
         
         <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.8rem; font-weight:900;">
-            <span id="nick" style="color:var(--primary)">PLAYER</span>
+            <span id="nick" style="color:#555">USER</span>
             <span id="bal" style="color:var(--win)">0₽</span>
         </div>
 
@@ -69,25 +79,26 @@
             </div>
         </div>
 
-        <div class="input-group">
-            <label>СУММА СТАВКИ</label>
+        <div class="controls-grid">
             <input type="number" id="bet-amount" value="50">
-        </div>
 
-        <div class="auto-controls">
-            <div class="auto-btn">
-                <span>АВТОСТАВКА</span>
-                <input type="checkbox" id="auto-bet">
+            <div class="auto-panel">
+                <div class="auto-card">
+                    <span>АВТОСТАВКА</span>
+                    <input type="checkbox" id="auto-bet" style="width:20px; height:20px;">
+                </div>
+                <div class="auto-card">
+                    <span>АВТОВЫВОД</span>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <input type="number" id="auto-cash-val" value="2.0" style="width:60px; padding:5px; font-size:0.8rem;">
+                        <input type="checkbox" id="auto-cash-check" style="width:20px; height:20px;">
+                    </div>
+                </div>
             </div>
-            <div class="auto-btn">
-                <span>АВТОВЫВОД (X)</span>
-                <input type="number" id="auto-cash-val" value="2.00" style="padding: 2px; font-size: 0.9rem; width: 60px;">
-                <input type="checkbox" id="auto-cash-check">
-            </div>
-        </div>
 
-        <button class="main-btn" id="btn-start" onclick="startFly()">СТАВКА</button>
-        <button class="main-btn cashout-btn" id="btn-cash" onclick="collectWin()">ЗАБРАТЬ <span id="win-preview">0</span></button>
+            <button class="main-btn" id="btn-start" onclick="startFly()">СТАВКА</button>
+            <button class="main-btn cashout-btn" id="btn-cash" onclick="collectWin()">ЗАБРАТЬ <span id="win-preview">0</span></button>
+        </div>
     </div>
 
     <script>
@@ -96,16 +107,13 @@
         const ctx = canvas.getContext('2d');
         let stars = [];
 
-        // Загрузка данных
         window.onload = () => {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            const stored = JSON.parse(localStorage.getItem('users_jet'));
             const user = localStorage.getItem('current_user') || 'GUEST';
-            if(stored && stored[user]) {
-                balance = stored[user].bal;
-                document.getElementById('nick').innerText = user.toUpperCase();
-            }
+            const stored = JSON.parse(localStorage.getItem('users_jet')) || {};
+            balance = stored[user]?.bal || 1000;
+            document.getElementById('nick').innerText = user.toUpperCase();
             updateUI();
             drawStars();
         };
@@ -113,44 +121,38 @@
         function startFly() {
             if(isFlying) return;
             currentBet = parseInt(document.getElementById('bet-amount').value);
-            if(currentBet > balance || currentBet <= 0) return alert("Баланс!");
+            if(currentBet > balance || currentBet <= 0) return;
 
             balance -= currentBet;
             updateUI();
+            isFlying = true; currentX = 1.0;
             
-            isFlying = true;
-            currentX = 1.0;
-            
-            // Логика икса
             let r = Math.random() * 100;
-            if(r < 20) crashAt = (Math.random() * 0.1 + 1.01).toFixed(2);
-            else if(r < 80) crashAt = (Math.random() * 2 + 1.2).toFixed(2);
-            else crashAt = (Math.random() * 10 + 5).toFixed(2);
+            if(r < 30) crashAt = (Math.random() * 0.1 + 1.01).toFixed(2);
+            else if(r < 85) crashAt = (Math.random() * 2.5 + 1.1).toFixed(2);
+            else crashAt = (Math.random() * 15 + 4).toFixed(2);
 
-            // Визуал
             document.getElementById('btn-start').style.display = 'none';
             document.getElementById('btn-cash').style.display = 'block';
             document.getElementById('area').classList.add('is-flying');
             document.getElementById('hero').classList.remove('crashed');
-            document.getElementById('mult').style.color = 'var(--win)';
 
             timer = setInterval(() => {
                 currentX += 0.01;
                 document.getElementById('mult').innerText = currentX.toFixed(2) + 'x';
                 document.getElementById('win-preview').innerText = Math.floor(currentBet * currentX) + '₽';
                 
-                // Движение ракеты
-                document.getElementById('hero').style.left = Math.min(20 + (currentX-1)*50, 280) + 'px';
-                document.getElementById('hero').style.bottom = Math.min(20 + (currentX-1)*30, 150) + 'px';
+                // Движение
+                document.getElementById('hero').style.left = Math.min(20 + (currentX-1)*45, 290) + 'px';
+                document.getElementById('hero').style.bottom = Math.min(20 + (currentX-1)*25, 140) + 'px';
 
-                // АВТОВЫВОД
+                // Автовывод
                 if(document.getElementById('auto-cash-check').checked) {
-                    let target = parseFloat(document.getElementById('auto-cash-val').value);
-                    if(currentX >= target) collectWin();
+                    if(currentX >= parseFloat(document.getElementById('auto-cash-val').value)) collectWin();
                 }
 
                 if(currentX >= crashAt) explode();
-            }, 80);
+            }, 75);
         }
 
         function explode() {
@@ -168,25 +170,21 @@
             if(!isFlying) return;
             clearInterval(timer);
             isFlying = false;
-            let win = Math.floor(currentBet * currentX);
-            balance += win;
+            balance += Math.floor(currentBet * currentX);
             addHistory(currentX, 'var(--win)');
             updateUI();
             saveToDB();
-            setTimeout(resetGame, 1500);
+            setTimeout(resetGame, 1000);
         }
 
         function resetGame() {
             document.getElementById('btn-start').style.display = 'block';
             document.getElementById('btn-cash').style.display = 'none';
             document.getElementById('mult').innerText = '1.00x';
+            document.getElementById('mult').style.color = 'var(--win)';
             document.getElementById('hero').style.cssText = "left:20px; bottom:20px;";
             document.getElementById('area').classList.remove('is-flying');
-            
-            // АВТОСТАВКА
-            if(document.getElementById('auto-bet').checked) {
-                setTimeout(startFly, 1000);
-            }
+            if(document.getElementById('auto-bet').checked) setTimeout(startFly, 1200);
         }
 
         function addHistory(x, color) {
@@ -196,12 +194,10 @@
             div.style.color = color;
             div.innerText = parseFloat(x).toFixed(2) + 'x';
             h.prepend(div);
-            if(h.children.length > 5) h.lastChild.remove();
+            if(h.children.length > 8) h.lastChild.remove();
         }
 
-        function updateUI() {
-            document.getElementById('bal').innerText = Math.floor(balance) + '₽';
-        }
+        function updateUI() { document.getElementById('bal').innerText = Math.floor(balance) + '₽'; }
 
         function saveToDB() {
             const user = localStorage.getItem('current_user') || 'GUEST';
@@ -214,9 +210,7 @@
         function drawStars() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
             ctx.fillStyle = "#fff";
-            if(isFlying && stars.length < 50) {
-                stars.push({x: canvas.width+10, y: Math.random()*canvas.height, s: Math.random()*2+1, sp: Math.random()*10+5});
-            }
+            if(isFlying && stars.length < 40) stars.push({x: canvas.width+10, y: Math.random()*canvas.height, s: Math.random()*2, sp: Math.random()*12+5});
             stars.forEach((s, i) => {
                 s.x -= isFlying ? s.sp : 0.5;
                 ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, 7); ctx.fill();
