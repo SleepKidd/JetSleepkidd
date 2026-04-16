@@ -3,182 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — CLEAN PRO</title>
+    <title>JET SLEEPKIDD — LEGACY</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { 
-            --primary: #bc13fe; 
-            --bg: #050505; 
-            --win: #00ff88; 
-            --lose: #ff4d4d; 
-            --panel: rgba(20, 20, 20, 0.8);
-        }
-
+        :root { --primary: #bc13fe; --bg: #050505; --win: #00ff88; --lose: #ff4d4d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        body { 
-            background: var(--bg); 
-            background-image: radial-gradient(circle at 50% 50%, #1a0525 0%, #050505 100%);
-            color: #fff; 
-            font-family: 'Orbitron', sans-serif; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh;
-        }
+        /* ТА САМАЯ ЛЕГЕНДАРНАЯ НАДПИСЬ */
+        .logo-box { margin: 25px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; }
+        .logo-box .top { font-size: 22px; color: var(--primary); display: block; text-shadow: 0 0 15px var(--primary); }
+        .logo-box .bot { font-size: 34px; color: #fff; letter-spacing: -1px; }
 
         .container { 
-            width: 95%; 
-            max-width: 440px; 
-            background: var(--panel);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(188, 19, 254, 0.3);
-            border-radius: 40px; 
-            padding: 20px; 
-            text-align: center; 
-            box-shadow: 0 0 30px rgba(188, 19, 254, 0.2);
-            margin: 15px 0;
-            position: relative;
+            width: 95%; max-width: 440px; background: rgba(15, 15, 15, 0.9); border: 2px solid var(--primary); 
+            border-radius: 40px; padding: 20px; text-align: center; box-shadow: 0 0 30px rgba(188, 19, 254, 0.2); position: relative; 
         }
+        
+        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
+        .back-nav { text-decoration: none; color: #555; font-size: 0.75rem; font-weight: 900; padding: 6px 12px; border-radius: 10px; background: rgba(255,255,255,0.03); }
 
-        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 15px; }
-        .back-nav { 
-            text-decoration: none; 
-            color: #fff; 
-            font-size: 0.7rem; 
-            font-weight: 900; 
-            padding: 6px 15px; 
-            border-radius: 10px; 
-            background: #111;
-            border: 1px solid var(--primary);
-        }
-
-        /* ИСПРАВЛЕННАЯ ИСТОРИЯ */
-        .history-line { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); /* Ровно 4 колонки */
-            gap: 8px; 
-            margin-bottom: 15px; 
-            padding: 0 5px;
-            overflow: hidden; /* Убирает ползунок */
-        }
-        /* Скрытие скроллбара для всех браузеров */
-        .history-line::-webkit-scrollbar { display: none; }
-        .history-line { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .hist-item { 
-            background: rgba(0, 0, 0, 0.5); 
-            border: 1px solid var(--primary); 
-            padding: 6px 0; 
-            border-radius: 10px; 
-            font-size: 0.85rem; 
-            font-weight: 900; 
-            text-align: center;
-        }
+        /* ИСТОРИЯ: 4 ИКСА БЕЗ ПОЛЗУНКА */
+        .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; overflow: hidden; }
+        .hist-item { background: #000; border: 1.5px solid var(--primary); padding: 6px 0; border-radius: 10px; font-size: 0.85rem; font-weight: 900; }
         .win-x { color: var(--win); border-color: var(--win); }
         .lose-x { color: var(--lose); border-color: var(--lose); }
 
-        .game-area { 
-            height: 240px; 
-            background: #000; 
-            border-radius: 25px; 
-            position: relative; 
-            overflow: hidden; 
-            margin-bottom: 15px; 
-            border: 1px solid rgba(188, 19, 254, 0.4);
-        }
-        
-        .grid-bg {
-            position: absolute;
-            width: 200%; height: 200%;
-            background-image: 
-                linear-gradient(rgba(188, 19, 254, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(188, 19, 254, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            transform: perspective(500px) rotateX(60deg);
-            top: -50%; left: -50%;
-            animation: gridMove 8s linear infinite;
-        }
-        @keyframes gridMove { from { transform: perspective(500px) rotateX(60deg) translateY(0); } to { transform: perspective(500px) rotateX(60deg) translateY(30px); } }
-
+        .game-area { height: 240px; background: #000; border-radius: 25px; position: relative; overflow: hidden; margin-bottom: 15px; border: 1px solid #222; }
         #star-canvas { position: absolute; top:0; left:0; width:100%; height:100%; }
         
-        .multiplier { 
-            font-size: 4.5rem; 
-            font-weight: 900; 
-            position: absolute; 
-            top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            z-index: 10; 
-            color: var(--win); 
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
-        }
+        .multiplier { font-size: 4.5rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; color: var(--win); }
         
         .hero-wrap { position: absolute; bottom: 25px; left: 25px; z-index: 5; transition: 0.1s linear; }
         .character { font-size: 55px; filter: drop-shadow(0 0 10px var(--primary)); }
 
-        .controls { display: flex; flex-direction: column; gap: 12px; }
-        
-        .input-box {
-            background: #111;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 12px;
-            font-size: 1.4rem;
-            color: #fff;
-            font-family: 'Orbitron';
-            font-weight: 900;
-            text-align: center;
-            width: 100%;
-        }
+        .input-box { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 18px; font-size: 1.4rem; font-family: 'Orbitron'; font-weight: 900; text-align: center; margin-bottom: 15px; }
 
-        .auto-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .auto-card { 
-            background: rgba(0, 0, 0, 0.3); 
-            padding: 10px; 
-            border-radius: 15px; 
-            border: 1px solid rgba(188, 19, 254, 0.2);
-            display: flex; flex-direction: column; align-items: center;
-        }
-        .auto-card span { font-size: 0.6rem; font-weight: 900; color: #666; margin-bottom: 5px; }
+        .auto-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .auto-card { background: #000; padding: 10px; border-radius: 15px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center; }
+        .auto-card span { font-size: 0.6rem; font-weight: 900; color: #555; margin-bottom: 5px; }
 
-        .main-btn { 
-            width: 100%; 
-            padding: 20px; 
-            background: linear-gradient(180deg, var(--primary), #8a0db8); 
-            color: #fff; border: none; border-radius: 20px; 
-            font-weight: 900; font-size: 1.4rem; text-transform: uppercase; cursor: pointer; 
-            box-shadow: 0 5px 0 #5e087d, 0 8px 15px rgba(188, 19, 254, 0.3);
-            transition: 0.1s;
-        }
-        .main-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #5e087d; }
+        .main-btn { width: 100%; padding: 22px; background: var(--primary); color: #fff; border: none; border-radius: 20px; font-weight: 900; font-size: 1.5rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 0 #8a0db8; }
+        .main-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #8a0db8; }
+        .cashout-btn { background: var(--win); color: #000; display: none; box-shadow: 0 5px 0 #008546; }
 
-        .cashout-btn { 
-            background: linear-gradient(180deg, var(--win), #00b35f); 
-            color: #000; display: none; 
-            box-shadow: 0 5px 0 #008546, 0 8px 15px rgba(0, 255, 136, 0.2);
-        }
-
-        .crashed { filter: grayscale(1) blur(2px) opacity(0.3); transition: 0.5s; }
+        .crashed { filter: grayscale(1) opacity(0.3); transition: 0.5s; }
     </style>
 </head>
 <body>
 
+    <div class="logo-box">
+        <span class="top">JET</span>
+        <span class="bot">SLEEPKIDD</span>
+    </div>
+    
     <div class="container">
-        <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
+        <div class="nav-bar"><a href="index.html" class="back-nav">← МЕНЮ</a></div>
+        <div class="history-line" id="history"></div>
         
-        <div class="history-line" id="history">
-            <!-- Здесь будут 4 икса -->
-        </div>
-        
-        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:12px; padding: 0 10px; font-weight:900;">
-            <span id="ui-nick" style="color:var(--primary)">PLAYER</span>
-            <span id="ui-bal" style="color:var(--win)">0₽</span>
+        <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:12px; padding: 0 10px; font-weight:900;">
+            <span id="nick" style="color:var(--primary)">PLAYER</span>
+            <span id="bal" style="color:var(--win)">0₽</span>
         </div>
 
         <div class="game-area" id="area">
-            <div class="grid-bg"></div>
             <canvas id="star-canvas"></canvas>
             <div class="multiplier" id="mult">1.00x</div>
             <div class="hero-wrap" id="hero">
@@ -186,30 +74,28 @@
             </div>
         </div>
 
-        <div class="controls">
-            <input type="number" id="bet" class="input-box" value="50" inputmode="numeric">
+        <input type="number" id="bet" class="input-box" value="50">
 
-            <div class="auto-panel">
-                <div class="auto-card">
-                    <span>АВТОСТАВКА</span>
-                    <input type="checkbox" id="auto-bet" style="width:22px; height:22px; accent-color: var(--primary);">
-                </div>
-                <div class="auto-card">
-                    <span>АВТОВЫВОД</span>
-                    <div style="display:flex; align-items:center; gap:5px;">
-                        <input type="number" id="auto-cash-val" value="2.0" style="width:50px; padding:4px; font-size:0.9rem; background: rgba(255,255,255,0.1); border:none; color:white; border-radius:5px; text-align:center;">
-                        <input type="checkbox" id="auto-cash-check" style="width:22px; height:22px; accent-color: var(--win);">
-                    </div>
+        <div class="auto-panel">
+            <div class="auto-card">
+                <span>АВТОСТАВКА</span>
+                <input type="checkbox" id="auto-bet" style="width:22px; height:22px;">
+            </div>
+            <div class="auto-card">
+                <span>АВТОВЫВОД</span>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <input type="number" id="auto-cash-val" value="2.0" style="width:50px; background:#111; color:#fff; border:none; text-align:center; border-radius:5px;">
+                    <input type="checkbox" id="auto-cash-check" style="width:22px; height:22px;">
                 </div>
             </div>
-
-            <button class="main-btn" id="btn-start" onclick="fly()">СТАВКА</button>
-            <button class="main-btn cashout-btn" id="btn-cash" onclick="collect()">ЗАБРАТЬ <br> <span id="win-sum">0</span>₽</button>
         </div>
+
+        <button class="main-btn" id="btn-start" onclick="fly()">СТАВКА</button>
+        <button class="main-btn cashout-btn" id="btn-cash" onclick="collect()">ЗАБРАТЬ <br> <span id="win-sum">0</span>₽</button>
     </div>
 
     <script>
-        let balance, user, users, currentBet, isFlying = false, currentX = 1.00, timer, crashAt;
+        let balance = 1000, currentBet, isFlying = false, currentX = 1.00, timer, crashAt;
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
@@ -217,10 +103,10 @@
         window.onload = () => {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            user = localStorage.getItem('current_user') || 'GUEST';
-            users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
+            const user = localStorage.getItem('current_user') || 'GUEST';
+            const users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
             balance = users[user].bal;
-            document.getElementById('ui-nick').innerText = user.toUpperCase();
+            document.getElementById('nick').innerText = user.toUpperCase();
             updateUI();
             drawStars();
         };
@@ -229,34 +115,25 @@
             if (isFlying) return;
             currentBet = parseInt(document.getElementById('bet').value);
             if(currentBet > balance || currentBet <= 0) return alert("Баланс!");
-            
             balance -= currentBet; updateUI(); saveDB();
             isFlying = true; currentX = 1.00;
-            
-            let rand = Math.random() * 100;
-            if (rand < 25) crashAt = (Math.random() * 0.1 + 1.01).toFixed(2);
-            else if (rand < 85) crashAt = (Math.random() * 3 + 1.2).toFixed(2);
-            else crashAt = (Math.random() * 15 + 5).toFixed(2);
-
+            let r = Math.random() * 100;
+            if (r < 25) crashAt = (Math.random() * 0.1 + 1.01).toFixed(2);
+            else if (r < 85) crashAt = (Math.random() * 3 + 1.2).toFixed(2);
+            else crashAt = (Math.random() * 10 + 5).toFixed(2);
             document.getElementById('btn-start').style.display = 'none';
             document.getElementById('btn-cash').style.display = 'block';
             document.getElementById('mult').style.color = 'var(--win)';
             document.getElementById('hero').classList.remove('crashed');
-
             timer = setInterval(() => {
                 currentX += 0.01;
                 document.getElementById('mult').innerText = currentX.toFixed(2) + "x";
                 document.getElementById('win-sum').innerText = Math.floor(currentBet * currentX);
-                
-                document.getElementById('hero').style.left = Math.min(25 + (currentX - 1) * 50, 310) + 'px';
-                document.getElementById('hero').style.bottom = Math.min(25 + (currentX - 1) * 35, 170) + 'px';
-
-                if(document.getElementById('auto-cash-check').checked) {
-                    if(currentX >= parseFloat(document.getElementById('auto-cash-val').value)) collect();
-                }
-                
+                document.getElementById('hero').style.left = Math.min(25 + (currentX - 1) * 55, 310) + 'px';
+                document.getElementById('hero').style.bottom = Math.min(25 + (currentX - 1) * 40, 170) + 'px';
+                if(document.getElementById('auto-cash-check').checked && currentX >= parseFloat(document.getElementById('auto-cash-val').value)) collect();
                 if(currentX >= crashAt) crash();
-            }, 75);
+            }, 80);
         }
 
         function crash() {
@@ -281,27 +158,32 @@
             document.getElementById('btn-cash').style.display = 'none';
             document.getElementById('mult').innerText = "1.00x";
             document.getElementById('mult').style.color = 'var(--win)';
-            document.getElementById('hero').style.cssText = "left: 25px; bottom: 25px; opacity: 1;";
+            document.getElementById('hero').style.cssText = "left: 25px; bottom: 25px;";
             if(document.getElementById('auto-bet').checked) setTimeout(fly, 1500);
         }
 
-        function addHistory(x, className) {
+        function addHistory(x, cls) {
             const h = document.getElementById('history');
             const div = document.createElement('div');
-            div.className = 'hist-item ' + className;
+            div.className = 'hist-item ' + cls;
             div.innerText = parseFloat(x).toFixed(2) + 'x';
             h.prepend(div);
-            // Ограничение строго 4 элементами
             if(h.children.length > 4) h.lastChild.remove();
         }
 
-        function updateUI() { document.getElementById('ui-bal').innerText = Math.floor(balance) + "₽"; }
-        function saveDB() { if(users[user]) { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); } }
+        function updateUI() { document.getElementById('bal').innerText = Math.floor(balance) + "₽"; }
+        function saveDB() { 
+            const user = localStorage.getItem('current_user') || 'GUEST';
+            let stored = JSON.parse(localStorage.getItem('users_jet')) || {};
+            if(!stored[user]) stored[user] = {};
+            stored[user].bal = balance;
+            localStorage.setItem('users_jet', JSON.stringify(stored));
+        }
 
         function drawStars() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
             ctx.fillStyle = "#fff";
-            if(isFlying && stars.length < 40) stars.push({x: canvas.width+10, y: Math.random()*canvas.height, s: Math.random()*2.5, sp: Math.random()*15+5});
+            if(isFlying && stars.length < 40) stars.push({x: canvas.width+10, y: Math.random()*canvas.height, s: Math.random()*2, sp: Math.random()*15+5});
             stars.forEach((s, i) => {
                 s.x -= isFlying ? s.sp : 0.5;
                 ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, 7); ctx.fill();
