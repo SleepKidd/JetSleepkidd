@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — FLIGHT FIXED</title>
+    <title>JET SLEEPKIDD — FLAT VIBE</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         body { background: #050505; margin: 0; display: flex; flex-direction: column; align-items: center; font-family: 'Orbitron', sans-serif; color: #fff; min-height: 100vh; overflow: hidden; }
@@ -22,7 +22,7 @@
         
         <!-- МЕНЮ -->
         <div style="width: 100%; display: flex; margin-bottom: 15px;">
-            <a href="index.html" style="text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid #bc13fe; box-shadow: 0 4px 0 #5e087d;">МЕНЮ</a>
+            <a href="index.html" style="text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid #bc13fe; text-transform: uppercase;">МЕНЮ</a>
         </div>
 
         <!-- ИСТОРИЯ -->
@@ -34,10 +34,9 @@
         </div>
 
         <!-- ИГРОВОЕ ПОЛЕ -->
-        <div id="area" style="height: 230px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 1.5px solid #333; margin-bottom: 15px;">
+        <div id="area" style="height: 230px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 1px solid #333; margin-bottom: 15px;">
             <canvas id="star-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
             <div id="mult" style="font-size: 4.5rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00ff88; z-index: 10; text-shadow: 0 0 25px rgba(0, 255, 136, 0.5);">1.00x</div>
-            <!-- РАКЕТА: теперь с правильным стартом -->
             <div id="hero" style="position: absolute; bottom: 20px; left: 20px; z-index: 5; transition: 0.1s linear;">
                 <div style="font-size: 55px; filter: drop-shadow(0 0 15px #bc13fe);">🚀</div>
             </div>
@@ -60,9 +59,11 @@
             </div>
         </div>
 
-        <button id="btn-start" onclick="fly()" style="width: 100%; padding: 22px; background: linear-gradient(180deg, #bc13fe, #8a0db8); color: #fff; border-radius: 22px; border: none; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 8px 0 #5e087d, 0 10px 20px rgba(188, 19, 254, 0.4);">СТАВКА</button>
+        <!-- КНОПКА СТАВКА (ФИОЛЕТОВАЯ) -->
+        <button id="btn-start" onclick="fly()" style="width: 100%; padding: 22px; background: linear-gradient(180deg, #bc13fe, #8a0db8); color: #fff; border-radius: 22px; border: none; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer;">СТАВКА</button>
         
-        <button id="btn-cash" onclick="collect()" style="display: none; width: 100%; padding: 22px; background: linear-gradient(180deg, #00ff88, #00b35f); color: #000; border-radius: 22px; border: none; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 8px 0 #008546, 0 10px 20px rgba(0, 255, 136, 0.3);">ЗАБРАТЬ <br> <span id="win-sum">0</span>₽</button>
+        <!-- КНОПКА ЗАБРАТЬ (ЗЕЛЕНАЯ) -->
+        <button id="btn-cash" onclick="collect()" style="display: none; width: 100%; padding: 22px; background: linear-gradient(180deg, #00ff88, #00b35f); color: #000; border-radius: 22px; border: none; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer;">ЗАБРАТЬ <br> <span id="win-sum">0</span>₽</button>
     </div>
 
     <script>
@@ -91,7 +92,6 @@
             document.getElementById('bal').innerText = Math.floor(balance) + "₽";
             isFlying = true; currentX = 1.00;
 
-            // Логика икса до 500
             let r = Math.random() * 100;
             if(r < 25) crashAt = (Math.random() * 0.1 + 1.01).toFixed(2);
             else if(r < 95) crashAt = (Math.random() * 5 + 1.2).toFixed(2);
@@ -107,8 +107,6 @@
                 document.getElementById('mult').innerText = currentX.toFixed(2) + "x";
                 document.getElementById('win-sum').innerText = Math.floor(currentBet * currentX);
                 
-                // РАКЕТА: плавный полет вверх и вправо до границ
-                // 20px - старт, 280px/140px - лимиты поля, чтобы не улетала
                 let moveX = Math.min(20 + (currentX - 1) * 60, 280);
                 let moveY = Math.min(20 + (currentX - 1) * 45, 140);
                 
