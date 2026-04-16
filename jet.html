@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — RELOADED</title>
+    <title>JET SLEEPKIDD — CLEAN PRO</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { 
@@ -11,8 +11,7 @@
             --bg: #050505; 
             --win: #00ff88; 
             --lose: #ff4d4d; 
-            --panel: rgba(20, 20, 20, 0.7);
-            --neon-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+            --panel: rgba(20, 20, 20, 0.8);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -29,7 +28,6 @@
             min-height: 100vh;
         }
 
-        /* Основной контейнер с неоновым свечением */
         .container { 
             width: 95%; 
             max-width: 440px; 
@@ -37,10 +35,10 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(188, 19, 254, 0.3);
             border-radius: 40px; 
-            padding: 25px; 
+            padding: 20px; 
             text-align: center; 
-            box-shadow: var(--neon-shadow), inset 0 0 15px rgba(188, 19, 254, 0.1);
-            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.2);
+            margin: 15px 0;
             position: relative;
         }
 
@@ -48,166 +46,135 @@
         .back-nav { 
             text-decoration: none; 
             color: #fff; 
-            font-size: 0.8rem; 
+            font-size: 0.7rem; 
             font-weight: 900; 
-            padding: 8px 20px; 
-            border-radius: 12px; 
-            background: linear-gradient(135deg, #333, #111);
+            padding: 6px 15px; 
+            border-radius: 10px; 
+            background: #111;
             border: 1px solid var(--primary);
-            box-shadow: 0 0 10px rgba(188, 19, 254, 0.3);
         }
 
-        /* История коэффициентов */
+        /* ИСПРАВЛЕННАЯ ИСТОРИЯ */
         .history-line { 
-            display: flex; 
-            gap: 10px; 
-            overflow-x: auto; 
-            justify-content: center; 
-            margin-bottom: 20px; 
-            padding: 5px;
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); /* Ровно 4 колонки */
+            gap: 8px; 
+            margin-bottom: 15px; 
+            padding: 0 5px;
+            overflow: hidden; /* Убирает ползунок */
         }
-        .hist-item { 
-            background: rgba(0, 0, 0, 0.6); 
-            border: 1px solid var(--primary); 
-            padding: 5px 12px; 
-            border-radius: 12px; 
-            font-size: 0.9rem; 
-            font-weight: 900; 
-            color: var(--win);
-            text-shadow: 0 0 5px var(--win);
-        }
+        /* Скрытие скроллбара для всех браузеров */
+        .history-line::-webkit-scrollbar { display: none; }
+        .history-line { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Игровое поле с анимацией */
+        .hist-item { 
+            background: rgba(0, 0, 0, 0.5); 
+            border: 1px solid var(--primary); 
+            padding: 6px 0; 
+            border-radius: 10px; 
+            font-size: 0.85rem; 
+            font-weight: 900; 
+            text-align: center;
+        }
+        .win-x { color: var(--win); border-color: var(--win); }
+        .lose-x { color: var(--lose); border-color: var(--lose); }
+
         .game-area { 
-            height: 250px; 
+            height: 240px; 
             background: #000; 
-            border-radius: 30px; 
+            border-radius: 25px; 
             position: relative; 
             overflow: hidden; 
-            margin-bottom: 20px; 
-            border: 2px solid var(--primary);
-            box-shadow: inset 0 0 30px rgba(188, 19, 254, 0.2);
+            margin-bottom: 15px; 
+            border: 1px solid rgba(188, 19, 254, 0.4);
         }
         
-        /* Сетка на фоне */
         .grid-bg {
             position: absolute;
-            width: 200%;
-            height: 200%;
+            width: 200%; height: 200%;
             background-image: 
-                linear-gradient(rgba(188, 19, 254, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(188, 19, 254, 0.1) 1px, transparent 1px);
-            background-size: 40px 40px;
+                linear-gradient(rgba(188, 19, 254, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(188, 19, 254, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
             transform: perspective(500px) rotateX(60deg);
-            top: -50%;
-            left: -50%;
-            animation: gridMove 5s linear infinite;
+            top: -50%; left: -50%;
+            animation: gridMove 8s linear infinite;
         }
-        @keyframes gridMove { from { transform: perspective(500px) rotateX(60deg) translateY(0); } to { transform: perspective(500px) rotateX(60deg) translateY(40px); } }
+        @keyframes gridMove { from { transform: perspective(500px) rotateX(60deg) translateY(0); } to { transform: perspective(500px) rotateX(60deg) translateY(30px); } }
 
-        #star-canvas { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 1; }
+        #star-canvas { position: absolute; top:0; left:0; width:100%; height:100%; }
         
         .multiplier { 
             font-size: 4.5rem; 
             font-weight: 900; 
             position: absolute; 
-            top: 50%; 
-            left: 50%; 
+            top: 50%; left: 50%; 
             transform: translate(-50%, -50%); 
             z-index: 10; 
             color: var(--win); 
-            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
         }
         
-        .hero-wrap { position: absolute; bottom: 30px; left: 30px; z-index: 5; transition: 0.1s linear; }
-        .character { 
-            font-size: 55px; 
-            filter: drop-shadow(0 0 15px var(--primary));
-        }
+        .hero-wrap { position: absolute; bottom: 25px; left: 25px; z-index: 5; transition: 0.1s linear; }
+        .character { font-size: 55px; filter: drop-shadow(0 0 10px var(--primary)); }
 
-        /* Стеклянные панели управления */
-        .controls { display: flex; flex-direction: column; gap: 15px; }
+        .controls { display: flex; flex-direction: column; gap: 12px; }
         
-        .input-wrapper {
-            position: relative;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 5px;
+        .input-box {
+            background: #111;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 12px;
+            font-size: 1.4rem;
+            color: #fff;
+            font-family: 'Orbitron';
+            font-weight: 900;
+            text-align: center;
+            width: 100%;
         }
 
-        input[type="number"] { 
-            width: 100%; 
-            background: transparent;
-            border: none;
-            color: #fff; 
-            padding: 15px; 
-            font-size: 1.5rem; 
-            font-family: 'Orbitron'; 
-            font-weight: 900; 
-            text-align: center; 
-        }
-
-        .auto-panel { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-        }
-        
+        .auto-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .auto-card { 
-            background: rgba(0, 0, 0, 0.4); 
-            padding: 15px; 
-            border-radius: 20px; 
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 10px; 
+            border-radius: 15px; 
             border: 1px solid rgba(188, 19, 254, 0.2);
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
+            display: flex; flex-direction: column; align-items: center;
         }
-        .auto-card span { font-size: 0.7rem; font-weight: 900; color: #888; margin-bottom: 10px; letter-spacing: 1px; }
+        .auto-card span { font-size: 0.6rem; font-weight: 900; color: #666; margin-bottom: 5px; }
 
-        /* Объемные кнопки */
         .main-btn { 
             width: 100%; 
-            padding: 22px; 
-            background: linear-gradient(180deg, var(--primary) 0%, #8a0db8 100%); 
-            color: #fff; 
-            border: none; 
-            border-radius: 22px; 
-            font-weight: 900; 
-            font-size: 1.5rem; 
-            text-transform: uppercase; 
-            cursor: pointer; 
-            box-shadow: 0 6px 0 #5e087d, 0 10px 20px rgba(188, 19, 254, 0.4);
+            padding: 20px; 
+            background: linear-gradient(180deg, var(--primary), #8a0db8); 
+            color: #fff; border: none; border-radius: 20px; 
+            font-weight: 900; font-size: 1.4rem; text-transform: uppercase; cursor: pointer; 
+            box-shadow: 0 5px 0 #5e087d, 0 8px 15px rgba(188, 19, 254, 0.3);
             transition: 0.1s;
         }
-        .main-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #5e087d; }
+        .main-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #5e087d; }
 
         .cashout-btn { 
-            background: linear-gradient(180deg, var(--win) 0%, #00b35f 100%); 
-            color: #000; 
-            display: none; 
-            box-shadow: 0 6px 0 #008546, 0 10px 20px rgba(0, 255, 136, 0.3);
+            background: linear-gradient(180deg, var(--win), #00b35f); 
+            color: #000; display: none; 
+            box-shadow: 0 5px 0 #008546, 0 8px 15px rgba(0, 255, 136, 0.2);
         }
-        .cashout-btn:active { box-shadow: 0 2px 0 #008546; }
 
-        .crashed { filter: grayscale(1) blur(2px) opacity(0.4); transition: 0.5s; }
+        .crashed { filter: grayscale(1) blur(2px) opacity(0.3); transition: 0.5s; }
     </style>
 </head>
 <body>
 
-    <div class="logo-box">
-        <span class="top">JET</span>
-        <span class="bot">SLEEPKIDD</span>
-    </div>
-    
     <div class="container">
         <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
         
-        <div class="history-line" id="history"></div>
+        <div class="history-line" id="history">
+            <!-- Здесь будут 4 икса -->
+        </div>
         
-        <div style="display:flex; justify-content:space-between; font-size:1rem; margin-bottom:15px; padding: 0 10px; font-weight:900;">
-            <span id="ui-nick" style="color:var(--primary); text-shadow: 0 0 10px var(--primary);">USER</span>
-            <span id="ui-bal" style="color:var(--win); text-shadow: 0 0 10px var(--win);">0₽</span>
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:12px; padding: 0 10px; font-weight:900;">
+            <span id="ui-nick" style="color:var(--primary)">PLAYER</span>
+            <span id="ui-bal" style="color:var(--win)">0₽</span>
         </div>
 
         <div class="game-area" id="area">
@@ -220,20 +187,18 @@
         </div>
 
         <div class="controls">
-            <div class="input-wrapper">
-                <input type="number" id="bet" value="50" inputmode="numeric">
-            </div>
+            <input type="number" id="bet" class="input-box" value="50" inputmode="numeric">
 
             <div class="auto-panel">
                 <div class="auto-card">
                     <span>АВТОСТАВКА</span>
-                    <input type="checkbox" id="auto-bet" style="width:25px; height:25px; accent-color: var(--primary);">
+                    <input type="checkbox" id="auto-bet" style="width:22px; height:22px; accent-color: var(--primary);">
                 </div>
                 <div class="auto-card">
                     <span>АВТОВЫВОД</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <input type="number" id="auto-cash-val" value="2.0" style="width:60px; padding:5px; font-size:1rem; margin:0; background: rgba(255,255,255,0.1); border-radius:10px;">
-                        <input type="checkbox" id="auto-cash-check" style="width:25px; height:25px; accent-color: var(--win);">
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <input type="number" id="auto-cash-val" value="2.0" style="width:50px; padding:4px; font-size:0.9rem; background: rgba(255,255,255,0.1); border:none; color:white; border-radius:5px; text-align:center;">
+                        <input type="checkbox" id="auto-cash-check" style="width:22px; height:22px; accent-color: var(--win);">
                     </div>
                 </div>
             </div>
@@ -270,8 +235,8 @@
             
             let rand = Math.random() * 100;
             if (rand < 25) crashAt = (Math.random() * 0.1 + 1.01).toFixed(2);
-            else if (rand < 85) crashAt = (Math.random() * 2.5 + 1.2).toFixed(2);
-            else crashAt = (Math.random() * 10 + 5).toFixed(2);
+            else if (rand < 85) crashAt = (Math.random() * 3 + 1.2).toFixed(2);
+            else crashAt = (Math.random() * 15 + 5).toFixed(2);
 
             document.getElementById('btn-start').style.display = 'none';
             document.getElementById('btn-cash').style.display = 'block';
@@ -283,8 +248,8 @@
                 document.getElementById('mult').innerText = currentX.toFixed(2) + "x";
                 document.getElementById('win-sum').innerText = Math.floor(currentBet * currentX);
                 
-                document.getElementById('hero').style.left = Math.min(30 + (currentX - 1) * 50, 310) + 'px';
-                document.getElementById('hero').style.bottom = Math.min(30 + (currentX - 1) * 35, 170) + 'px';
+                document.getElementById('hero').style.left = Math.min(25 + (currentX - 1) * 50, 310) + 'px';
+                document.getElementById('hero').style.bottom = Math.min(25 + (currentX - 1) * 35, 170) + 'px';
 
                 if(document.getElementById('auto-cash-check').checked) {
                     if(currentX >= parseFloat(document.getElementById('auto-cash-val').value)) collect();
@@ -296,7 +261,7 @@
 
         function crash() {
             clearInterval(timer); isFlying = false;
-            addHistory(currentX, 'var(--lose)');
+            addHistory(currentX, 'lose-x');
             document.getElementById('mult').style.color = 'var(--lose)';
             document.getElementById('hero').classList.add('crashed');
             setTimeout(reset, 2000);
@@ -306,7 +271,7 @@
             if(!isFlying) return;
             clearInterval(timer);
             balance += Math.floor(currentBet * currentX); saveDB(); updateUI();
-            addHistory(currentX, 'var(--win)');
+            addHistory(currentX, 'win-x');
             isFlying = false;
             setTimeout(reset, 1200);
         }
@@ -316,17 +281,18 @@
             document.getElementById('btn-cash').style.display = 'none';
             document.getElementById('mult').innerText = "1.00x";
             document.getElementById('mult').style.color = 'var(--win)';
-            document.getElementById('hero').style.cssText = "left: 30px; bottom: 30px; opacity: 1;";
+            document.getElementById('hero').style.cssText = "left: 25px; bottom: 25px; opacity: 1;";
             if(document.getElementById('auto-bet').checked) setTimeout(fly, 1500);
         }
 
-        function addHistory(x, color) {
+        function addHistory(x, className) {
             const h = document.getElementById('history');
             const div = document.createElement('div');
-            div.className = 'hist-item'; div.style.color = color;
+            div.className = 'hist-item ' + className;
             div.innerText = parseFloat(x).toFixed(2) + 'x';
             h.prepend(div);
-            if(h.children.length > 6) h.lastChild.remove();
+            // Ограничение строго 4 элементами
+            if(h.children.length > 4) h.lastChild.remove();
         }
 
         function updateUI() { document.getElementById('ui-bal').innerText = Math.floor(balance) + "₽"; }
@@ -335,7 +301,7 @@
         function drawStars() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
             ctx.fillStyle = "#fff";
-            if(isFlying && stars.length < 50) stars.push({x: canvas.width+10, y: Math.random()*canvas.height, s: Math.random()*3, sp: Math.random()*15+5});
+            if(isFlying && stars.length < 40) stars.push({x: canvas.width+10, y: Math.random()*canvas.height, s: Math.random()*2.5, sp: Math.random()*15+5});
             stars.forEach((s, i) => {
                 s.x -= isFlying ? s.sp : 0.5;
                 ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, 7); ctx.fill();
