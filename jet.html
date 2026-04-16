@@ -3,73 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — РАКЕТКА</title>
+    <title>JET SLEEPKIDD — FIXED FINAL</title>
     <link href="https://googleapis.com" rel="stylesheet">
-    <style>
-        body { background: #050505; margin: 0; display: flex; flex-direction: column; align-items: center; font-family: 'Orbitron', sans-serif; color: #fff; overflow-x: hidden; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        #history::-webkit-scrollbar { display: none; }
-        #history { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .win-x { color: #00ff88 !important; border-color: #00ff88 !important; }
-        .lose-x { color: #ff4d4d !important; border-color: #ff4d4d !important; }
-        .crashed { filter: grayscale(1) blur(4px) opacity(0.3) !important; }
-    </style>
 </head>
-<body>
+<body style="background: #050505; margin: 0; display: flex; flex-direction: column; align-items: center; font-family: 'Orbitron', sans-serif; color: #fff; min-height: 100vh; overflow-x: hidden;">
 
-    <!-- ТО САМОЕ БОЛЬШОЕ ЛОГО -->
-    <div style="margin: 40px 0 20px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center;">
-        <span style="font-size: 26px; color: #bc13fe; display: block; text-shadow: 0 0 20px #bc13fe;">JET</span>
-        <span style="font-size: 44px; color: #fff; letter-spacing: -2px; line-height: 0.8;">SLEEPKIDD</span>
+    <!-- 1. ЛОГОТИП: JET НАД SLEEPKIDD -->
+    <div style="margin: 30px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1;">
+        <span style="font-size: 28px; color: #bc13fe; display: block; text-shadow: 0 0 20px #bc13fe; margin-bottom: -5px;">JET</span>
+        <span style="font-size: 42px; color: #fff; letter-spacing: -2px; display: block;">SLEEPKIDD</span>
     </div>
     
-    <div style="width: 95%; max-width: 440px; background: #0a0a0a; border: 3px solid #bc13fe; border-radius: 45px; padding: 25px; box-shadow: 0 0 50px rgba(188, 19, 254, 0.6); position: relative;">
+    <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
+    <div style="width: 92%; max-width: 420px; background: #0a0a0a; border: 3px solid #bc13fe; border-radius: 40px; padding: 20px; box-shadow: 0 0 50px rgba(188, 19, 254, 0.6); position: relative; box-sizing: border-box;">
         
-        <!-- КНОПКА МЕНЮ (НА МЕСТЕ!) -->
-        <div style="width: 100%; display: flex; margin-bottom: 20px;">
-            <a href="index.html" style="text-decoration: none; color: #fff; font-size: 0.8rem; font-weight: 900; padding: 10px 22px; border-radius: 12px; background: #111; border: 1.5px solid #bc13fe; box-shadow: 0 4px 0 #5e087d; text-transform: uppercase;">МЕНЮ</a>
+        <!-- 2. КНОПКА МЕНЮ -->
+        <div style="width: 100%; display: flex; margin-bottom: 15px;">
+            <a href="index.html" style="text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid #bc13fe; box-shadow: 0 4px 0 #5e087d; text-transform: uppercase;">МЕНЮ</a>
         </div>
 
-        <!-- ИСТОРИЯ (4 ИКСА) -->
-        <div id="history" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; overflow: hidden; height: 45px;"></div>
+        <!-- ИСТОРИЯ (СТРОГО 4 ИКСА) -->
+        <div id="history" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; height: 40px; overflow: hidden;"></div>
         
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:1.1rem; font-weight: 900;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:1rem; font-weight: 900;">
             <span id="nick" style="color: #bc13fe;">USER</span>
             <span id="bal" style="color: #00ff88;">0₽</span>
         </div>
 
         <!-- ИГРОВОЕ ПОЛЕ -->
-        <div id="area" style="height: 250px; background: #000; border-radius: 30px; position: relative; overflow: hidden; border: 1.5px solid #bc13fe; margin-bottom: 20px;">
+        <div id="area" style="height: 220px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 1.5px solid #333; margin-bottom: 15px; box-sizing: border-box;">
             <canvas id="star-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
-            <div id="mult" style="font-size: 5rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00ff88; z-index: 10; text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);">1.00x</div>
-            <div id="hero" style="position: absolute; bottom: 30px; left: 30px; z-index: 5; transition: 0.1s linear;">
-                <div style="font-size: 60px; filter: drop-shadow(0 0 20px #bc13fe);">🚀</div>
+            <div id="mult" style="font-size: 4.5rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00ff88; z-index: 10; text-shadow: 0 0 25px rgba(0, 255, 136, 0.5);">1.00x</div>
+            <div id="hero" style="position: absolute; bottom: 20px; left: 20px; z-index: 5; transition: 0.1s linear;">
+                <div style="font-size: 55px; filter: drop-shadow(0 0 15px #bc13fe);">🚀</div>
             </div>
         </div>
 
-        <input type="number" id="bet" value="50" style="width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 18px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 20px;">
+        <!-- СУММА СТАВКИ -->
+        <input type="number" id="bet" value="50" style="width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 15px; border-radius: 18px; font-size: 1.5rem; font-weight: 900; text-align: center; margin-bottom: 15px; box-sizing: border-box;">
 
-        <!-- АВТО ПАНЕЛЬ -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <div style="background: #000; padding: 12px; border-radius: 20px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center;">
-                <span style="font-size: 0.7rem; color: #666; margin-bottom: 8px;">АВТОСТАВКА</span>
-                <input type="checkbox" id="auto-bet" style="width: 28px; height: 28px; accent-color: #bc13fe;">
+        <!-- 4. АВТОСТАВКА И АВТОВЫВОД -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div style="background: #000; padding: 10px; border-radius: 15px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;">
+                <span style="font-size: 0.65rem; color: #666; margin-bottom: 5px;">АВТОСТАВКА</span>
+                <input type="checkbox" id="auto-bet" style="width: 24px; height: 24px; accent-color: #bc13fe; cursor: pointer;">
             </div>
-            <div style="background: #000; padding: 12px; border-radius: 20px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center;">
-                <span style="font-size: 0.7rem; color: #666; margin-bottom: 8px;">АВТОВЫВОД</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <input type="number" id="auto-cash-val" value="2.0" style="width: 55px; background: #111; color: #fff; border: 1px solid #333; text-align: center; border-radius: 8px; font-weight: 900;">
-                    <input type="checkbox" id="auto-cash-check" style="width: 28px; height: 28px; accent-color: #00ff88;">
+            <div style="background: #000; padding: 10px; border-radius: 15px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;">
+                <span style="font-size: 0.65rem; color: #666; margin-bottom: 5px;">АВТОВЫВОД</span>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <input type="number" id="auto-cash-val" value="2.0" style="width: 45px; background: #111; color: #fff; border: 1px solid #333; text-align: center; border-radius: 5px; font-size: 0.8rem; font-weight: 900;">
+                    <input type="checkbox" id="auto-cash-check" style="width: 24px; height: 24px; accent-color: #00ff88; cursor: pointer;">
                 </div>
             </div>
         </div>
 
-        <!-- ЖИРНАЯ КНОПКА -->
-        <button id="btn-start" onclick="fly()" style="width: 100%; padding: 25px; background: linear-gradient(180deg, #bc13fe, #8a0db8); color: #fff; border-radius: 25px; border: none; font-weight: 900; font-size: 2rem; cursor: pointer; box-shadow: 0 10px 0 #5e087d, 0 15px 30px rgba(188, 19, 254, 0.5);">СТАВКА</button>
+        <!-- КНОПКА СТАВКИ -->
+        <button id="btn-start" onclick="fly()" style="width: 100%; padding: 22px; background: linear-gradient(180deg, #bc13fe, #8a0db8); color: #fff; border-radius: 22px; border: none; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 8px 0 #5e087d, 0 10px 20px rgba(188, 19, 254, 0.4); box-sizing: border-box;">СТАВКА</button>
         
-        <button id="btn-cash" onclick="collect()" style="display: none; width: 100%; padding: 25px; background: linear-gradient(180deg, #00ff88, #00b35f); color: #000; border-radius: 25px; border: none; font-weight: 900; font-size: 2rem; cursor: pointer; box-shadow: 0 10px 0 #008546, 0 15px 30px rgba(0, 255, 136, 0.4);">ЗАБРАТЬ <br> <span id="win-sum">0</span>₽</button>
+        <button id="btn-cash" onclick="collect()" style="display: none; width: 100%; padding: 22px; background: linear-gradient(180deg, #00ff88, #00b35f); color: #000; border-radius: 22px; border: none; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 8px 0 #008546, 0 10px 20px rgba(0, 255, 136, 0.3); box-sizing: border-box;">ЗАБРАТЬ <br> <span id="win-sum">0</span>₽</button>
     </div>
 
     <script>
@@ -92,21 +83,20 @@
         function fly() {
             if (isFlying) return;
             currentBet = parseInt(document.getElementById('bet').value);
-            if(currentBet > balance || currentBet <= 0) return;
+            if(currentBet > balance || currentBet <= 0) return alert("Мало денег!");
             balance -= currentBet;
             document.getElementById('bal').innerText = Math.floor(balance) + "₽";
             isFlying = true; currentX = 1.00;
-            crashAt = (Math.random() * 5 + 1.1).toFixed(2);
+            crashAt = (Math.random() * 4 + 1.1).toFixed(2);
             document.getElementById('btn-start').style.display = 'none';
             document.getElementById('btn-cash').style.display = 'block';
             document.getElementById('mult').style.color = '#00ff88';
-            document.getElementById('hero').classList.remove('crashed');
             timer = setInterval(() => {
                 currentX += 0.01;
                 document.getElementById('mult').innerText = currentX.toFixed(2) + "x";
                 document.getElementById('win-sum').innerText = Math.floor(currentBet * currentX);
-                document.getElementById('hero').style.left = Math.min(30 + (currentX - 1) * 55, 310) + 'px';
-                document.getElementById('hero').style.bottom = Math.min(30 + (currentX - 1) * 40, 170) + 'px';
+                document.getElementById('hero').style.left = Math.min(20 + (currentX - 1) * 50, 310) + 'px';
+                document.getElementById('hero').style.bottom = Math.min(20 + (currentX - 1) * 35, 150) + 'px';
                 if(document.getElementById('auto-cash-check').checked && currentX >= parseFloat(document.getElementById('auto-cash-val').value)) collect();
                 if(currentX >= crashAt) crash();
             }, 80);
@@ -114,9 +104,8 @@
 
         function crash() {
             clearInterval(timer); isFlying = false;
-            addHistory(currentX, 'lose-x');
+            addHistory(currentX, '#ff4d4d');
             document.getElementById('mult').style.color = '#ff4d4d';
-            document.getElementById('hero').classList.add('crashed');
             setTimeout(reset, 2000);
         }
 
@@ -125,7 +114,7 @@
             clearInterval(timer);
             balance += Math.floor(currentBet * currentX);
             document.getElementById('bal').innerText = Math.floor(balance) + "₽";
-            addHistory(currentX, 'win-x');
+            addHistory(currentX, '#00ff88');
             isFlying = false;
             setTimeout(reset, 1200);
         }
@@ -135,16 +124,15 @@
             document.getElementById('btn-cash').style.display = 'none';
             document.getElementById('mult').innerText = "1.00x";
             document.getElementById('mult').style.color = '#00ff88';
-            document.getElementById('hero').style.cssText = "left: 30px; bottom: 30px;";
+            document.getElementById('hero').style.cssText = "position: absolute; bottom: 20px; left: 20px; z-index: 5; transition: 0.1s linear;";
             if(document.getElementById('auto-bet').checked) setTimeout(fly, 1500);
             saveDB();
         }
 
-        function addHistory(x, cls) {
+        function addHistory(x, color) {
             const h = document.getElementById('history');
             const div = document.createElement('div');
-            div.className = cls;
-            div.style.cssText = "background: #000; border: 2px solid #bc13fe; padding: 10px 0; border-radius: 12px; font-weight: 900; text-align: center; font-size: 0.9rem;";
+            div.style.cssText = `background: #000; border: 2.5px solid ${color}; color: ${color}; padding: 8px 0; border-radius: 12px; font-weight: 900; text-align: center; font-size: 0.85rem;`;
             div.innerText = parseFloat(x).toFixed(2) + 'x';
             h.prepend(div);
             if(h.children.length > 4) h.lastChild.remove();
@@ -161,7 +149,7 @@
         function drawStars() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
             ctx.fillStyle = "#fff";
-            if(isFlying && stars.length < 40) stars.push({x: canvas.width+10, y: Math.random()*canvas.height, s: Math.random()*2, sp: Math.random()*15+5});
+            if(isFlying && stars.length < 35) stars.push({x: canvas.width+10, y: Math.random()*canvas.height, s: Math.random()*2, sp: Math.random()*12+5});
             stars.forEach((s, i) => {
                 s.x -= isFlying ? s.sp : 0.5;
                 ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, 7); ctx.fill();
