@@ -3,43 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — MINES</title>
+    <title>JET SLEEPKIDD — MINES PRO</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { --primary: #bc13fe; --bg: #030303; --win: #00ff88; --lose: #ff4d4d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .logo-box { margin: 20px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; }
-        .logo-box .top { font-size: 20px; color: var(--primary); display: block; }
-        .logo-box .bot { font-size: 30px; color: #fff; }
-        .container { width: 95%; max-width: 420px; background: rgba(15, 15, 15, 0.95); border: 2px solid var(--primary); border-radius: 40px; padding: 20px; text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.2); position: relative; }
+        body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        
+        .logo-box { margin: 25px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
+        .logo-box .top { font-size: 24px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); margin-bottom: -5px; }
+        .logo-box .bot { font-size: 38px; color: #fff; letter-spacing: -2px; }
+
+        .container { width: 92%; max-width: 420px; background: #0a0a0a; border: 3px solid var(--primary); border-radius: 40px; padding: 20px; text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.6); position: relative; }
         
         .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
-        .back-nav { text-decoration: none; color: #555; font-size: 0.7rem; font-weight: 900; padding: 5px 10px; border-radius: 10px; background: rgba(255,255,255,0.02); }
+        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
 
-        .game-info { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 15px; padding: 0 5px; }
+        /* ИСТОРИЯ РАУНДОВ */
+        .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; height: 42px; overflow: hidden; }
+        .hist-item { background: #000; border: 2px solid var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 900; animation: slideIn 0.3s ease; }
+        .hist-win { color: var(--win); border-color: var(--win); }
+        .hist-lose { color: var(--lose); border-color: var(--lose); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        .game-info { display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 15px; padding: 0 10px; font-weight: 900; }
         .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 15px 0; }
-        .cell { aspect-ratio: 1/1; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: 0.2s; }
-        .cell.open-win { background: rgba(0, 255, 136, 0.2); border-color: var(--win); box-shadow: 0 0 15px var(--win); }
-        .cell.open-lose { background: rgba(255, 77, 77, 0.2); border-color: var(--lose); box-shadow: 0 0 15px var(--lose); }
+        .cell { aspect-ratio: 1/1; background: #111; border-radius: 12px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: 0.2s; }
+        .cell.open-win { background: rgba(0, 255, 136, 0.1); border-color: var(--win); box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
+        .cell.open-lose { background: rgba(255, 77, 77, 0.1); border-color: var(--lose); box-shadow: 0 0 15px rgba(255, 77, 77, 0.3); }
         
-        .control-group { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; margin-bottom: 10px; }
-        .mine-selector { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.7rem; color: #888; }
-        select { background: #000; color: #fff; border: 1px solid var(--primary); padding: 5px; border-radius: 5px; font-family: 'Orbitron'; }
+        .control-group { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; border: 1px solid #222; margin-bottom: 10px; }
+        .mine-selector { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.7rem; color: #666; font-weight: 900; }
+        select { background: #111; color: #fff; border: 1px solid var(--primary); padding: 5px 10px; border-radius: 8px; font-family: 'Orbitron'; font-weight: 900; }
         
-        input { background: #000; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 12px; width: 100%; text-align: center; font-family: 'Orbitron'; margin-bottom: 10px; }
-        .main-btn { width: 100%; padding: 18px; background: var(--primary); color: #fff; border: none; border-radius: 15px; font-weight: 900; font-size: 1.2rem; text-transform: uppercase; cursor: pointer; }
-        .cashout-btn { background: var(--win); color: #000; display: none; }
+        input { background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 15px; width: 100%; text-align: center; font-family: 'Orbitron'; margin-bottom: 15px; font-size: 1.3rem; font-weight: 900; }
+        
+        .main-btn { width: 100%; padding: 20px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 20px; font-weight: 900; font-size: 1.5rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
+        .main-btn:active { transform: scale(0.98); }
+        .cashout-btn { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none; }
     </style>
 </head>
 <body>
     <div class="logo-box"><span class="top">CYBER</span><span class="bot">MINES</span></div>
     <div class="container">
-        <div class="nav-bar"><a href="index.html" class="back-nav">← МЕНЮ</a></div>
+        <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
+        
+        <!-- ЛЕНТА ИСТОРИИ -->
+        <div class="history-line" id="history"></div>
+        
         <div class="game-info">
-            <span id="u-nick" style="color:#666">PLAYER</span>
-            <span style="color:var(--win); font-weight:900" id="u-bal">0₽</span>
+            <span id="u-nick" style="color:var(--primary)">PLAYER</span>
+            <span style="color:var(--win)" id="u-bal">0₽</span>
         </div>
+        
         <div class="mines-grid" id="grid"></div>
         
         <div class="control-group">
@@ -56,21 +72,31 @@
             </div>
             <input type="number" id="bet-amount" value="50" inputmode="numeric">
             <button class="main-btn" id="btn-start" onclick="startGame()">ИГРАТЬ</button>
-            <button class="main-btn cashout-btn" id="btn-cash" onclick="cashOut()">ЗАБРАТЬ <br> <small id="win-preview">0</small></button>
+            <button class="main-btn cashout-btn" id="btn-cash" onclick="cashOut()">ЗАБРАТЬ <br> <span id="win-preview" style="font-size: 1.2rem;">0</span>₽</button>
         </div>
     </div>
 
     <script>
-        let balance, user, users, mines = [], opened = 0, currentBet = 0, active = false;
+        let balance, user, users, currentBet, mines = [], opened = 0, active = false;
+        
         window.onload = () => {
-            user = localStorage.getItem('current_user');
-            if(!user) return location.href = 'index.html';
-            users = JSON.parse(localStorage.getItem('users_jet'));
+            user = localStorage.getItem('current_user') || 'GUEST';
+            users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
             balance = users[user].bal;
             document.getElementById('u-nick').innerText = user.toUpperCase();
             document.getElementById('u-bal').innerText = Math.floor(balance) + "₽";
             createGrid();
         };
+
+        function addHistory(val, isWin) {
+            const h = document.getElementById('history');
+            const div = document.createElement('div');
+            div.className = 'hist-item ' + (isWin ? 'hist-win' : 'hist-lose');
+            div.innerText = isWin ? '+' + Math.floor(val) : '💣';
+            h.prepend(div);
+            if(h.children.length > 4) h.lastChild.remove();
+        }
+
         function createGrid() {
             const g = document.getElementById('grid'); g.innerHTML = '';
             for(let i=0; i<25; i++) {
@@ -78,14 +104,16 @@
                 c.onclick = () => openCell(i, c); g.appendChild(c);
             }
         }
+
         function getMult() {
             let mCount = parseInt(document.getElementById('mines-count').value);
-            let n = 25; let k = mCount; let j = opened;
+            let n = 25, k = mCount, j = opened;
             if (j === 0) return 1;
             let res = 1;
             for (let i = 0; i < j; i++) { res *= (n - i) / (n - k - i); }
-            return res * 0.97; // Комиссия казино 3%
+            return res * 0.97; 
         }
+
         function startGame() {
             currentBet = parseInt(document.getElementById('bet-amount').value);
             if(currentBet > balance || currentBet <= 0) return alert("Мало кэша!");
@@ -98,22 +126,29 @@
             document.getElementById('mines-count').disabled = true;
             document.getElementById('bet-amount').disabled = true;
         }
+
         function openCell(i, c) {
             if(!active || c.classList.contains('open-win')) return;
             if(mines.includes(i)) { 
                 c.classList.add('open-lose'); c.innerText = '💣'; active = false; 
+                addHistory(0, false);
                 mines.forEach(m => document.getElementById('grid').children[m].innerText = '💣');
                 setTimeout(reset, 2000); 
             } else { 
                 c.classList.add('open-win'); c.innerText = '💎'; opened++; 
                 let win = Math.floor(currentBet * getMult());
-                document.getElementById('win-preview').innerText = win + "₽";
+                document.getElementById('win-preview').innerText = win;
             }
         }
+
         function cashOut() {
             if(!active || opened === 0) return;
-            balance += Math.floor(currentBet * getMult()); active = false; save(); reset();
+            let finalWin = Math.floor(currentBet * getMult());
+            balance += finalWin; active = false; 
+            addHistory(finalWin, true);
+            save(); reset();
         }
+
         function reset() { 
             document.getElementById('btn-start').style.display = 'block'; 
             document.getElementById('btn-cash').style.display = 'none'; 
@@ -121,8 +156,15 @@
             document.getElementById('bet-amount').disabled = false;
             createGrid(); 
         }
-        function save() { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); document.getElementById('u-bal').innerText = Math.floor(balance) + "₽"; }
+
+        function save() { 
+            const user = localStorage.getItem('current_user') || 'GUEST';
+            if(users[user]) {
+                users[user].bal = balance; 
+                localStorage.setItem('users_jet', JSON.stringify(users)); 
+                document.getElementById('u-bal').innerText = Math.floor(balance) + "₽"; 
+            }
+        }
     </script>
 </body>
 </html>
-
