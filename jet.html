@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — FIXED</title>
+    <title>JET SLEEPKIDD — REAL LUCK</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         body { background: #050505; margin: 0; display: flex; flex-direction: column; align-items: center; font-family: 'Orbitron', sans-serif; color: #fff; min-height: 100vh; overflow-x: hidden; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* ОБЩИЙ СТИЛЬ КНОПОК */
+        /* СТИЛЬ КНОПОК */
         .game-btn {
             width: 100% !important;
             height: 85px !important;
@@ -26,13 +26,13 @@
             line-height: 1 !important;
         }
 
-        /* Кнопка ЗАБРАТЬ изначально СТРОГО СКРЫТА */
         #btn-cash { display: none !important; background: linear-gradient(180deg, #00ff88, #00b35f); color: #000; }
         #btn-start { display: flex !important; background: linear-gradient(180deg, #bc13fe, #8a0db8); color: #fff; }
     </style>
 </head>
 <body style="background: #050505;">
 
+    <!-- ЛОГОТИП -->
     <div style="margin: 30px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1;">
         <span style="font-size: 26px; color: #bc13fe; display: block; text-shadow: 0 0 20px #bc13fe; margin-bottom: -5px;">JET</span>
         <span style="font-size: 42px; color: #fff; letter-spacing: -2px; display: block;">SLEEPKIDD</span>
@@ -40,10 +40,12 @@
     
     <div style="width: 92%; max-width: 420px; background: #0a0a0a; border: 3px solid #bc13fe; border-radius: 40px; padding: 20px; box-shadow: 0 0 50px rgba(188, 19, 254, 0.6); position: relative;">
         
+        <!-- МЕНЮ -->
         <div style="width: 100%; display: flex; margin-bottom: 15px;">
             <a href="index.html" style="text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid #bc13fe; text-transform: uppercase;">МЕНЮ</a>
         </div>
 
+        <!-- ИСТОРИЯ (4 ИКСА) -->
         <div id="history" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; height: 40px; overflow: hidden;"></div>
         
         <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:1rem; font-weight: 900;">
@@ -51,6 +53,7 @@
             <span id="bal" style="color: #00ff88;">0₽</span>
         </div>
 
+        <!-- ИГРОВОЕ ПОЛЕ -->
         <div id="area" style="height: 230px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 1px solid #333; margin-bottom: 15px;">
             <canvas id="star-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
             <div id="mult" style="font-size: 4.5rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00ff88; z-index: 10;">1.00x</div>
@@ -61,6 +64,7 @@
 
         <input type="number" id="bet" value="50" style="width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 15px; border-radius: 18px; font-size: 1.6rem; font-weight: 900; text-align: center; margin-bottom: 15px;">
 
+        <!-- АВТО ПАНЕЛЬ -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
             <div style="background: #000; padding: 10px; border-radius: 15px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center;">
                 <span style="font-size: 0.65rem; color: #666; margin-bottom: 5px;">АВТОСТАВКА</span>
@@ -75,7 +79,6 @@
             </div>
         </div>
 
-        <!-- КНОПКИ ТЕПЕРЬ СМЕНЯЮТ ДРУГ ДРУГА -->
         <button id="btn-start" class="game-btn" onclick="fly()">СТАВКА</button>
         <button id="btn-cash" class="game-btn" onclick="collect()">
             ЗАБРАТЬ
@@ -109,11 +112,17 @@
             document.getElementById('bal').innerText = Math.floor(balance) + "₽";
             isFlying = true; currentX = 1.00;
 
-            // ЛОГИКА ПЕРЕКЛЮЧЕНИЯ: Скрыть ставку, показать забрать
+            // Переключение кнопок
             document.getElementById('btn-start').style.setProperty('display', 'none', 'important');
             document.getElementById('btn-cash').style.setProperty('display', 'flex', 'important');
 
-            crashAt = (Math.random() * 5 + 1.1).toFixed(2);
+            // НОВАЯ ЛОГИКА РАНДОМА
+            let r = Math.random() * 100;
+            if (r < 40) crashAt = (Math.random() * 0.2 + 1.01).toFixed(2); // Слив
+            else if (r < 90) crashAt = (Math.random() * 1.8 + 1.2).toFixed(2); // Средний
+            else if (r < 98) crashAt = (Math.random() * 7 + 3).toFixed(2); // Хороший
+            else crashAt = (Math.random() * 490 + 10).toFixed(2); // Легендарный
+
             document.getElementById('mult').style.color = '#00ff88';
             
             timer = setInterval(() => {
@@ -149,10 +158,8 @@
         }
 
         function reset() {
-            // ЛОГИКА ВОЗВРАТА: Показать ставку, скрыть забрать
             document.getElementById('btn-start').style.setProperty('display', 'flex', 'important');
             document.getElementById('btn-cash').style.setProperty('display', 'none', 'important');
-
             document.getElementById('mult').innerText = "1.00x";
             document.getElementById('mult').style.color = '#00ff88';
             document.getElementById('hero').style.left = "20px";
