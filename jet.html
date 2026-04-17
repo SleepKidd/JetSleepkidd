@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — PURPLE AUTO</title>
+    <title>JET SLEEPKIDD — SYMMETRY</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         body { background: #050505; margin: 0; display: flex; flex-direction: column; align-items: center; font-family: 'Orbitron', sans-serif; color: #fff; min-height: 100vh; overflow: hidden; }
@@ -44,7 +44,7 @@
 
         <input type="number" id="bet" value="50" style="width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 15px; border-radius: 18px; font-size: 1.5rem; font-weight: 900; text-align: center; margin-bottom: 15px;">
 
-        <!-- АВТО ПАНЕЛЬ (ОБЕ КНОПКИ ТЕПЕРЬ ФИОЛЕТОВЫЕ) -->
+        <!-- АВТО ПАНЕЛЬ -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
             <div style="background: #000; padding: 10px; border-radius: 15px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center;">
                 <span style="font-size: 0.65rem; color: #666; margin-bottom: 5px;">АВТОСТАВКА</span>
@@ -54,14 +54,15 @@
                 <span style="font-size: 0.65rem; color: #666; margin-bottom: 5px;">АВТОВЫВОД</span>
                 <div style="display:flex; align-items:center; gap:5px;">
                     <input type="number" id="auto-cash-val" value="2.0" style="width: 45px; background: #111; color: #fff; border: 1px solid #333; text-align: center; border-radius: 5px; font-weight: 900;">
-                    <!-- Чекбокс теперь тоже фиолетовый -->
                     <input type="checkbox" id="auto-cash-check" style="width: 24px; height: 24px; accent-color: #bc13fe; cursor: pointer;">
                 </div>
             </div>
         </div>
 
+        <!-- КНОПКА СТАВКА -->
         <button id="btn-start" onclick="fly()" style="width: 100%; padding: 22px; background: linear-gradient(180deg, #bc13fe, #8a0db8); color: #fff; border-radius: 22px; border: none; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer;">СТАВКА</button>
         
+        <!-- КНОПКА ЗАБРАТЬ (ТАКОЙ ЖЕ РАЗМЕР) -->
         <button id="btn-cash" onclick="collect()" style="display: none; width: 100%; padding: 22px; background: linear-gradient(180deg, #00ff88, #00b35f); color: #000; border-radius: 22px; border: none; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer;">ЗАБРАТЬ <br> <span id="win-sum">0</span>₽</button>
     </div>
 
@@ -86,32 +87,24 @@
             if (isFlying) return;
             currentBet = parseInt(document.getElementById('bet').value);
             if(currentBet > balance || currentBet <= 0) return alert("Мало денег!");
-            
             balance -= currentBet;
             document.getElementById('bal').innerText = Math.floor(balance) + "₽";
             isFlying = true; currentX = 1.00;
-
             let r = Math.random() * 100;
             if(r < 25) crashAt = (Math.random() * 0.1 + 1.01).toFixed(2);
             else if(r < 95) crashAt = (Math.random() * 5 + 1.2).toFixed(2);
             else crashAt = (Math.random() * 490 + 10).toFixed(2);
-
             document.getElementById('btn-start').style.display = 'none';
             document.getElementById('btn-cash').style.display = 'block';
             document.getElementById('mult').style.color = '#00ff88';
-            document.getElementById('hero').style.opacity = '1';
-            
             timer = setInterval(() => {
                 currentX += 0.01;
                 document.getElementById('mult').innerText = currentX.toFixed(2) + "x";
                 document.getElementById('win-sum').innerText = Math.floor(currentBet * currentX);
-                
                 let moveX = Math.min(20 + (currentX - 1) * 60, 280);
                 let moveY = Math.min(20 + (currentX - 1) * 45, 140);
-                
                 document.getElementById('hero').style.left = moveX + 'px';
                 document.getElementById('hero').style.bottom = moveY + 'px';
-
                 if(document.getElementById('auto-cash-check').checked && currentX >= parseFloat(document.getElementById('auto-cash-val').value)) collect();
                 if(currentX >= crashAt) crash();
             }, 80);
@@ -121,7 +114,6 @@
             clearInterval(timer); isFlying = false;
             addHistory(currentX, '#ff4d4d');
             document.getElementById('mult').style.color = '#ff4d4d';
-            document.getElementById('hero').style.opacity = '0.3';
             setTimeout(reset, 2000);
         }
 
@@ -142,7 +134,6 @@
             document.getElementById('mult').style.color = '#00ff88';
             document.getElementById('hero').style.left = "20px";
             document.getElementById('hero').style.bottom = "20px";
-            document.getElementById('hero').style.opacity = '1';
             if(document.getElementById('auto-bet').checked) setTimeout(fly, 1500);
             saveDB();
         }
