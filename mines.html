@@ -3,59 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — MINES</title>
+    <title>MINES SLEEPKIDD</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #bc13fe; --bg: #030303; --win: #00ff88; --lose: #ff4d4d; }
+        :root { --primary: #bc13fe; --bg: #050505; --win: #00ff88; --lose: #ff4d4d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        /* ОБНОВЛЕННЫЙ ЗАГОЛОВОК */
+        /* ЗАГОЛОВОК */
         .logo-box { margin: 30px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
         .logo-box .top { font-size: 24px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); margin-bottom: -5px; }
         .logo-box .bot { font-size: 38px; color: #fff; letter-spacing: -2px; }
 
-        .container { width: 92%; max-width: 420px; background: #0a0a0a; border: 3px solid var(--primary); border-radius: 40px; padding: 20px; text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.6); position: relative; }
+        /* КОНТЕЙНЕР С НЕОНОМ */
+        .container { 
+            width: 95%; max-width: 420px; background: #0a0a0a; 
+            border: 3px solid var(--primary); border-radius: 40px; 
+            padding: 20px; text-align: center; 
+            box-shadow: 0 0 40px rgba(188, 19, 254, 0.5); position: relative; 
+        }
         
-        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
-        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
+        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 15px; }
+        .back-nav { 
+            text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; 
+            padding: 8px 18px; border-radius: 12px; background: #111; 
+            border: 1.5px solid var(--primary); text-transform: uppercase; 
+        }
 
-        .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; height: 42px; overflow: hidden; }
+        .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; height: 42px; }
         .hist-item { background: #000; border: 2px solid var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 900; }
-        .hist-win { color: var(--win); border-color: var(--win); }
-        .hist-lose { color: var(--lose); border-color: var(--lose); }
 
         .game-info { display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 15px; padding: 0 10px; font-weight: 900; }
         .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 15px 0; }
-        .cell { aspect-ratio: 1/1; background: #111; border-radius: 12px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: 0.2s; }
+        .cell { aspect-ratio: 1/1; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: 0.2s; }
         .cell.open-win { background: rgba(0, 255, 136, 0.1); border-color: var(--win); box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
         .cell.open-lose { background: rgba(255, 77, 77, 0.1); border-color: var(--lose); box-shadow: 0 0 15px rgba(255, 77, 77, 0.3); }
         
-        .control-group { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; border: 1px solid #222; margin-bottom: 10px; }
+        .control-group { background: #111; padding: 15px; border-radius: 20px; border: 1px solid #222; margin-bottom: 10px; }
         .mine-selector { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.7rem; color: #666; font-weight: 900; }
-        select { background: #111; color: #fff; border: 1px solid var(--primary); padding: 5px 10px; border-radius: 8px; font-family: 'Orbitron'; font-weight: 900; }
+        select { background: #000; color: #fff; border: 1px solid var(--primary); padding: 5px 10px; border-radius: 8px; font-family: 'Orbitron'; }
         
-        input { background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 15px; width: 100%; text-align: center; font-family: 'Orbitron'; margin-bottom: 15px; font-size: 1.3rem; font-weight: 900; }
+        input { background: #000; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 15px; width: 100%; text-align: center; font-family: 'Orbitron'; margin-bottom: 15px; font-size: 1.3rem; font-weight: 900; }
 
-        /* ФИКСИРОВАННЫЕ КНОПКИ */
+        /* КНОПКИ */
         .action-btn {
-            width: 100% !important;
-            height: 80px !important;
-            border: none !important;
-            border-radius: 25px !important;
-            font-weight: 900 !important;
-            font-size: 1.6rem !important;
-            text-transform: uppercase !important;
-            cursor: pointer !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
+            width: 100% !important; height: 80px !important;
+            border: none !important; border-radius: 25px !important;
+            font-weight: 900 !important; font-size: 1.6rem !important;
+            text-transform: uppercase !important; cursor: pointer !important;
+            display: flex !important; flex-direction: column !important;
+            align-items: center !important; justify-content: center !important;
             line-height: 1 !important;
         }
         
         #btn-start { background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; }
-        #btn-cash { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none; }
+        #btn-cash { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none !important; }
     </style>
 </head>
 <body>
@@ -79,20 +81,16 @@
             <div class="mine-selector">
                 <span>КОЛ-ВО МИН:</span>
                 <select id="mines-count">
-                    <option value="1">1</option>
-                    <option value="3" selected>3</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="24">24</option>
+                    <option value="1">1</option><option value="3" selected>3</option>
+                    <option value="5">5</option><option value="10">10</option>
+                    <option value="20">20</option><option value="24">24</option>
                 </select>
             </div>
-            <input type="number" id="bet-amount" value="50" inputmode="numeric">
+            <input type="number" id="bet-amount" value="50">
             
             <button class="action-btn" id="btn-start" onclick="startGame()">ИГРАТЬ</button>
             <button class="action-btn" id="btn-cash" onclick="cashOut()">
-                ЗАБРАТЬ
-                <span id="win-preview" style="font-size: 1.2rem; opacity: 0.9;">0₽</span>
+                ЗАБРАТЬ <span id="win-preview" style="font-size: 1.1rem; opacity: 0.8;">0₽</span>
             </button>
         </div>
     </div>
@@ -109,32 +107,6 @@
             createGrid();
         };
 
-        function addHistory(val, isWin) {
-            const h = document.getElementById('history');
-            const div = document.createElement('div');
-            div.className = 'hist-item ' + (isWin ? 'hist-win' : 'hist-lose');
-            div.innerText = isWin ? '+' + Math.floor(val) : '💣';
-            h.prepend(div);
-            if(h.children.length > 4) h.lastChild.remove();
-        }
-
-        function createGrid() {
-            const g = document.getElementById('grid'); g.innerHTML = '';
-            for(let i=0; i<25; i++) {
-                const c = document.createElement('div'); c.className = 'cell';
-                c.onclick = () => openCell(i, c); g.appendChild(c);
-            }
-        }
-
-        function getMult() {
-            let mCount = parseInt(document.getElementById('mines-count').value);
-            let n = 25, k = mCount, j = opened;
-            if (j === 0) return 1;
-            let res = 1;
-            for (let i = 0; i < j; i++) { res *= (n - i) / (n - k - i); }
-            return res * 0.97; 
-        }
-
         function startGame() {
             currentBet = parseInt(document.getElementById('bet-amount').value);
             if(currentBet > balance || currentBet <= 0) return alert("Мало кэша!");
@@ -143,9 +115,9 @@
             while(mines.length < mCount) { let r = Math.floor(Math.random()*25); if(!mines.includes(r)) mines.push(r); }
             createGrid(); save();
             
-            // ПЕРЕКЛЮЧЕНИЕ КНОПОК
-            document.getElementById('btn-start').style.display = 'none';
-            document.getElementById('btn-cash').style.display = 'flex';
+            // ПРИНУДИТЕЛЬНОЕ ПЕРЕКЛЮЧЕНИЕ
+            document.getElementById('btn-start').style.setProperty('display', 'none', 'important');
+            document.getElementById('btn-cash').style.setProperty('display', 'flex', 'important');
             
             document.getElementById('mines-count').disabled = true;
             document.getElementById('bet-amount').disabled = true;
@@ -169,25 +141,48 @@
             if(!active || opened === 0) return;
             let finalWin = Math.floor(currentBet * getMult());
             balance += finalWin; active = false; 
-            addHistory(finalWin, true);
-            save(); reset();
+            addHistory(finalWin, true); save(); reset();
         }
 
         function reset() { 
-            // ВОЗВРАТ КНОПОК
-            document.getElementById('btn-start').style.display = 'flex'; 
-            document.getElementById('btn-cash').style.display = 'none'; 
-            
+            document.getElementById('btn-start').style.setProperty('display', 'flex', 'important');
+            document.getElementById('btn-cash').style.setProperty('display', 'none', 'important');
             document.getElementById('mines-count').disabled = false;
             document.getElementById('bet-amount').disabled = false;
             document.getElementById('win-preview').innerText = "0₽";
             createGrid(); 
         }
 
+        function getMult() {
+            let mCount = parseInt(document.getElementById('mines-count').value);
+            let n = 25, k = mCount, j = opened;
+            if (j === 0) return 1;
+            let res = 1;
+            for (let i = 0; i < j; i++) { res *= (n - i) / (n - k - i); }
+            return res * 0.97; 
+        }
+
+        function addHistory(val, isWin) {
+            const h = document.getElementById('history');
+            const div = document.createElement('div');
+            div.style.cssText = `background:#000; border:2px solid ${isWin?'#00ff88':'#bc13fe'}; color:${isWin?'#00ff88':'#ff4d4d'}; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:900;`;
+            div.innerText = isWin ? '+' + Math.floor(val) : '💣';
+            h.prepend(div);
+            if(h.children.length > 4) h.lastChild.remove();
+        }
+
+        function createGrid() {
+            const g = document.getElementById('grid'); g.innerHTML = '';
+            for(let i=0; i<25; i++) {
+                const c = document.createElement('div'); c.className = 'cell';
+                c.onclick = () => openCell(i, c); g.appendChild(c);
+            }
+        }
+
         function save() { 
-            const user = localStorage.getItem('current_user') || 'GUEST';
-            if(users[user]) {
-                users[user].bal = balance; 
+            const u = localStorage.getItem('current_user') || 'GUEST';
+            if(users[u]) {
+                users[u].bal = balance; 
                 localStorage.setItem('users_jet', JSON.stringify(users)); 
                 document.getElementById('u-bal').innerText = Math.floor(balance) + "₽"; 
             }
