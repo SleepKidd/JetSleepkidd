@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — MINES SYMMETRY</title>
+    <title>JET SLEEPKIDD — MINES</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { --primary: #bc13fe; --bg: #030303; --win: #00ff88; --lose: #ff4d4d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        .logo-box { margin: 25px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
+        /* ОБНОВЛЕННЫЙ ЗАГОЛОВОК */
+        .logo-box { margin: 30px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
         .logo-box .top { font-size: 24px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); margin-bottom: -5px; }
         .logo-box .bot { font-size: 38px; color: #fff; letter-spacing: -2px; }
 
@@ -36,14 +37,14 @@
         
         input { background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 15px; width: 100%; text-align: center; font-family: 'Orbitron'; margin-bottom: 15px; font-size: 1.3rem; font-weight: 900; }
 
-        /* ФИКСИРОВАННЫЙ РАЗМЕР КНОПОК */
+        /* ФИКСИРОВАННЫЕ КНОПКИ */
         .action-btn {
             width: 100% !important;
-            height: 75px !important; /* Строго одна высота */
+            height: 80px !important;
             border: none !important;
-            border-radius: 20px !important;
+            border-radius: 25px !important;
             font-weight: 900 !important;
-            font-size: 1.5rem !important;
+            font-size: 1.6rem !important;
             text-transform: uppercase !important;
             cursor: pointer !important;
             display: flex !important;
@@ -53,12 +54,16 @@
             line-height: 1 !important;
         }
         
-        #btn-start { background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; display: flex; }
+        #btn-start { background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; }
         #btn-cash { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none; }
     </style>
 </head>
 <body>
-    <div class="logo-box"><span class="top">MINES</span><span class="bot">SLEEPLIDD</span></div>
+    <div class="logo-box">
+        <span class="top">MINES</span>
+        <span class="bot">SLEEPKIDD</span>
+    </div>
+    
     <div class="container">
         <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
         <div class="history-line" id="history"></div>
@@ -84,11 +89,10 @@
             </div>
             <input type="number" id="bet-amount" value="50" inputmode="numeric">
             
-            <!-- КНОПКИ ТЕПЕРЬ ОДНОГО РАЗМЕРА -->
             <button class="action-btn" id="btn-start" onclick="startGame()">ИГРАТЬ</button>
             <button class="action-btn" id="btn-cash" onclick="cashOut()">
                 ЗАБРАТЬ
-                <span id="win-preview" style="font-size: 1.1rem; opacity: 0.8;">0₽</span>
+                <span id="win-preview" style="font-size: 1.2rem; opacity: 0.9;">0₽</span>
             </button>
         </div>
     </div>
@@ -138,8 +142,11 @@
             let mCount = parseInt(document.getElementById('mines-count').value);
             while(mines.length < mCount) { let r = Math.floor(Math.random()*25); if(!mines.includes(r)) mines.push(r); }
             createGrid(); save();
+            
+            // ПЕРЕКЛЮЧЕНИЕ КНОПОК
             document.getElementById('btn-start').style.display = 'none';
             document.getElementById('btn-cash').style.display = 'flex';
+            
             document.getElementById('mines-count').disabled = true;
             document.getElementById('bet-amount').disabled = true;
         }
@@ -167,10 +174,13 @@
         }
 
         function reset() { 
+            // ВОЗВРАТ КНОПОК
             document.getElementById('btn-start').style.display = 'flex'; 
             document.getElementById('btn-cash').style.display = 'none'; 
+            
             document.getElementById('mines-count').disabled = false;
             document.getElementById('bet-amount').disabled = false;
+            document.getElementById('win-preview').innerText = "0₽";
             createGrid(); 
         }
 
