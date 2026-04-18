@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — MINES PRO</title>
+    <title>JET SLEEPKIDD — MINES SYMMETRY</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { --primary: #bc13fe; --bg: #030303; --win: #00ff88; --lose: #ff4d4d; }
@@ -19,12 +19,10 @@
         .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
         .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
 
-        /* ИСТОРИЯ РАУНДОВ */
         .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; height: 42px; overflow: hidden; }
-        .hist-item { background: #000; border: 2px solid var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 900; animation: slideIn 0.3s ease; }
+        .hist-item { background: #000; border: 2px solid var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 900; }
         .hist-win { color: var(--win); border-color: var(--win); }
         .hist-lose { color: var(--lose); border-color: var(--lose); }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
         .game-info { display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 15px; padding: 0 10px; font-weight: 900; }
         .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 15px 0; }
@@ -37,18 +35,32 @@
         select { background: #111; color: #fff; border: 1px solid var(--primary); padding: 5px 10px; border-radius: 8px; font-family: 'Orbitron'; font-weight: 900; }
         
         input { background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 15px; width: 100%; text-align: center; font-family: 'Orbitron'; margin-bottom: 15px; font-size: 1.3rem; font-weight: 900; }
+
+        /* ФИКСИРОВАННЫЙ РАЗМЕР КНОПОК */
+        .action-btn {
+            width: 100% !important;
+            height: 75px !important; /* Строго одна высота */
+            border: none !important;
+            border-radius: 20px !important;
+            font-weight: 900 !important;
+            font-size: 1.5rem !important;
+            text-transform: uppercase !important;
+            cursor: pointer !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+        }
         
-        .main-btn { width: 100%; padding: 20px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 20px; font-weight: 900; font-size: 1.5rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
-        .main-btn:active { transform: scale(0.98); }
-        .cashout-btn { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none; }
+        #btn-start { background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; display: flex; }
+        #btn-cash { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none; }
     </style>
 </head>
 <body>
-    <div class="logo-box"><span class="top">CYBER</span><span class="bot">MINES</span></div>
+    <div class="logo-box"><span class="top">MINES</span><span class="bot">SLEEPLIDD</span></div>
     <div class="container">
         <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
-        
-        <!-- ЛЕНТА ИСТОРИИ -->
         <div class="history-line" id="history"></div>
         
         <div class="game-info">
@@ -71,8 +83,13 @@
                 </select>
             </div>
             <input type="number" id="bet-amount" value="50" inputmode="numeric">
-            <button class="main-btn" id="btn-start" onclick="startGame()">ИГРАТЬ</button>
-            <button class="main-btn cashout-btn" id="btn-cash" onclick="cashOut()">ЗАБРАТЬ <br> <span id="win-preview" style="font-size: 1.2rem;">0</span>₽</button>
+            
+            <!-- КНОПКИ ТЕПЕРЬ ОДНОГО РАЗМЕРА -->
+            <button class="action-btn" id="btn-start" onclick="startGame()">ИГРАТЬ</button>
+            <button class="action-btn" id="btn-cash" onclick="cashOut()">
+                ЗАБРАТЬ
+                <span id="win-preview" style="font-size: 1.1rem; opacity: 0.8;">0₽</span>
+            </button>
         </div>
     </div>
 
@@ -122,7 +139,7 @@
             while(mines.length < mCount) { let r = Math.floor(Math.random()*25); if(!mines.includes(r)) mines.push(r); }
             createGrid(); save();
             document.getElementById('btn-start').style.display = 'none';
-            document.getElementById('btn-cash').style.display = 'block';
+            document.getElementById('btn-cash').style.display = 'flex';
             document.getElementById('mines-count').disabled = true;
             document.getElementById('bet-amount').disabled = true;
         }
@@ -137,7 +154,7 @@
             } else { 
                 c.classList.add('open-win'); c.innerText = '💎'; opened++; 
                 let win = Math.floor(currentBet * getMult());
-                document.getElementById('win-preview').innerText = win;
+                document.getElementById('win-preview').innerText = win + "₽";
             }
         }
 
@@ -150,7 +167,7 @@
         }
 
         function reset() { 
-            document.getElementById('btn-start').style.display = 'block'; 
+            document.getElementById('btn-start').style.display = 'flex'; 
             document.getElementById('btn-cash').style.display = 'none'; 
             document.getElementById('mines-count').disabled = false;
             document.getElementById('bet-amount').disabled = false;
