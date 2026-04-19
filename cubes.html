@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CUBES SLEEPKIDD — 8K EDITION</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root { --primary: #bc13fe; --bg: #000000; --win: #00ff88; --lose: #ff4d4d; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        body { 
+            background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; 
+            margin: 0; display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; overflow-x: hidden; position: relative;
+        }
+
+        /* АУРА НА ФОНЕ */
+        .aura {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(188, 19, 254, 0.08) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        /* ТОТ САМЫЙ ЛОГОТИП С ГЛИТЧЕМ */
+        .logo-box { margin: 40px 0 20px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
+        .logo-box .top { 
+            font-size: 28px; color: var(--primary); display: block; 
+            text-shadow: 0 0 20px var(--primary); 
+            position: relative;
+            animation: hyperGlitch 1.5s infinite; 
+        }
+        /* RGB ЭФФЕКТ */
+        .logo-box .top::before, .logo-box .top::after {
+            content: 'CUBES'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;
+        }
+        .logo-box .top::before { color: #00f6ff; z-index: -1; animation: rgbSplit 1.5s infinite; }
+        .logo-box .top::after { color: #ff00de; z-index: -2; animation: rgbSplit 1.5s infinite reverse; }
+
+        @keyframes hyperGlitch {
+            0%, 15%, 45%, 80%, 100% { transform: translate(0); }
+            16% { transform: translate(-4px, 2px); }
+            18% { transform: translate(4px, -2px); }
+            81% { transform: translate(2px, 2px); }
+            83% { transform: translate(-2px, -2px); }
+        }
+        @keyframes rgbSplit {
+            0%, 15%, 19%, 80%, 84%, 100% { opacity: 0; transform: translate(0); }
+            16%, 18% { opacity: 1; transform: translate(-8px, 0); }
+            81%, 83% { opacity: 1; transform: translate(8px, 0); }
+        }
+        .logo-box .bot { font-size: 44px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
+
+        .container { 
+            width: 92%; max-width: 420px; background: rgba(10, 10, 10, 0.9); 
+            border: 3px solid var(--primary); border-radius: 45px; padding: 25px; 
+            text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.4); 
+            backdrop-filter: blur(20px); position: relative;
+        }
+        
+        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 15px; }
+        .back-nav { 
+            text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; 
+            padding: 8px 20px; border-radius: 12px; background: #111; 
+            border: 1.5px solid var(--primary); text-transform: uppercase; 
+        }
+
+        .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; height: 45px; }
+        .hist-item { 
+            background: #000; border: 2px solid var(--primary); border-radius: 15px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1rem; font-weight: 900; 
+        }
+
+        .bal-val { color: var(--win); font-weight: 900; font-size: 1.8rem; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,255,136,0.3); }
+
+        /* 3D КУБИК 8K */
+        .scene { width: 100px; height: 100px; perspective: 1000px; margin: 50px auto; }
+        .cube { 
+            width: 100%; height: 100%; position: relative; transform-style: preserve-3d; 
+            transition: transform 1.5s cubic-bezier(0.2, 1, 0.3, 1); 
+        }
+        .cube-face { 
+            position: absolute; width: 100px; height: 100px; background: #0a0a0a; 
+            border: 2px solid var(--primary); border-radius: 20px; 
+            display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); 
+            padding: 12px; box-shadow: inset 0 0 20px rgba(188, 19, 254, 0.2); 
+        }
+        .dot { 
+            background: #fff; border-radius: 50%; width: 15px; height: 15px; 
+            align-self: center; justify-self: center; box-shadow: 0 0 12px #fff; 
+        }
+        
+        /* Грани */
+        .front  { transform: rotateY(0deg) translateZ(50px); }
+        .back   { transform: rotateY(180deg) translateZ(50px); }
+        .right  { transform: rotateY(90deg) translateZ(50px); }
+        .left   { transform: rotateY(-90deg) translateZ(50px); }
+        .top    { transform: rotateX(90deg) translateZ(50px); }
+        .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+        /* УПРАВЛЕНИЕ */
+        .bet-input { 
+            width: 100%; background: #111; border: 2px solid #333; color: #fff; 
+            padding: 18px; border-radius: 20px; font-size: 1.6rem; font-weight: 900; 
+            text-align: center; margin-bottom: 20px; 
+        }
+        
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .choice-btn { 
+            background: #000; border: 2px solid #222; color: #fff; padding: 18px; 
+            border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; 
+            font-family: 'Orbitron'; font-size: 0.9rem;
+        }
+        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); box-shadow: 0 0 20px rgba(188, 19, 254, 0.3); }
+
+        .main-btn { 
+            width: 100%; height: 85px; 
+            background: linear-gradient(180deg, var(--primary), #8a0db8); 
+            color: #fff; border: none; border-radius: 25px; 
+            font-weight: 900; font-size: 2rem; text-transform: uppercase; 
+            cursor: pointer; transition: 0.1s;
+        }
+        .main-btn:active { transform: scale(0.97); }
+        .main-btn:disabled { opacity: 0.5; }
+    </style>
+</head>
+<body>
+
+    <div class="aura"></div>
+
+    <div class="logo-box">
+        <span class="top">CUBES</span>
+        <span class="bot">SLEEPKIDD</span>
+    </div>
+
+    <div class="container">
+        <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
+        <div id="history" class="history-line"></div>
+        <div class="bal-val"><span id="bal">0</span>₽</div>
+
+        <div class="scene">
+            <div class="cube" id="cube">
+                <!-- 1 -->
+                <div class="cube-face front"><div class="dot" style="grid-area: 2/2"></div></div>
+                <!-- 5 -->
+                <div class="cube-face back">
+                    <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
+                    <div class="dot" style="grid-area: 2/2"></div>
+                    <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
+                </div>
+                <!-- 3 -->
+                <div class="cube-face right">
+                    <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 2/2"></div><div class="dot" style="grid-area: 3/3"></div>
+                </div>
+                <!-- 4 -->
+                <div class="cube-face left">
+                    <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
+                    <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
+                </div>
+                <!-- 2 -->
+                <div class="cube-face top">
+                    <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 3/3"></div>
+                </div>
+                <!-- 6 -->
+                <div class="cube-face bottom">
+                    <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
+                    <div class="dot" style="grid-area: 2/1"></div><div class="dot" style="grid-area: 2/3"></div>
+                    <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
+                </div>
+            </div>
+        </div>
+
+        <input type="number" id="bet" class="bet-input" value="50">
+
+        <div class="choice-grid">
+            <button class="choice-btn active" onclick="setChoice('even', this)">ЧЕТНОЕ</button>
+            <button class="choice-btn" onclick="setChoice('odd', this)">НЕЧЕТНОЕ</button>
+        </div>
+
+        <button class="main-btn" id="roll-btn" onclick="roll()">КРУТИТЬ</button>
+    </div>
+
+    <script>
+        let balance, user, users, currentChoice = 'even';
+        
+        // Маппинг граней куба
+        const rotations = {
+            1: { x: 0, y: 0 },
+            2: { x: -90, y: 0 },
+            3: { x: 0, y: -90 },
+            4: { x: 0, y: 90 },
+            5: { x: 0, y: 180 },
+            6: { x: 90, y: 0 }
+        };
+
+        window.onload = () => {
+            user = localStorage.getItem('current_user') || 'GUEST';
+            const db = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
+            users = db;
+            balance = users[user].bal;
+            updateUI();
+        };
+
+        function setChoice(type, btn) {
+            currentChoice = type;
+            document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function roll() {
+            let bet = parseInt(document.getElementById('bet').value);
+            if(bet > balance || bet <= 0) return alert("Мало денег!");
+
+            balance -= bet; updateUI();
+            const btn = document.getElementById('roll-btn');
+            btn.disabled = true;
+
+            const result = Math.floor(Math.random() * 6) + 1;
+            const cube = document.getElementById('cube');
+            
+            // 3 мощных оборота
+            const extraX = 360 * 3;
+            const extraY = 360 * 3;
+            
+            cube.style.transition = 'transform 2s cubic-bezier(0.2, 1, 0.3, 1)';
+            cube.style.transform = `rotateX(${rotations[result].x + extraX}deg) rotateY(${rotations[result].y + extraY}deg)`;
+
+            setTimeout(() => {
+                const isEven = result % 2 === 0;
+                const won = (currentChoice === 'even' && isEven) || (currentChoice === 'odd' && !isEven);
+                
+                if(won) {
+                    balance += bet * 1.95;
+                    addHistory(result, '#00ff88');
+                } else {
+                    addHistory(result, '#ff4d4d');
+                }
+                
+                updateUI();
+                saveDB();
+                btn.disabled = false;
+                
+                // Сброс лишних градусов для следующего броска
+                setTimeout(() => {
+                    cube.style.transition = 'none';
+                    cube.style.transform = `rotateX(${rotations[result].x}deg) rotateY(${rotations[result].y}deg)`;
+                }, 500);
+            }, 2000);
+        }
+
+        function addHistory(num, color) {
+            const h = document.getElementById('history');
+            const div = document.createElement('div');
+            div.className = 'hist-item';
+            div.style.borderColor = color;
+            div.style.color = color;
+            div.innerText = num;
+            h.prepend(div);
+            if(h.children.length > 4) h.lastChild.remove();
+        }
+
+        function updateUI() { document.getElementById('bal').innerText = Math.floor(balance).toLocaleString() + '₽'; }
+        function saveDB() { if(users[user]) { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); } }
+    </script>
+</body>
+</html>
