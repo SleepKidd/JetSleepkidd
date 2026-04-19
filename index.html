@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — ULTRA 8K</title>
+    <title>JET SLEEPKIDD — PRESTIGE</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { 
@@ -11,7 +11,6 @@
             --bg: #000000; 
             --win: #00ff88; 
             --lose: #ff4d4d; 
-            --glass-border: rgba(188, 19, 254, 0.3);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -29,52 +28,56 @@
             position: relative;
         }
 
-        /* ИДЕАЛЬНО ЧИСТЫЙ КОСМОС */
-        #starfield { 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            z-index: -1; 
-            background: radial-gradient(circle at 50% 50%, #110218 0%, #000000 100%);
+        /* ЖИВОЙ КОСМОС И АУРА */
+        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .aura {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(188, 19, 254, 0.1) 0%, transparent 70%);
+            z-index: -1; animation: auraMove 10s infinite alternate ease-in-out;
         }
+        @keyframes auraMove { from { transform: translate(-60%, -40%); } to { transform: translate(-40%, -60%); } }
 
-        /* HD ГЛИТЧ ЛОГОТИП */
+        /* ГИПЕР-ГЛИТЧ ЛОГОТИП */
         .logo-box { margin: 45px 0 30px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; position: relative; }
         
         .logo-box .top { 
-            font-size: 30px; color: var(--primary); display: block; 
+            font-size: 32px; color: var(--primary); display: block; 
             text-shadow: 0 0 15px var(--primary); 
             position: relative;
-            animation: sharpGlitch 4s infinite;
+            animation: hyperGlitch 1.5s infinite; /* Очень частый вжух */
         }
 
-        /* Четкие RGB слои */
+        /* Эффект RGB сплита при глитче */
         .logo-box .top::before, .logo-box .top::after {
-            content: 'JET'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none;
+            content: 'JET'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;
         }
-        .logo-box .top::before { color: #00f6ff; z-index: -1; left: -2px; }
-        .logo-box .top::after { color: #ff00de; z-index: -2; left: 2px; }
+        .logo-box .top::before { color: #00f6ff; z-index: -1; animation: rgbSplit 1.5s infinite; }
+        .logo-box .top::after { color: #ff00de; z-index: -2; animation: rgbSplit 1.5s infinite reverse; }
 
-        @keyframes sharpGlitch {
-            0%, 92%, 100% { transform: translate(0); }
-            93% { transform: translate(-3px, 0); }
-            95% { transform: translate(3px, 0); }
+        @keyframes hyperGlitch {
+            0%, 15%, 45%, 80%, 100% { transform: translate(0); }
+            16% { transform: translate(-4px, 2px); }
+            18% { transform: translate(4px, -2px); }
+            81% { transform: translate(2px, 2px); }
+            83% { transform: translate(-2px, -2px); }
+        }
+        @keyframes rgbSplit {
+            0%, 15%, 19%, 80%, 84%, 100% { opacity: 0; transform: translate(0); }
+            16%, 18% { opacity: 1; transform: translate(-8px, 0); }
+            81%, 83% { opacity: 1; transform: translate(8px, 0); }
         }
 
-        .logo-box .bot { font-size: 46px; color: #fff; letter-spacing: -2px; line-height: 0.85; }
+        .logo-box .bot { font-size: 48px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
 
         .container { width: 95%; max-width: 850px; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; z-index: 10; }
 
-        /* ФОРМА ВХОДА - CRYSTAL DESIGN */
+        /* ВХОД */
         #scr-auth { 
-            width: 100%; max-width: 400px; 
-            background: rgba(10, 10, 10, 0.8); 
-            padding: 45px; border-radius: 50px; 
-            border: 1px solid var(--glass-border); 
-            text-align: center; 
-            box-shadow: 0 0 40px rgba(188, 19, 254, 0.15); 
-            backdrop-filter: blur(25px); 
-            margin-top: 30px;
+            width: 100%; max-width: 400px; background: rgba(10, 10, 10, 0.8); 
+            padding: 45px; border-radius: 50px; border: 1px solid rgba(188, 19, 254, 0.2); 
+            text-align: center; box-shadow: 0 0 40px rgba(188, 19, 254, 0.1); 
+            backdrop-filter: blur(25px); margin-top: 30px;
         }
 
         .btn-go { 
@@ -82,62 +85,55 @@
             border: none; color: #fff; padding: 22px; border-radius: 18px; 
             font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; 
             font-size: 1.6rem; transition: 0.3s;
-            box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
         }
-        .btn-go:hover { transform: scale(1.02); filter: brightness(1.2); box-shadow: 0 0 30px rgba(188, 19, 254, 0.5); }
 
         input { 
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: #fff; padding: 20px; width: 100%; 
-            border-radius: 15px; margin-bottom: 20px; 
-            text-align: center; font-family: 'Orbitron'; 
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: #fff; padding: 20px; width: 100%; border-radius: 15px; 
+            margin-bottom: 20px; text-align: center; font-family: 'Orbitron'; 
             font-size: 1.3rem; font-weight: 900;
         }
 
-        /* ЛОББИ - ULTRA CLEAN */
+        /* ЛОББИ */
         .user-bar { 
-            width: 100%;
-            background: rgba(255, 255, 255, 0.02); 
-            padding: 25px 40px; border-radius: 25px; 
+            width: 100%; background: rgba(255, 255, 255, 0.02); 
+            padding: 25px 40px; border-radius: 30px; 
             border: 1px solid rgba(255, 255, 255, 0.05); 
-            display: flex; flex-direction: column; 
+            display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 40px; backdrop-filter: blur(20px); 
         }
-
-        .rank-bar { width: 100%; height: 2px; background: rgba(255,255,255,0.05); margin-top: 15px; }
-        .rank-fill { width: 80%; height: 100%; background: var(--primary); box-shadow: 0 0 15px var(--primary); }
 
         .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; width: 100%; }
         
         .game-card { 
-            background: rgba(10, 10, 10, 0.6); 
-            border-radius: 40px; 
+            background: rgba(10, 10, 10, 0.6); border-radius: 45px; 
             border: 1px solid rgba(255,255,255,0.05); 
             overflow: hidden; transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1); 
-            text-decoration: none; color: #fff; 
-            backdrop-filter: blur(15px);
+            text-decoration: none; color: #fff; backdrop-filter: blur(15px);
         }
         .game-card:hover { 
-            border-color: var(--primary); 
-            transform: translateY(-10px); 
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(188, 19, 254, 0.2);
+            border-color: var(--primary); transform: translateY(-10px) scale(1.02); 
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.3);
             background: rgba(20, 20, 20, 0.8);
         }
         
         .preview { 
-            height: 180px; display: flex; align-items: center; 
-            justify-content: center; font-size: 6rem; 
-            background: radial-gradient(circle, #0f0f0f, #000); 
+            height: 190px; display: flex; align-items: center; justify-content: center; 
+            font-size: 6.5rem; background: radial-gradient(circle, #0f0f0f, #000); 
         }
 
-        .logout { margin-top: 60px; color: #444; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; font-weight: 900; transition: 0.3s; letter-spacing: 2px; }
-        .logout:hover { color: var(--lose); letter-spacing: 5px; }
+        .logout { 
+            margin-top: 60px; color: #444; font-size: 0.95rem; cursor: pointer; 
+            text-transform: uppercase; font-weight: 900; transition: 0.3s; 
+            letter-spacing: 1px; 
+        }
+        .logout:hover { color: var(--lose); letter-spacing: 3px; }
     </style>
 </head>
 <body>
 
     <canvas id="starfield"></canvas>
+    <div class="aura"></div>
 
     <div class="logo-box">
         <span class="top">JET</span>
@@ -155,14 +151,11 @@
         <!-- ЛОББИ -->
         <div id="scr-lobby" style="display:none; width: 100%;">
             <div class="user-bar">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <small style="color: #666; display: block; font-size: 0.8rem; font-weight: 900;">SESSION_ACTIVE</small>
-                        <span id="u-name" style="font-weight: 900; font-size: 1.5rem; color: var(--primary); text-shadow: 0 0 10px rgba(188, 19, 254, 0.3);">---</span>
-                    </div>
-                    <div style="color: var(--win); font-weight: 900; font-size: 2rem; text-shadow: 0 0 15px rgba(0,255,136,0.2);" id="u-bal">0₽</div>
+                <div>
+                    <small style="color: #666; display: block; font-size: 0.8rem; font-weight: 900;">ВАШЕ ИМЯ</small>
+                    <span id="u-name" style="font-weight: 900; font-size: 1.6rem; color: var(--primary); text-shadow: 0 0 10px rgba(188, 19, 254, 0.4);">---</span>
                 </div>
-                <div class="rank-bar"><div class="rank-fill"></div></div>
+                <div style="color: var(--win); font-weight: 900; font-size: 2.2rem; text-shadow: 0 0 15px rgba(0,255,136,0.3);" id="u-bal">0₽</div>
             </div>
 
             <div class="games-grid">
@@ -170,19 +163,19 @@
                     <div class="preview">🚀</div>
                     <div style="padding:35px;">
                         <h3 style="margin:0; font-size:2rem; color:var(--primary); text-transform: uppercase;">JET ENGINE</h3>
-                        <p style="color:#777; font-size:1rem; margin-top:10px; line-height:1.4;">Множители до 500x. Идеальная плавность полета.</p>
+                        <p style="color:#777; font-size:1rem; margin-top:10px;">Множители до 500x. Идеальная плавность.</p>
                     </div>
                 </a>
                 <a href="mines.html" class="game-card">
                     <div class="preview">💣</div>
                     <div style="padding:35px;">
                         <h3 style="margin:0; font-size:2rem; color:var(--primary); text-transform: uppercase;">MINES PRO</h3>
-                        <p style="color:#777; font-size:1rem; margin-top:10px; line-height:1.4;">25 секторов риска. Чистый путь к победе.</p>
+                        <p style="color:#777; font-size:1rem; margin-top:10px;">25 секторов риска. Чистый путь к победе.</p>
                     </div>
                 </a>
             </div>
             
-            <div class="logout" onclick="logout()">CLOSE_SESSION</div>
+            <div class="logout" onclick="logout()">ВЫЙТИ ИЗ АККАУНТА</div>
         </div>
     </div>
 
@@ -195,7 +188,6 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             stars = [];
-            // Больше звезд, меньше размер для эффекта "4K"
             for (let i = 0; i < 200; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
@@ -230,7 +222,7 @@
             if(!l || !p) return;
             let users = JSON.parse(localStorage.getItem('users_jet')) || { "test": { pass: "test", bal: 500000 } };
             if(!users[l]) { users[l] = { pass: p, bal: 500 }; } 
-            else if(users[l].pass !== p) { return alert("WRONG_PASSWORD"); }
+            else if(users[l].pass !== p) { return alert("НЕВЕРНЫЙ ПАРОЛЬ"); }
             localStorage.setItem('users_jet', JSON.stringify(users));
             localStorage.setItem('current_user', l);
             check();
