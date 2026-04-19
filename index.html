@@ -3,110 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — КАЗИНО</title>
+    <title>JET SLEEPKIDD — ULTRA 8K</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #bc13fe; --bg: #030303; --win: #00ff88; --glass: rgba(255, 255, 255, 0.05); }
+        :root { 
+            --primary: #bc13fe; 
+            --bg: #000000; 
+            --win: #00ff88; 
+            --lose: #ff4d4d; 
+            --glass-border: rgba(188, 19, 254, 0.3);
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        .logo-box { margin: 40px 0 20px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; }
-        .logo-box .top { font-size: 32px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); }
-        .logo-box .bot { font-size: 48px; color: #fff; text-shadow: 2px 2px 0px rgba(0,0,0,0.5); }
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Orbitron', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+            position: relative;
+        }
 
-        .container { width: 95%; max-width: 800px; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; }
+        /* ИДЕАЛЬНО ЧИСТЫЙ КОСМОС */
+        #starfield { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            z-index: -1; 
+            background: radial-gradient(circle at 50% 50%, #110218 0%, #000000 100%);
+        }
 
-        /* ВХОД */
-        #scr-auth { width: 100%; max-width: 360px; background: #111; padding: 35px; border-radius: 45px; border: 2px solid var(--primary); text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.2); margin-top: 20px; }
-        input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 16px; width: 100%; border-radius: 20px; margin-bottom: 15px; text-align: center; font-family: 'Orbitron'; font-size: 1.1rem; transition: 0.3s; }
-        input:focus { border-color: var(--primary); background: #222; }
-        .btn-go { background: var(--primary); border: none; color: #fff; padding: 18px; border-radius: 20px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1.3rem; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-
-        /* ЛОББИ */
-        #scr-lobby { display: none; width: 100%; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .user-bar { background: var(--glass); padding: 20px 30px; border-radius: 30px; border: 1px solid #222; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; backdrop-filter: blur(10px); }
-        .bal-val { color: var(--win); font-weight: 900; font-size: 1.6rem; text-shadow: 0 0 15px rgba(0,255,136,0.4); }
-
-        .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; width: 100%; }
-        .game-card { background: #111; border-radius: 45px; border: 2px solid #222; overflow: hidden; transition: 0.4s; text-decoration: none; color: #fff; position: relative; display: flex; flex-direction: column; }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-10px); box-shadow: 0 25px 50px rgba(188, 19, 254, 0.3); }
+        /* HD ГЛИТЧ ЛОГОТИП */
+        .logo-box { margin: 45px 0 30px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; position: relative; }
         
-        .preview { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 5.5rem; background: radial-gradient(circle, #222, #000); position: relative; }
-        .preview::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, #111, transparent); }
+        .logo-box .top { 
+            font-size: 30px; color: var(--primary); display: block; 
+            text-shadow: 0 0 15px var(--primary); 
+            position: relative;
+            animation: sharpGlitch 4s infinite;
+        }
 
-        .card-info { padding: 25px; text-align: left; flex-grow: 1; }
-        .card-info h3 { margin: 0; font-size: 1.8rem; color: var(--primary); text-transform: uppercase; font-weight: 900; }
-        .card-info p { margin: 12px 0 0; font-size: 0.9rem; color: #888; line-height: 1.5; font-weight: 500; }
+        /* Четкие RGB слои */
+        .logo-box .top::before, .logo-box .top::after {
+            content: 'JET'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none;
+        }
+        .logo-box .top::before { color: #00f6ff; z-index: -1; left: -2px; }
+        .logo-box .top::after { color: #ff00de; z-index: -2; left: 2px; }
+
+        @keyframes sharpGlitch {
+            0%, 92%, 100% { transform: translate(0); }
+            93% { transform: translate(-3px, 0); }
+            95% { transform: translate(3px, 0); }
+        }
+
+        .logo-box .bot { font-size: 46px; color: #fff; letter-spacing: -2px; line-height: 0.85; }
+
+        .container { width: 95%; max-width: 850px; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; z-index: 10; }
+
+        /* ФОРМА ВХОДА - CRYSTAL DESIGN */
+        #scr-auth { 
+            width: 100%; max-width: 400px; 
+            background: rgba(10, 10, 10, 0.8); 
+            padding: 45px; border-radius: 50px; 
+            border: 1px solid var(--glass-border); 
+            text-align: center; 
+            box-shadow: 0 0 40px rgba(188, 19, 254, 0.15); 
+            backdrop-filter: blur(25px); 
+            margin-top: 30px;
+        }
+
+        .btn-go { 
+            background: linear-gradient(180deg, var(--primary), #8a0db8); 
+            border: none; color: #fff; padding: 22px; border-radius: 18px; 
+            font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; 
+            font-size: 1.6rem; transition: 0.3s;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
+        }
+        .btn-go:hover { transform: scale(1.02); filter: brightness(1.2); box-shadow: 0 0 30px rgba(188, 19, 254, 0.5); }
+
+        input { 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: #fff; padding: 20px; width: 100%; 
+            border-radius: 15px; margin-bottom: 20px; 
+            text-align: center; font-family: 'Orbitron'; 
+            font-size: 1.3rem; font-weight: 900;
+        }
+
+        /* ЛОББИ - ULTRA CLEAN */
+        .user-bar { 
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02); 
+            padding: 25px 40px; border-radius: 25px; 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            display: flex; flex-direction: column; 
+            margin-bottom: 40px; backdrop-filter: blur(20px); 
+        }
+
+        .rank-bar { width: 100%; height: 2px; background: rgba(255,255,255,0.05); margin-top: 15px; }
+        .rank-fill { width: 80%; height: 100%; background: var(--primary); box-shadow: 0 0 15px var(--primary); }
+
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; width: 100%; }
         
-        .logout { margin-top: 60px; color: #444; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
-        .logout:hover { color: var(--lose); }
+        .game-card { 
+            background: rgba(10, 10, 10, 0.6); 
+            border-radius: 40px; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            overflow: hidden; transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1); 
+            text-decoration: none; color: #fff; 
+            backdrop-filter: blur(15px);
+        }
+        .game-card:hover { 
+            border-color: var(--primary); 
+            transform: translateY(-10px); 
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(188, 19, 254, 0.2);
+            background: rgba(20, 20, 20, 0.8);
+        }
+        
+        .preview { 
+            height: 180px; display: flex; align-items: center; 
+            justify-content: center; font-size: 6rem; 
+            background: radial-gradient(circle, #0f0f0f, #000); 
+        }
+
+        .logout { margin-top: 60px; color: #444; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; font-weight: 900; transition: 0.3s; letter-spacing: 2px; }
+        .logout:hover { color: var(--lose); letter-spacing: 5px; }
     </style>
 </head>
 <body>
-    <div class="logo-box"><span class="top">JET</span><span class="bot">SLEEPKIDD</span></div>
+
+    <canvas id="starfield"></canvas>
+
+    <div class="logo-box">
+        <span class="top">JET</span>
+        <span class="bot">SLEEPKIDD</span>
+    </div>
 
     <div class="container">
-        <!-- АВТОРИЗАЦИЯ -->
+        <!-- ВХОД -->
         <div id="scr-auth">
-            <h2 style="font-size: 1rem; color: #555; margin-bottom: 20px;">ВХОД В СИСТЕМУ</h2>
-            <input type="text" id="log" placeholder="ВАШ ЛОГИН">
-            <input type="password" id="pas" placeholder="ПАРОЛЬ">
-            <button class="btn-go" onclick="login()">ПОГНАЛИ</button>
-            <p style="font-size: 0.6rem; color: #333; margin-top: 15px;">АККАУНТ ДЛЯ ТЕСТА: test / test</p>
+            <input type="text" id="log" placeholder="LOGIN">
+            <input type="password" id="pas" placeholder="PASSWORD">
+            <button class="btn-go" onclick="login()">ENTER SYSTEM</button>
         </div>
 
         <!-- ЛОББИ -->
-        <div id="scr-lobby">
+        <div id="scr-lobby" style="display:none; width: 100%;">
             <div class="user-bar">
-                <div style="text-align: left;">
-                    <small style="color: #666; display: block; font-size: 0.7rem; letter-spacing: 1px;">ПРИВЕТ,</small>
-                    <span id="u-name" style="font-weight: 900; font-size: 1.1rem; color: #fff;">---</span>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <small style="color: #666; display: block; font-size: 0.8rem; font-weight: 900;">SESSION_ACTIVE</small>
+                        <span id="u-name" style="font-weight: 900; font-size: 1.5rem; color: var(--primary); text-shadow: 0 0 10px rgba(188, 19, 254, 0.3);">---</span>
+                    </div>
+                    <div style="color: var(--win); font-weight: 900; font-size: 2rem; text-shadow: 0 0 15px rgba(0,255,136,0.2);" id="u-bal">0₽</div>
                 </div>
-                <div class="bal-val"><span id="u-bal">0</span>₽</div>
+                <div class="rank-bar"><div class="rank-fill"></div></div>
             </div>
 
             <div class="games-grid">
-                <!-- JET PREVIEW -->
                 <a href="jet.html" class="game-card">
                     <div class="preview">🚀</div>
-                    <div class="card-info">
-                        <h3>JET</h3>
-                        <p>Лети к звездам и лови множитель до 500.00x. Твоя задача — вовремя нажать «Забрать» до того, как ракета улетит!</p>
+                    <div style="padding:35px;">
+                        <h3 style="margin:0; font-size:2rem; color:var(--primary); text-transform: uppercase;">JET ENGINE</h3>
+                        <p style="color:#777; font-size:1rem; margin-top:10px; line-height:1.4;">Множители до 500x. Идеальная плавность полета.</p>
                     </div>
                 </a>
-                
-                <!-- MINES PREVIEW -->
                 <a href="mines.html" class="game-card">
                     <div class="preview">💣</div>
-                    <div class="card-info">
-                        <h3>MINES</h3>
-                        <p>Проверь свою интуицию на поле 5x5. Ищи кристаллы и увеличивай выигрыш с каждой клеткой, но берегись скрытых мин!</p>
+                    <div style="padding:35px;">
+                        <h3 style="margin:0; font-size:2rem; color:var(--primary); text-transform: uppercase;">MINES PRO</h3>
+                        <p style="color:#777; font-size:1rem; margin-top:10px; line-height:1.4;">25 секторов риска. Чистый путь к победе.</p>
                     </div>
                 </a>
             </div>
             
-            <div class="logout" onclick="logout()">ВЫЙТИ ИЗ АККАУНТА</div>
+            <div class="logout" onclick="logout()">CLOSE_SESSION</div>
         </div>
     </div>
 
     <script>
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function initStars() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            // Больше звезд, меньше размер для эффекта "4K"
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.2,
+                    speed: Math.random() * 0.2 + 0.05,
+                    opacity: Math.random()
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => {
+                ctx.globalAlpha = s.opacity;
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                s.y += s.speed;
+                if (s.y > canvas.height) s.y = -5;
+            });
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', initStars);
+        initStars(); draw();
+
         function login() {
             const l = document.getElementById('log').value.trim().toLowerCase();
             const p = document.getElementById('pas').value.trim();
-            if(!l || !p) return alert("Введите данные!");
-            
-            let users = JSON.parse(localStorage.getItem('users_jet')) || {
-                "test": { pass: "test", bal: 500000, hist: [] }
-            };
-
-            if(!users[l]) {
-                users[l] = { pass: p, bal: 500, hist: [] };
-            } else if(users[l].pass !== p) {
-                return alert("Неверный пароль!");
-            }
-
+            if(!l || !p) return;
+            let users = JSON.parse(localStorage.getItem('users_jet')) || { "test": { pass: "test", bal: 500000 } };
+            if(!users[l]) { users[l] = { pass: p, bal: 500 }; } 
+            else if(users[l].pass !== p) { return alert("WRONG_PASSWORD"); }
             localStorage.setItem('users_jet', JSON.stringify(users));
             localStorage.setItem('current_user', l);
             check();
@@ -119,7 +243,7 @@
                 document.getElementById('scr-auth').style.display = 'none';
                 document.getElementById('scr-lobby').style.display = 'block';
                 document.getElementById('u-name').innerText = user.toUpperCase();
-                document.getElementById('u-bal').innerText = Math.floor(users[user].bal).toLocaleString();
+                document.getElementById('u-bal').innerText = Math.floor(users[user].bal).toLocaleString() + '₽';
             }
         }
 
