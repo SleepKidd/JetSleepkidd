@@ -17,88 +17,72 @@
 
         .aura {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 700px; height: 700px;
-            background: radial-gradient(circle, rgba(188, 19, 254, 0.08) 0%, transparent 70%);
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(188, 19, 254, 0.05) 0%, transparent 70%);
             z-index: -1;
         }
 
         .logo-box { margin: 40px 0 20px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
-        .logo-box .top { 
-            font-size: 28px; color: var(--primary); display: block; 
-            text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 1.5s infinite; 
-        }
+        .logo-box .top { font-size: 28px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 2s infinite; }
         .logo-box .bot { font-size: 44px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
-
-        @keyframes hyperGlitch {
-            0%, 15%, 45%, 80%, 100% { transform: translate(0); }
-            16% { transform: translate(-4px, 2px); }
-            18% { transform: translate(4px, -2px); }
-        }
+        @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 2px); } 94% { transform: translate(3px, -2px); } }
 
         .container { 
-            width: 92%; max-width: 420px; background: #0a0a0a; 
-            border: 3px solid var(--primary); border-radius: 45px; padding: 25px; 
-            text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.4); 
-            backdrop-filter: blur(20px); position: relative;
+            width: 92%; max-width: 420px; background: rgba(10, 10, 10, 0.95); 
+            border: 2px solid var(--primary); border-radius: 45px; padding: 25px; 
+            text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.3); 
+            backdrop-filter: blur(20px);
         }
         
         .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 15px; }
-        .back-nav { 
-            text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; 
-            padding: 8px 18px; border-radius: 12px; background: #111; 
-            border: 1.5px solid var(--primary); text-transform: uppercase; 
-        }
+        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 20px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
 
         .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; height: 45px; }
-        .hist-item { 
-            background: #000; border: 2.5px solid var(--primary); border-radius: 15px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 1.1rem; font-weight: 900; 
-        }
+        .hist-item { background: #000; border: 1.5px solid var(--primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; }
 
-        .bal-val { color: var(--win); font-weight: 900; font-size: 2.2rem; margin-bottom: 20px; }
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; }
 
-        /* --- НОВЫЙ МОНОЛИТНЫЙ КУБИК 8K БЕЗ ДЫРОК --- */
-        .scene { width: 110px; height: 110px; perspective: 1000px; margin: 40px auto; }
+        /* --- MONOLITHIC 8K DICE --- */
+        .scene { width: 120px; height: 120px; perspective: 1000px; margin: 40px auto; }
         .cube { 
             width: 100%; height: 100%; position: relative; transform-style: preserve-3d; 
-            transition: transform 2s cubic-bezier(0.17, 0.67, 0.1, 1.05); 
-            transform: rotateX(-20deg) rotateY(20deg);
+            transition: transform 1.5s cubic-bezier(0.17, 0.67, 0.1, 1); 
+            transform: rotateX(-20deg) rotateY(25deg);
+        }
+        /* Ядро куба для удаления щелей */
+        .cube-core {
+            position: absolute; width: 110px; height: 110px; background: #fff;
+            top: 5px; left: 5px; border-radius: 20px; transform: translateZ(0);
         }
         .cube-face { 
-            position: absolute; 
-            width: 112px; height: 112px; /* Чуть больше для перекрытия щелей */
-            background: #ffffff; 
-            border: none !important; /* УБРАЛ ОБВОДКУ */
-            border-radius: 22px; 
+            position: absolute; width: 120px; height: 120px; 
+            background: #ffffff; border: none; border-radius: 26px; 
             display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); 
-            padding: 12px; 
-            /* Мягкая тень вместо рамки для 3D эффекта */
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.1), inset 0 0 5px rgba(0,0,0,0.05);
-            backface-visibility: visible;
+            padding: 18px; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.08); /* Мягкие тени граней */
+            backface-visibility: hidden;
         }
         
         .dot { 
-            background: #222; border-radius: 50%; width: 18px; height: 18px; 
+            background: #222; border-radius: 50%; width: 20px; height: 20px; 
             align-self: center; justify-self: center; 
-            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); 
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.4); 
         }
-        /* Красная точка на грани 1 */
-        .front .dot { background: #ff3b30; width: 26px; height: 26px; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2); }
+        /* Красная единица */
+        .face-1 .dot { background: #ff3b30; width: 30px; height: 30px; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
 
-        /* Идеальная стыковка граней */
-        .front  { transform: rotateY(0deg) translateZ(55px); }
-        .back   { transform: rotateY(180deg) translateZ(55px); }
-        .right  { transform: rotateY(90deg) translateZ(55px); }
-        .left   { transform: rotateY(-90deg) translateZ(55px); }
-        .top    { transform: rotateX(90deg) translateZ(55px); }
-        .bottom { transform: rotateX(-90deg) translateZ(55px); }
+        .face-1 { transform: rotateY(0deg) translateZ(60px); }
+        .face-6 { transform: rotateY(180deg) translateZ(60px); }
+        .face-3 { transform: rotateY(90deg) translateZ(60px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(60px); }
+        .face-2 { transform: rotateX(90deg) translateZ(60px); }
+        .face-5 { transform: rotateX(-90deg) translateZ(60px); }
 
         /* УПРАВЛЕНИЕ */
         .bet-input { 
             width: 100%; background: #111; border: 2px solid #333; color: #fff; 
             padding: 18px; border-radius: 20px; font-size: 1.6rem; font-weight: 900; 
-            text-align: center; margin-bottom: 20px; 
+            text-align: center; margin-bottom: 20px; font-family: 'Orbitron';
         }
         
         .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
@@ -107,7 +91,7 @@
             border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; 
             font-family: 'Orbitron'; font-size: 1rem;
         }
-        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); box-shadow: 0 0 15px rgba(188, 19, 254, 0.2); }
+        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); }
 
         .main-btn { 
             width: 100%; height: 85px; 
@@ -120,44 +104,34 @@
     </style>
 </head>
 <body>
-
     <div class="aura"></div>
-
-    <div class="logo-box">
-        <span class="top">CUBES</span>
-        <span class="bot">SLEEPKIDD</span>
-    </div>
+    <div class="logo-box"><span class="top">CUBES</span><span class="bot">SLEEPKIDD</span></div>
 
     <div class="container">
         <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
         <div id="history" class="history-line"></div>
-        <div class="bal-val"><span id="bal">0</span>₽</div>
+        <div class="bal-val"><span id="bal">0</span> ₽</div>
 
         <div class="scene">
             <div class="cube" id="cube">
-                <!-- Грань 1 -->
-                <div class="cube-face front"><div class="dot" style="grid-area: 2/2"></div></div>
-                <!-- Грань 6 -->
-                <div class="cube-face back">
+                <div class="cube-core"></div>
+                <div class="cube-face face-1"><div class="dot" style="grid-area: 2/2"></div></div>
+                <div class="cube-face face-6">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
                     <div class="dot" style="grid-area: 2/1"></div><div class="dot" style="grid-area: 2/3"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
-                <!-- Грань 3 -->
-                <div class="cube-face right">
+                <div class="cube-face face-3">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 2/2"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
-                <!-- Грань 4 -->
-                <div class="cube-face left">
+                <div class="cube-face face-4">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
-                <!-- Грань 2 -->
-                <div class="cube-face top">
+                <div class="cube-face face-2">
                     <div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 3/1"></div>
                 </div>
-                <!-- Грань 5 -->
-                <div class="cube-face bottom">
+                <div class="cube-face face-5">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
                     <div class="dot" style="grid-area: 2/2"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
@@ -177,7 +151,7 @@
 
     <script>
         let balance, user, users, currentChoice = 'even';
-        const rotations = { 1: { x: 0, y: 0 }, 6: { x: 0, y: 180 }, 3: { x: 0, y: -90 }, 4: { x: 0, y: 90 }, 2: { x: -90, y: 0 }, 5: { x: 90, y: 0 } };
+        const rotations = { 1: {x:0, y:0}, 6: {x:0, y:180}, 3: {x:0, y:-90}, 4: {x:0, y:90}, 2: {x:-90, y:0}, 5: {x:90, y:0} };
 
         window.onload = () => {
             user = localStorage.getItem('current_user') || 'GUEST';
@@ -186,10 +160,10 @@
             updateUI();
         };
 
-        function setChoice(type) {
-            currentChoice = type;
-            document.getElementById('btn-even').classList.toggle('active', type === 'even');
-            document.getElementById('btn-odd').classList.toggle('active', type === 'odd');
+        function setChoice(t) {
+            currentChoice = t;
+            document.getElementById('btn-even').classList.toggle('active', t === 'even');
+            document.getElementById('btn-odd').classList.toggle('active', t === 'odd');
         }
 
         function roll() {
@@ -199,46 +173,36 @@
             const btn = document.getElementById('roll-btn');
             btn.disabled = true;
 
-            const result = Math.floor(Math.random() * 6) + 1;
+            const res = Math.floor(Math.random() * 6) + 1;
             const cube = document.getElementById('cube');
-            const extraX = 360 * 3 + (Math.random() > 0.5 ? 360 : 0);
-            const extraY = 360 * 3 + (Math.random() > 0.5 ? 360 : 0);
+            const exX = 360 * 3; const exY = 360 * 3;
             
-            cube.style.transition = 'transform 2s cubic-bezier(0.17, 0.67, 0.1, 1.05)';
-            cube.style.transform = `rotateX(${rotations[result].x + extraX}deg) rotateY(${rotations[result].y + extraY}deg)`;
+            cube.style.transition = 'transform 1.5s cubic-bezier(0.17, 0.67, 0.1, 1)';
+            cube.style.transform = `rotateX(${rotations[res].x + exX}deg) rotateY(${rotations[res].y + exY}deg)`;
 
             setTimeout(() => {
-                const won = (currentChoice === 'even' && result % 2 === 0) || (currentChoice === 'odd' && result % 2 !== 0);
-                if(won) { balance += bet * 1.95; addHistory(result, '#00ff88'); } 
-                else { addHistory(result, '#ff4d4d'); }
-                updateUI(); saveDB();
-                btn.disabled = false;
+                const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
+                if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
+                else { addHistory(res, '#ff4d4d'); }
+                updateUI(); saveDB(); btn.disabled = false;
                 setTimeout(() => {
                     cube.style.transition = 'none';
-                    cube.style.transform = `rotateX(${rotations[result].x}deg) rotateY(${rotations[result].y}deg)`;
-                }, 500);
-            }, 2000);
+                    cube.style.transform = `rotateX(${rotations[res].x}deg) rotateY(${rotations[res].y}deg)`;
+                }, 400);
+            }, 1500);
         }
 
-        function addHistory(num, color) {
+        function addHistory(n, c) {
             const h = document.getElementById('history');
             const div = document.createElement('div');
-            div.className = 'hist-item';
-            div.style.borderColor = color;
-            div.style.color = color;
-            div.innerText = num + ' ₽'; // ОДИН СИМВОЛ
+            div.className = 'hist-item'; div.style.borderColor = c; div.style.color = c;
+            div.innerText = n;
             h.prepend(div);
             if(h.children.length > 4) h.lastChild.remove();
         }
 
-        function updateUI() { 
-            document.getElementById('bal').innerText = Math.floor(balance).toLocaleString(); 
-        }
-
-        function saveDB() { 
-            if(users[user]) { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); } 
-        }
+        function updateUI() { document.getElementById('bal').innerText = Math.floor(balance).toLocaleString(); }
+        function saveDB() { if(users[user]) { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); } }
     </script>
 </body>
 </html>
-
