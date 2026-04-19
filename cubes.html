@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES SLEEPKIDD — 8K EDITION</title>
+    <title>CUBES SLEEPKIDD</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #bc13fe; --bg: #000000; --win: #00ff88; --lose: #ff4d4d; }
+        :root { --primary: #bc13fe; --bg: #000000; --win: #00ff88; --lose: #ff4d4d; --dice-border: #b3b3b3; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
         body { 
@@ -15,7 +15,6 @@
             min-height: 100vh; overflow-x: hidden; position: relative;
         }
 
-        /* АУРА НА ФОНЕ */
         .aura {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 700px; height: 700px;
@@ -23,34 +22,18 @@
             z-index: -1;
         }
 
-        /* ТОТ САМЫЙ ЛОГОТИП С ГЛИТЧЕМ */
         .logo-box { margin: 40px 0 20px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
         .logo-box .top { 
             font-size: 28px; color: var(--primary); display: block; 
-            text-shadow: 0 0 20px var(--primary); 
-            position: relative;
-            animation: hyperGlitch 1.5s infinite; 
+            text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 1.5s infinite; 
         }
-        /* RGB ЭФФЕКТ */
-        .logo-box .top::before, .logo-box .top::after {
-            content: 'CUBES'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;
-        }
-        .logo-box .top::before { color: #00f6ff; z-index: -1; animation: rgbSplit 1.5s infinite; }
-        .logo-box .top::after { color: #ff00de; z-index: -2; animation: rgbSplit 1.5s infinite reverse; }
+        .logo-box .bot { font-size: 44px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
 
         @keyframes hyperGlitch {
             0%, 15%, 45%, 80%, 100% { transform: translate(0); }
             16% { transform: translate(-4px, 2px); }
             18% { transform: translate(4px, -2px); }
-            81% { transform: translate(2px, 2px); }
-            83% { transform: translate(-2px, -2px); }
         }
-        @keyframes rgbSplit {
-            0%, 15%, 19%, 80%, 84%, 100% { opacity: 0; transform: translate(0); }
-            16%, 18% { opacity: 1; transform: translate(-8px, 0); }
-            81%, 83% { opacity: 1; transform: translate(8px, 0); }
-        }
-        .logo-box .bot { font-size: 44px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
 
         .container { 
             width: 92%; max-width: 420px; background: rgba(10, 10, 10, 0.9); 
@@ -70,35 +53,42 @@
         .hist-item { 
             background: #000; border: 2px solid var(--primary); border-radius: 15px; 
             display: flex; align-items: center; justify-content: center; 
-            font-size: 1rem; font-weight: 900; 
+            font-size: 1.1rem; font-weight: 900; 
         }
 
-        .bal-val { color: var(--win); font-weight: 900; font-size: 1.8rem; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,255,136,0.3); }
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2rem; margin-bottom: 20px; }
 
-        /* 3D КУБИК 8K */
-        .scene { width: 100px; height: 100px; perspective: 1000px; margin: 50px auto; }
+        /* --- 8K TG DICE STYLE --- */
+        .scene { width: 120px; height: 120px; perspective: 1000px; margin: 40px auto; }
         .cube { 
             width: 100%; height: 100%; position: relative; transform-style: preserve-3d; 
-            transition: transform 1.5s cubic-bezier(0.2, 1, 0.3, 1); 
+            transition: transform 2s cubic-bezier(0.17, 0.67, 0.1, 1.05); 
+            transform: rotateX(-20deg) rotateY(20deg);
         }
         .cube-face { 
-            position: absolute; width: 100px; height: 100px; background: #0a0a0a; 
-            border: 2px solid var(--primary); border-radius: 20px; 
+            position: absolute; width: 120px; height: 120px; 
+            background: #ffffff; /* Белый кубик */
+            border: 6px solid var(--dice-border); /* Жирный серый контур */
+            border-radius: 28px; /* Скругленные углы */
             display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); 
-            padding: 12px; box-shadow: inset 0 0 20px rgba(188, 19, 254, 0.2); 
-        }
-        .dot { 
-            background: #fff; border-radius: 50%; width: 15px; height: 15px; 
-            align-self: center; justify-self: center; box-shadow: 0 0 12px #fff; 
+            padding: 15px; 
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1), inset 5px 5px 15px rgba(255,255,255,1);
         }
         
-        /* Грани */
-        .front  { transform: rotateY(0deg) translateZ(50px); }
-        .back   { transform: rotateY(180deg) translateZ(50px); }
-        .right  { transform: rotateY(90deg) translateZ(50px); }
-        .left   { transform: rotateY(-90deg) translateZ(50px); }
-        .top    { transform: rotateX(90deg) translateZ(50px); }
-        .bottom { transform: rotateX(-90deg) translateZ(50px); }
+        .dot { 
+            background: #333; border-radius: 50%; width: 18px; height: 18px; 
+            align-self: center; justify-self: center; 
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.4); /* Вдавленные точки */
+        }
+        /* КРАСНАЯ ТОЧКА НА ЕДИНИЦЕ */
+        .front .dot { background: #ff3b30; width: 24px; height: 24px; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.3); }
+
+        .front  { transform: rotateY(0deg) translateZ(60px); }
+        .back   { transform: rotateY(180deg) translateZ(60px); }
+        .right  { transform: rotateY(90deg) translateZ(60px); }
+        .left   { transform: rotateY(-90deg) translateZ(60px); }
+        .top    { transform: rotateX(90deg) translateZ(60px); }
+        .bottom { transform: rotateX(-90deg) translateZ(60px); }
 
         /* УПРАВЛЕНИЕ */
         .bet-input { 
@@ -111,9 +101,9 @@
         .choice-btn { 
             background: #000; border: 2px solid #222; color: #fff; padding: 18px; 
             border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; 
-            font-family: 'Orbitron'; font-size: 0.9rem;
+            font-family: 'Orbitron'; font-size: 1rem;
         }
-        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); box-shadow: 0 0 20px rgba(188, 19, 254, 0.3); }
+        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); }
 
         .main-btn { 
             width: 100%; height: 85px; 
@@ -123,7 +113,6 @@
             cursor: pointer; transition: 0.1s;
         }
         .main-btn:active { transform: scale(0.97); }
-        .main-btn:disabled { opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -142,12 +131,12 @@
 
         <div class="scene">
             <div class="cube" id="cube">
-                <!-- 1 -->
+                <!-- 1: КРАСНАЯ ТОЧКА -->
                 <div class="cube-face front"><div class="dot" style="grid-area: 2/2"></div></div>
-                <!-- 5 -->
+                <!-- 6 -->
                 <div class="cube-face back">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
-                    <div class="dot" style="grid-area: 2/2"></div>
+                    <div class="dot" style="grid-area: 2/1"></div><div class="dot" style="grid-area: 2/3"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
                 <!-- 3 -->
@@ -161,12 +150,12 @@
                 </div>
                 <!-- 2 -->
                 <div class="cube-face top">
-                    <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 3/3"></div>
+                    <div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 3/1"></div>
                 </div>
-                <!-- 6 -->
+                <!-- 5 -->
                 <div class="cube-face bottom">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
-                    <div class="dot" style="grid-area: 2/1"></div><div class="dot" style="grid-area: 2/3"></div>
+                    <div class="dot" style="grid-area: 2/2"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
             </div>
@@ -175,8 +164,8 @@
         <input type="number" id="bet" class="bet-input" value="50">
 
         <div class="choice-grid">
-            <button class="choice-btn active" onclick="setChoice('even', this)">ЧЕТНОЕ</button>
-            <button class="choice-btn" onclick="setChoice('odd', this)">НЕЧЕТНОЕ</button>
+            <button class="choice-btn active" id="btn-even" onclick="setChoice('even')">ЧЕТНОЕ</button>
+            <button class="choice-btn" id="btn-odd" onclick="setChoice('odd')">НЕЧЕТНОЕ</button>
         </div>
 
         <button class="main-btn" id="roll-btn" onclick="roll()">КРУТИТЬ</button>
@@ -185,14 +174,13 @@
     <script>
         let balance, user, users, currentChoice = 'even';
         
-        // Маппинг граней куба
         const rotations = {
             1: { x: 0, y: 0 },
-            2: { x: -90, y: 0 },
+            6: { x: 0, y: 180 },
             3: { x: 0, y: -90 },
             4: { x: 0, y: 90 },
-            5: { x: 0, y: 180 },
-            6: { x: 90, y: 0 }
+            2: { x: -90, y: 0 },
+            5: { x: 90, y: 0 }
         };
 
         window.onload = () => {
@@ -203,10 +191,10 @@
             updateUI();
         };
 
-        function setChoice(type, btn) {
+        function setChoice(type) {
             currentChoice = type;
-            document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            document.getElementById('btn-even').classList.toggle('active', type === 'even');
+            document.getElementById('btn-odd').classList.toggle('active', type === 'odd');
         }
 
         function roll() {
@@ -220,11 +208,11 @@
             const result = Math.floor(Math.random() * 6) + 1;
             const cube = document.getElementById('cube');
             
-            // 3 мощных оборота
-            const extraX = 360 * 3;
-            const extraY = 360 * 3;
+            // 3 полных непредсказуемых оборота
+            const extraX = 360 * 3 + (Math.random() > 0.5 ? 360 : 0);
+            const extraY = 360 * 3 + (Math.random() > 0.5 ? 360 : 0);
             
-            cube.style.transition = 'transform 2s cubic-bezier(0.2, 1, 0.3, 1)';
+            cube.style.transition = 'transform 2s cubic-bezier(0.17, 0.67, 0.1, 1.05)';
             cube.style.transform = `rotateX(${rotations[result].x + extraX}deg) rotateY(${rotations[result].y + extraY}deg)`;
 
             setTimeout(() => {
@@ -238,11 +226,10 @@
                     addHistory(result, '#ff4d4d');
                 }
                 
-                updateUI();
-                saveDB();
+                updateUI(); saveDB();
                 btn.disabled = false;
                 
-                // Сброс лишних градусов для следующего броска
+                // Фиксируем позицию без лишних градусов для красоты
                 setTimeout(() => {
                     cube.style.transition = 'none';
                     cube.style.transform = `rotateX(${rotations[result].x}deg) rotateY(${rotations[result].y}deg)`;
