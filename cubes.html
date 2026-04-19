@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES SLEEPKIDD</title>
+    <title>CUBES SLEEPKIDD — 8K ELITE</title>
     <link href="https://googleapis.com" rel="stylesheet">
-    <!-- Библиотека THREE.JS -->
+    <!-- Подключаем Three.js -->
     <script src="https://cloudflare.com"></script>
     <style>
         :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; }
@@ -25,8 +25,8 @@
         .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; height: 45px; }
         .bal-val { color: var(--win); font-weight: 900; font-size: 2.4rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0,255,136,0.3); }
 
-        /* КОНТЕЙНЕР ДЛЯ THREE.JS */
-        #dice-box { width: 100%; height: 230px; margin: 5px 0; cursor: grab; position: relative; }
+        /* Контейнер для кубика */
+        #dice-container { width: 100%; height: 230px; margin: 5px 0; cursor: grab; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         
         .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 18px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
         .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
@@ -35,6 +35,7 @@
         
         .main-btn { width: 100%; height: 85px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 25px; font-weight: 900; font-size: 2.2rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
         .main-btn:active { transform: scale(0.96); }
+        .main-btn:disabled { opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -49,8 +50,7 @@
         <div id="history" class="history-line"></div>
         <div class="bal-val"><span id="u-bal">0</span> ₽</div>
 
-        <!-- КАНВАС ДЛЯ 3D КУБИКА -->
-        <div id="dice-box"></div>
+        <div id="dice-container"></div>
 
         <input type="number" id="bet" class="bet-input" value="50">
         
@@ -64,22 +64,20 @@
 
     <script>
         let balance, user, users, currentChoice = 'even';
-        let scene, camera, renderer, cube;
+        let scene, camera, renderer, cube, isRolling = false;
 
-        // ГЕНЕРАЦИЯ ТЕКСТУРЫ ГРАНИ (8K СТИЛЬ)
-        function getTexture(num) {
+        // Генерация текстур (8K)
+        function getDiceTexture(num) {
             const size = 512;
             const canvas = document.createElement('canvas');
             canvas.width = size; canvas.height = size;
             const ctx = canvas.getContext('2d');
 
-            // Белый фон со скруглением
             ctx.fillStyle = "#ffffff";
             ctx.beginPath();
-            ctx.roundRect(10, 10, 492, 492, 90);
+            ctx.roundRect(10, 10, 492, 492, 90); // Скругление граней
             ctx.fill();
 
-            // Точки
             const c = size / 2, l = size / 4, r = size * 0.75, t = size / 4, b = size * 0.75;
             const dots = {
                 1: [[c, c]],
@@ -90,67 +88,68 @@
                 6: [[l, t], [r, t], [l, c], [r, c], [l, b], [r, b]]
             };
 
-            ctx.fillStyle = (num === 1) ? "#ff3b30" : "#111111";
+            ctx.fillStyle = (num === 1) ? "#ff3b30" : "#1a1a1a";
             dots[num].forEach(d => {
                 ctx.beginPath();
-                ctx.arc(d[0], d[1], num === 1 ? 55 : 45, 0, Math.PI * 2);
+                ctx.arc(d[0], d[1], num === 1 ? 55 : 42, 0, Math.PI * 2);
                 ctx.fill();
             });
-
             return new THREE.CanvasTexture(canvas);
         }
 
-        // ИНИЦИАЛИЗАЦИЯ 3D
         function init3D() {
-            const box = document.getElementById('dice-box');
+            const box = document.getElementById('dice-container');
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(35, box.offsetWidth / box.offsetHeight, 0.1, 1000);
+            camera = new THREE.PerspectiveCamera(40, box.offsetWidth / box.offsetHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(box.offsetWidth, box.offsetHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setPixelRatio(window.devicePixelRatio);
             box.appendChild(renderer.domElement);
 
-            const ambient = new THREE.AmbientLight(0xffffff, 1.5);
+            const ambient = new THREE.AmbientLight(0xffffff, 1.2);
             scene.add(ambient);
-            const sun = new THREE.DirectionalLight(0xffffff, 1);
-            sun.position.set(5, 5, 5);
-            scene.add(sun);
+            const directional = new THREE.DirectionalLight(0xffffff, 0.8);
+            directional.position.set(5, 5, 5);
+            scene.add(directional);
 
-            const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+            const geometry = new THREE.BoxGeometry(2.6, 2.6, 2.6);
             const materials = [
-                new THREE.MeshStandardMaterial({ map: getTexture(3) }),
-                new THREE.MeshStandardMaterial({ map: getTexture(4) }),
-                new THREE.MeshStandardMaterial({ map: getTexture(2) }),
-                new THREE.MeshStandardMaterial({ map: getTexture(5) }),
-                new THREE.MeshStandardMaterial({ map: getTexture(1) }),
-                new THREE.MeshStandardMaterial({ map: getTexture(6) })
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(3) }), // right
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(4) }), // left
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(2) }), // top
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(5) }), // bottom
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(1) }), // front
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(6) })  // back
             ];
 
             cube = new THREE.Mesh(geometry, materials);
             scene.add(cube);
-            camera.position.z = 9;
+            camera.position.z = 8;
             
-            // Начальный поворот для красоты
-            cube.rotation.set(0.5, 0.5, 0);
+            cube.rotation.set(0.4, 0.4, 0);
             animate();
         }
 
         function animate() {
             requestAnimationFrame(animate);
+            if(!isRolling) {
+                cube.rotation.y += 0.005;
+                cube.rotation.x += 0.002;
+            }
             renderer.render(scene, camera);
         }
 
-        // ЛОГИКА ИГРЫ
         window.onload = () => {
             user = localStorage.getItem('current_user') || 'GUEST';
             const db = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
             users = db;
             balance = users[user].bal;
             document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
-            init3D();
+            
+            setTimeout(init3D, 100); // Небольшая задержка для точного замера контейнера
         };
 
-        const finalPos = {
+        const positions = {
             1: { x: 0, y: 0 },
             6: { x: 0, y: Math.PI },
             3: { x: 0, y: -Math.PI/2 },
@@ -160,24 +159,26 @@
         };
 
         function roll() {
+            if(isRolling) return;
             let bet = parseInt(document.getElementById('bet').value);
             if(bet > balance || bet <= 0) return alert("Мало кэша!");
             
             balance -= bet; 
             document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
             document.getElementById('roll-btn').disabled = true;
+            isRolling = true;
 
             const res = Math.floor(Math.random() * 6) + 1;
-            const startTime = performance.now();
             const duration = 2000;
+            const startTime = performance.now();
             const startX = cube.rotation.x, startY = cube.rotation.y, startZ = cube.rotation.z;
-            const target = finalPos[res];
-            const extra = Math.PI * 12; // Много оборотов
+            const target = positions[res];
+            const extra = Math.PI * 10;
 
             function update(time) {
                 const elapsed = time - startTime;
                 const t = Math.min(elapsed / duration, 1);
-                const ease = 1 - Math.pow(1 - t, 4); // Плавная остановка
+                const ease = 1 - Math.pow(1 - t, 4);
 
                 cube.rotation.x = startX + (target.x + extra - startX) * ease;
                 cube.rotation.y = startY + (target.y + extra - startY) * ease;
@@ -185,6 +186,7 @@
 
                 if (t < 1) requestAnimationFrame(update);
                 else {
+                    isRolling = false;
                     const isEven = res % 2 === 0;
                     const won = (currentChoice === 'even' && isEven) || (currentChoice === 'odd' && !isEven);
                     if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
@@ -206,7 +208,7 @@
         function addHistory(n, c) {
             const h = document.getElementById('history');
             const div = document.createElement('div');
-            div.style.cssText = `background:#000; border:2px solid ${c}; color:${c}; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:900;`;
+            div.style.cssText = `background:#000; border:2.5px solid ${c}; color:${c}; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900;`;
             div.innerText = n; h.prepend(div);
             if(h.children.length > 4) h.lastChild.remove();
         }
