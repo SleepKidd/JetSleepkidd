@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — PRESTIGE</title>
+    <title>JET SLEEPKIDD — PRESTIGE RU</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { 
@@ -45,10 +45,9 @@
             font-size: 32px; color: var(--primary); display: block; 
             text-shadow: 0 0 15px var(--primary); 
             position: relative;
-            animation: hyperGlitch 1.5s infinite; /* Очень частый вжух */
+            animation: hyperGlitch 1.5s infinite;
         }
 
-        /* Эффект RGB сплита при глитче */
         .logo-box .top::before, .logo-box .top::after {
             content: 'JET'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;
         }
@@ -82,10 +81,11 @@
 
         .btn-go { 
             background: linear-gradient(180deg, var(--primary), #8a0db8); 
-            border: none; color: #fff; padding: 22px; border-radius: 18px; 
+            border: none; color: #fff; padding: 22px; border-radius: 20px; 
             font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; 
-            font-size: 1.6rem; transition: 0.3s;
+            font-size: 1.8rem; transition: 0.3s;
         }
+        .btn-go:active { transform: scale(0.96); }
 
         input { 
             background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); 
@@ -112,9 +112,8 @@
             text-decoration: none; color: #fff; backdrop-filter: blur(15px);
         }
         .game-card:hover { 
-            border-color: var(--primary); transform: translateY(-10px) scale(1.02); 
-            box-shadow: 0 0 30px rgba(188, 19, 254, 0.3);
-            background: rgba(20, 20, 20, 0.8);
+            border-color: var(--primary); transform: translateY(-10px); 
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.2);
         }
         
         .preview { 
@@ -127,7 +126,7 @@
             text-transform: uppercase; font-weight: 900; transition: 0.3s; 
             letter-spacing: 1px; 
         }
-        .logout:hover { color: var(--lose); letter-spacing: 3px; }
+        .logout:hover { color: var(--lose); letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -141,36 +140,36 @@
     </div>
 
     <div class="container">
-        <!-- ВХОД -->
+        <!-- ВХОД РУССКИЙ -->
         <div id="scr-auth">
-            <input type="text" id="log" placeholder="LOGIN">
-            <input type="password" id="pas" placeholder="PASSWORD">
-            <button class="btn-go" onclick="login()">ENTER SYSTEM</button>
+            <input type="text" id="log" placeholder="ЛОГИН">
+            <input type="password" id="pas" placeholder="ПАРОЛЬ">
+            <button class="btn-go" onclick="login()">ВОЙТИ</button>
         </div>
 
-        <!-- ЛОББИ -->
+        <!-- ЛОББИ РУССКИЙ -->
         <div id="scr-lobby" style="display:none; width: 100%;">
             <div class="user-bar">
                 <div>
                     <small style="color: #666; display: block; font-size: 0.8rem; font-weight: 900;">ВАШЕ ИМЯ</small>
-                    <span id="u-name" style="font-weight: 900; font-size: 1.6rem; color: var(--primary); text-shadow: 0 0 10px rgba(188, 19, 254, 0.4);">---</span>
+                    <span id="u-name" style="font-weight: 900; font-size: 1.6rem; color: var(--primary);">---</span>
                 </div>
-                <div style="color: var(--win); font-weight: 900; font-size: 2.2rem; text-shadow: 0 0 15px rgba(0,255,136,0.3);" id="u-bal">0₽</div>
+                <div style="color: var(--win); font-weight: 900; font-size: 2.2rem;" id="u-bal">0₽</div>
             </div>
 
             <div class="games-grid">
                 <a href="jet.html" class="game-card">
                     <div class="preview">🚀</div>
                     <div style="padding:35px;">
-                        <h3 style="margin:0; font-size:2rem; color:var(--primary); text-transform: uppercase;">JET ENGINE</h3>
-                        <p style="color:#777; font-size:1rem; margin-top:10px;">Множители до 500x. Идеальная плавность.</p>
+                        <h3 style="margin:0; font-size:2rem; color:var(--primary);">JET GAME</h3>
+                        <p style="color:#777; font-size:1rem; margin-top:10px;">Множители до 500x. Полетели!</p>
                     </div>
                 </a>
                 <a href="mines.html" class="game-card">
                     <div class="preview">💣</div>
                     <div style="padding:35px;">
-                        <h3 style="margin:0; font-size:2rem; color:var(--primary); text-transform: uppercase;">MINES PRO</h3>
-                        <p style="color:#777; font-size:1rem; margin-top:10px;">25 секторов риска. Чистый путь к победе.</p>
+                        <h3 style="margin:0; font-size:2rem; color:var(--primary);">MINES PRO</h3>
+                        <p style="color:#777; font-size:1rem; margin-top:10px;">Найди путь сквозь 25 секторов.</p>
                     </div>
                 </a>
             </div>
