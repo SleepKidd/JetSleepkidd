@@ -3,52 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES SLEEPKIDD — 8K MONOLITH</title>
+    <title>CUBES SLEEPKIDD — 8K SUPREME</title>
     <link href="https://googleapis.com" rel="stylesheet">
-    <!-- THREE.JS CORE -->
+    <!-- Подключаем Three.js -->
     <script src="https://cloudflare.com"></script>
     <style>
-        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; }
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
 
-        .logo-box { margin: 35px 0 10px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
+        .logo-box { margin: 30px 0 10px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
         .logo-box .top { font-size: 26px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 2s infinite; }
         .logo-box .bot { font-size: 42px; color: #fff; letter-spacing: -2px; }
         @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
 
-        .container { width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.98); border: 2.5px solid var(--primary); border-radius: 45px; padding: 25px; text-align: center; box-shadow: 0 0 60px rgba(188, 19, 254, 0.4); backdrop-filter: blur(25px); position: relative; }
+        .container { width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.98); border: 2.5px solid var(--primary); border-radius: 45px; padding: 20px; text-align: center; box-shadow: 0 0 60px rgba(188, 19, 254, 0.5); backdrop-filter: blur(25px); position: relative; z-index: 10; }
         
         .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
-        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 20px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
+        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 10px 20px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
 
         .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; height: 45px; }
-        .bal-val { color: var(--win); font-weight: 900; font-size: 2.4rem; margin-bottom: 10px; }
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2.4rem; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,255,136,0.3); }
 
-        /* Контейнер для WebGL */
-        #dice-view { width: 100%; height: 240px; margin: 5px 0; border-radius: 30px; position: relative; }
+        /* КОНТЕЙНЕР ДЛЯ КУБИКА */
+        #dice-container { width: 100%; height: 230px; margin: 5px 0; background: transparent; cursor: grab; }
         
         .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 18px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
         .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 18px; border-radius: 18px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; font-size: 0.9rem; }
+        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 18px; border-radius: 18px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; transition: 0.2s; }
         .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.15); box-shadow: 0 0 20px rgba(188, 19, 254, 0.3); }
+        
         .main-btn { width: 100%; height: 85px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 25px; font-weight: 900; font-size: 2.2rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
         .main-btn:active { transform: scale(0.96); }
     </style>
 </head>
 <body>
 
-    <div class="logo-box">
-        <span class="top">CUBES</span>
-        <span class="bot">SLEEPKIDD</span>
-    </div>
+    <div class="logo-box"><span class="top">CUBES</span><span class="bot">SLEEPKIDD</span></div>
 
     <div class="container">
         <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
         <div id="history" class="history-line"></div>
         <div class="bal-val"><span id="u-bal">0</span> ₽</div>
 
-        <div id="dice-view"></div>
+        <!-- КАНВАС WebGL -->
+        <div id="dice-container"></div>
 
         <input type="number" id="bet" class="bet-input" value="50">
         <div class="choice-grid">
@@ -62,20 +61,19 @@
         let balance, user, users, currentChoice = 'even';
         let scene, camera, renderer, cube, isRolling = false;
 
-        // Генерация текстуры грани (8K Style)
-        function generateFace(num) {
+        // 1. Генерация 8K текстур
+        function getDiceTexture(num) {
             const canvas = document.createElement('canvas');
             canvas.width = 1024; canvas.height = 1024;
             const ctx = canvas.getContext('2d');
-            
-            // Заливка белым
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0,0,1024,1024);
 
-            // Мягкое скругление углов текстурой (имитация фаски)
-            ctx.strokeStyle = "#f0f0f0";
-            ctx.lineWidth = 40;
-            ctx.strokeRect(20, 20, 984, 984);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            // Фаска (скругление) в текстуре
+            ctx.strokeStyle = "#e0e0e0";
+            ctx.lineWidth = 60;
+            ctx.strokeRect(30, 30, 964, 964);
 
             const c = 512, l = 260, r = 764, t = 260, b = 764;
             const dots = {
@@ -87,73 +85,74 @@
                 6: [[l, t], [r, t], [l, c], [r, c], [l, b], [r, b]]
             };
 
-            ctx.fillStyle = (num === 1) ? "#ff3b30" : "#111111";
+            ctx.fillStyle = (num === 1) ? "#ff3b30" : "#1a1a1a";
             dots[num].forEach(d => {
                 ctx.beginPath();
                 ctx.arc(d[0], d[1], num === 1 ? 110 : 85, 0, Math.PI * 2);
                 ctx.fill();
             });
 
-            const tex = new THREE.CanvasTexture(canvas);
-            tex.anisotropy = 16;
-            return tex;
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.anisotropy = 16;
+            return texture;
         }
 
+        // 2. Инициализация 3D
         function init3D() {
-            const el = document.getElementById('dice-view');
+            const container = document.getElementById('dice-container');
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(35, el.offsetWidth / el.offsetHeight, 0.1, 1000);
+            camera = new THREE.PerspectiveCamera(40, container.offsetWidth / container.offsetHeight, 0.1, 1000);
             
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(el.offsetWidth, el.offsetHeight);
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
-            el.appendChild(renderer.domElement);
+            container.appendChild(renderer.domElement);
 
-            // Элитный свет
+            // Освещение (Elite)
             scene.add(new THREE.AmbientLight(0xffffff, 1.4));
-            const light = new THREE.DirectionalLight(0xffffff, 0.6);
-            light.position.set(5, 5, 5);
-            scene.add(light);
+            const pointLight = new THREE.PointLight(0xffffff, 1.2);
+            pointLight.position.set(5, 5, 5);
+            scene.add(pointLight);
+            
+            const rimLight = new THREE.PointLight(0xbc13fe, 1.5); // Подсветка от рамки
+            rimLight.position.set(-5, -5, 5);
+            scene.add(rimLight);
 
-            // Создаем ОДИН монолитный меш (BoxGeometry не имеет дыр)
+            // Монолитная геометрия (Box)
             const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
             const materials = [
-                new THREE.MeshStandardMaterial({ map: generateFace(3) }), // right
-                new THREE.MeshStandardMaterial({ map: generateFace(4) }), // left
-                new THREE.MeshStandardMaterial({ map: generateFace(2) }), // top
-                new THREE.MeshStandardMaterial({ map: generateFace(5) }), // bottom
-                new THREE.MeshStandardMaterial({ map: generateFace(1) }), // front
-                new THREE.MeshStandardMaterial({ map: generateFace(6) })  // back
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(3) }), 
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(4) }), 
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(2) }), 
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(5) }), 
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(1) }), 
+                new THREE.MeshStandardMaterial({ map: getDiceTexture(6) })
             ];
 
             cube = new THREE.Mesh(geometry, materials);
             scene.add(cube);
             camera.position.z = 8.5;
+            cube.rotation.set(0.4, 0.4, 0);
 
             function animate() {
                 requestAnimationFrame(animate);
                 if (!isRolling) {
                     cube.rotation.y += 0.003;
-                    cube.rotation.x += 0.002;
                 }
                 renderer.render(scene, camera);
             }
             animate();
         }
 
-        const rots = {
-            1: { x: 0, y: 0 }, 6: { x: 0, y: Math.PI },
-            3: { x: 0, y: -Math.PI/2 }, 4: { x: 0, y: Math.PI/2 },
-            2: { x: Math.PI/2, y: 0 }, 5: { x: -Math.PI/2, y: 0 }
-        };
+        // 3. Логика игры
+        const rots = { 1: {x:0,y:0}, 6: {x:0,y:Math.PI}, 3: {x:0,y:-Math.PI/2}, 4: {x:0,y:Math.PI/2}, 2: {x:Math.PI/2,y:0}, 5: {x:-Math.PI/2,y:0} };
 
         function roll() {
             if (isRolling) return;
             let bet = parseInt(document.getElementById('bet').value);
             if (bet > balance || bet <= 0) return alert("Мало кэша!");
 
-            balance -= bet; 
-            document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
+            balance -= bet; updateUI();
             isRolling = true;
             document.getElementById('roll-btn').disabled = true;
 
@@ -176,8 +175,7 @@
                     const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
                     if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
                     else { addHistory(res, '#ff4d4d'); }
-                    document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
-                    save();
+                    updateUI(); save();
                     document.getElementById('roll-btn').disabled = false;
                 }
             }
@@ -193,18 +191,19 @@
         function addHistory(n, c) {
             const h = document.getElementById('history');
             const div = document.createElement('div');
-            div.style.cssText = `background:#000; border:2.5px solid ${c}; color:${c}; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:900;`;
+            div.style.cssText = `background:#000; border:2px solid ${c}; color:${c}; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:900;`;
             div.innerText = n; h.prepend(div);
             if(h.children.length > 4) h.lastChild.remove();
         }
 
+        function updateUI() { document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString(); }
         function save() { if(users[user]) { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); } }
 
         window.onload = () => {
             user = localStorage.getItem('current_user') || 'GUEST';
             users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
             balance = users[user].bal;
-            document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
+            updateUI();
             init3D();
         };
     </script>
