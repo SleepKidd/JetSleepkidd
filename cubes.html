@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CUBES SLEEPKIDD — 8K SUPREME</title>
     <link href="https://googleapis.com" rel="stylesheet">
-    <!-- Подключаем Three.js -->
-    <script src="https://cloudflare.com"></script>
+    <!-- САМАЯ СТАБИЛЬНАЯ ВЕРСИЯ THREE.JS -->
+    <script src="https://jsdelivr.net"></script>
     <style>
-        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; }
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
+        body { background: #000; color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
 
         .logo-box { margin: 30px 0 10px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
         .logo-box .top { font-size: 26px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 2s infinite; }
@@ -18,23 +18,18 @@
         @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
 
         .container { width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.98); border: 2.5px solid var(--primary); border-radius: 45px; padding: 20px; text-align: center; box-shadow: 0 0 60px rgba(188, 19, 254, 0.5); backdrop-filter: blur(25px); position: relative; z-index: 10; }
-        
         .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
         .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 10px 20px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
 
-        .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; height: 45px; }
-        .bal-val { color: var(--win); font-weight: 900; font-size: 2.4rem; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,255,136,0.3); }
-
-        /* КОНТЕЙНЕР ДЛЯ КУБИКА */
-        #dice-container { width: 100%; height: 230px; margin: 5px 0; background: transparent; cursor: grab; }
+        /* МЕСТО ДЛЯ КУБА */
+        #dice-view { width: 100%; height: 250px; margin: 5px 0; background: transparent; position: relative; }
         
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2.4rem; margin-bottom: 10px; }
         .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 18px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
         .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 18px; border-radius: 18px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; transition: 0.2s; }
+        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 18px; border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; font-family: 'Orbitron'; }
         .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.15); box-shadow: 0 0 20px rgba(188, 19, 254, 0.3); }
-        
-        .main-btn { width: 100%; height: 85px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 25px; font-weight: 900; font-size: 2.2rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
-        .main-btn:active { transform: scale(0.96); }
+        .main-btn { width: 100%; height: 85px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 25px; font-weight: 900; font-size: 2.2rem; text-transform: uppercase; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -43,11 +38,9 @@
 
     <div class="container">
         <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
-        <div id="history" class="history-line"></div>
         <div class="bal-val"><span id="u-bal">0</span> ₽</div>
 
-        <!-- КАНВАС WebGL -->
-        <div id="dice-container"></div>
+        <div id="dice-view"></div>
 
         <input type="number" id="bet" class="bet-input" value="50">
         <div class="choice-grid">
@@ -61,98 +54,75 @@
         let balance, user, users, currentChoice = 'even';
         let scene, camera, renderer, cube, isRolling = false;
 
-        // 1. Генерация 8K текстур
-        function getDiceTexture(num) {
+        function createFace(num) {
             const canvas = document.createElement('canvas');
-            canvas.width = 1024; canvas.height = 1024;
+            canvas.width = 512; canvas.height = 512;
             const ctx = canvas.getContext('2d');
-
             ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, 1024, 1024);
+            ctx.fillRect(0, 0, 512, 512);
 
-            // Фаска (скругление) в текстуре
-            ctx.strokeStyle = "#e0e0e0";
-            ctx.lineWidth = 60;
-            ctx.strokeRect(30, 30, 964, 964);
-
-            const c = 512, l = 260, r = 764, t = 260, b = 764;
+            const c = 256, l = 120, r = 392, t = 120, b = 392;
             const dots = {
-                1: [[c, c]],
-                2: [[l, t], [r, b]],
-                3: [[l, t], [c, c], [r, b]],
-                4: [[l, t], [r, t], [l, b], [r, b]],
-                5: [[l, t], [r, t], [c, c], [l, b], [r, b]],
+                1: [[c, c]], 2: [[l, t], [r, b]], 3: [[l, t], [c, c], [r, b]],
+                4: [[l, t], [r, t], [l, b], [r, b]], 5: [[l, t], [r, t], [c, c], [l, b], [r, b]],
                 6: [[l, t], [r, t], [l, c], [r, c], [l, b], [r, b]]
             };
 
-            ctx.fillStyle = (num === 1) ? "#ff3b30" : "#1a1a1a";
+            ctx.fillStyle = (num === 1) ? "#ff3b30" : "#111";
             dots[num].forEach(d => {
                 ctx.beginPath();
-                ctx.arc(d[0], d[1], num === 1 ? 110 : 85, 0, Math.PI * 2);
+                ctx.arc(d[0], d[1], num === 1 ? 60 : 45, 0, Math.PI * 2);
                 ctx.fill();
             });
-
-            const texture = new THREE.CanvasTexture(canvas);
-            texture.anisotropy = 16;
-            return texture;
+            return new THREE.CanvasTexture(canvas);
         }
 
-        // 2. Инициализация 3D
-        function init3D() {
-            const container = document.getElementById('dice-container');
+        function init() {
+            const el = document.getElementById('dice-view');
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(40, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-            
+            camera = new THREE.PerspectiveCamera(40, el.offsetWidth / el.offsetHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.offsetWidth, container.offsetHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
+            renderer.setSize(el.offsetWidth, el.offsetHeight);
+            el.appendChild(renderer.domElement);
 
-            // Освещение (Elite)
-            scene.add(new THREE.AmbientLight(0xffffff, 1.4));
-            const pointLight = new THREE.PointLight(0xffffff, 1.2);
-            pointLight.position.set(5, 5, 5);
-            scene.add(pointLight);
-            
-            const rimLight = new THREE.PointLight(0xbc13fe, 1.5); // Подсветка от рамки
-            rimLight.position.set(-5, -5, 5);
-            scene.add(rimLight);
+            const light = new THREE.AmbientLight(0xffffff, 1.8);
+            scene.add(light);
 
-            // Монолитная геометрия (Box)
             const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
             const materials = [
-                new THREE.MeshStandardMaterial({ map: getDiceTexture(3) }), 
-                new THREE.MeshStandardMaterial({ map: getDiceTexture(4) }), 
-                new THREE.MeshStandardMaterial({ map: getDiceTexture(2) }), 
-                new THREE.MeshStandardMaterial({ map: getDiceTexture(5) }), 
-                new THREE.MeshStandardMaterial({ map: getDiceTexture(1) }), 
-                new THREE.MeshStandardMaterial({ map: getDiceTexture(6) })
+                new THREE.MeshLambertMaterial({ map: createFace(3) }),
+                new THREE.MeshLambertMaterial({ map: createFace(4) }),
+                new THREE.MeshLambertMaterial({ map: createFace(2) }),
+                new THREE.MeshLambertMaterial({ map: createFace(5) }),
+                new THREE.MeshLambertMaterial({ map: createFace(1) }),
+                new THREE.MeshLambertMaterial({ map: createFace(6) })
             ];
 
             cube = new THREE.Mesh(geometry, materials);
             scene.add(cube);
-            camera.position.z = 8.5;
-            cube.rotation.set(0.4, 0.4, 0);
+            camera.position.z = 8;
+            cube.rotation.set(0.5, 0.5, 0);
 
             function animate() {
                 requestAnimationFrame(animate);
-                if (!isRolling) {
-                    cube.rotation.y += 0.003;
-                }
+                if(!isRolling) cube.rotation.y += 0.005;
                 renderer.render(scene, camera);
             }
             animate();
         }
 
-        // 3. Логика игры
-        const rots = { 1: {x:0,y:0}, 6: {x:0,y:Math.PI}, 3: {x:0,y:-Math.PI/2}, 4: {x:0,y:Math.PI/2}, 2: {x:Math.PI/2,y:0}, 5: {x:-Math.PI/2,y:0} };
+        const rots = { 
+            1: {x:0, y:0}, 6: {x:0, y:Math.PI}, 3: {x:0, y:-Math.PI/2}, 
+            4: {x:0, y:Math.PI/2}, 2: {x:Math.PI/2, y:0}, 5: {x:-Math.PI/2, y:0} 
+        };
 
         function roll() {
-            if (isRolling) return;
+            if(isRolling) return;
             let bet = parseInt(document.getElementById('bet').value);
-            if (bet > balance || bet <= 0) return alert("Мало кэша!");
-
-            balance -= bet; updateUI();
+            if(bet > balance || bet <= 0) return alert("Мало кэша!");
+            
+            balance -= bet; 
+            document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
             isRolling = true;
             document.getElementById('roll-btn').disabled = true;
 
@@ -160,12 +130,11 @@
             const startTime = performance.now();
             const startX = cube.rotation.x, startY = cube.rotation.y;
             const target = rots[res];
-            const extra = Math.PI * 12;
+            const extra = Math.PI * 10;
 
             function update(time) {
                 const t = Math.min((time - startTime) / 2000, 1);
                 const ease = 1 - Math.pow(1 - t, 4);
-
                 cube.rotation.x = startX + (target.x + extra - startX) * ease;
                 cube.rotation.y = startY + (target.y + extra - startY) * ease;
 
@@ -173,9 +142,9 @@
                 else {
                     isRolling = false;
                     const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
-                    if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
-                    else { addHistory(res, '#ff4d4d'); }
-                    updateUI(); save();
+                    if(won) balance += bet * 1.95;
+                    document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
+                    save();
                     document.getElementById('roll-btn').disabled = false;
                 }
             }
@@ -188,23 +157,19 @@
             document.getElementById('btn-odd').classList.toggle('active', t === 'odd');
         }
 
-        function addHistory(n, c) {
-            const h = document.getElementById('history');
-            const div = document.createElement('div');
-            div.style.cssText = `background:#000; border:2px solid ${c}; color:${c}; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:900;`;
-            div.innerText = n; h.prepend(div);
-            if(h.children.length > 4) h.lastChild.remove();
+        function save() {
+            if(users[user]) {
+                users[user].bal = balance;
+                localStorage.setItem('users_jet', JSON.stringify(users));
+            }
         }
-
-        function updateUI() { document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString(); }
-        function save() { if(users[user]) { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); } }
 
         window.onload = () => {
             user = localStorage.getItem('current_user') || 'GUEST';
             users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
             balance = users[user].bal;
-            updateUI();
-            init3D();
+            document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
+            init();
         };
     </script>
 </body>
