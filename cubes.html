@@ -3,27 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES SLEEPKIDD — REAL 3D</title>
+    <title>CUBES SLEEPKIDD</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #bc13fe; --dice-white: #fdfdfd; --dot-color: #111; }
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; --dice: #ffffff; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
         body { 
-            background: #000; color: #fff; font-family: 'Orbitron', sans-serif; 
+            background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; 
             margin: 0; display: flex; flex-direction: column; align-items: center; 
-            min-height: 100vh; overflow: hidden; position: relative;
+            min-height: 100vh; overflow-x: hidden; position: relative;
         }
 
-        /* LOGO */
+        .aura {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(188, 19, 254, 0.05) 0%, transparent 70%);
+            z-index: -1;
+        }
+
         .logo-box { margin: 35px 0 15px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
         .logo-box .top { font-size: 26px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 2s infinite; }
         .logo-box .bot { font-size: 42px; color: #fff; letter-spacing: -2px; }
         @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
 
         .container { 
-            width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.95); 
-            border: 2px solid var(--primary); border-radius: 45px; padding: 20px; 
+            width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.98); 
+            border: 2px solid var(--primary); border-radius: 45px; padding: 25px; 
             text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.4); 
             backdrop-filter: blur(20px);
         }
@@ -32,76 +38,62 @@
         .back-nav { text-decoration: none; color: #fff; font-size: 0.7rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
 
         .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; height: 45px; }
-        .hist-item { background: #000; border: 2px solid var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; color: #00ff88; }
+        .hist-item { background: #000; border: 2px solid var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; }
 
-        .bal-val { color: #00ff88; font-weight: 900; font-size: 2.2rem; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,136,0.2); }
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2.2rem; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,136,0.2); }
 
-        /* --- REALISTIC MONOLITHIC DICE --- */
-        .scene { width: 100px; height: 100px; perspective: 1000px; margin: 30px auto 50px; }
+        /* --- ИДЕАЛЬНЫЙ 3D КУБИК 8K --- */
+        .scene { width: 100px; height: 100px; perspective: 1000px; margin: 30px auto 40px; }
         .cube { 
             width: 100%; height: 100%; position: relative; transform-style: preserve-3d; 
             transition: transform 1.5s cubic-bezier(0.2, 0.8, 0.3, 1.1);
             transform: rotateX(-20deg) rotateY(25deg);
         }
 
-        /* Сферическое ядро для закрытия углов */
+        /* Ядро, которое закрывает дыры на углах */
         .dice-core {
-            position: absolute; width: 90px; height: 90px; background: var(--dice-white);
-            top: 5px; left: 5px; border-radius: 35%; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: absolute; width: 96px; height: 96px; background: var(--dice);
+            top: 2px; left: 2px; border-radius: 30%; transform: translateZ(0px);
         }
 
         .face { 
             position: absolute; 
-            width: 104px; height: 104px; /* Нахлест для удаления щелей */
-            background: var(--dice-white); 
-            border-radius: 32px; /* Сильное скругление как на фото */
+            width: 100px; height: 100px; 
+            background: var(--dice); 
+            border-radius: 24px; 
             display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); 
-            padding: 18px; 
-            box-shadow: inset 0 0 25px rgba(0,0,0,0.05); /* Глубина пластика */
+            padding: 14px; 
+            /* Секрет монолита: outline и тень убирают щели */
+            outline: 1px solid var(--dice);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.06); 
             backface-visibility: hidden;
-            border: none;
         }
-
-        /* Цвета граней для имитации света с фото */
-        .f-1 { background: #ffffff; transform: rotateY(0deg) translateZ(50px); }
-        .f-6 { background: #e0e0e0; transform: rotateY(180deg) translateZ(50px); }
-        .f-3 { background: #eeeeee; transform: rotateY(90deg) translateZ(50px); }
-        .f-4 { background: #dcdcdc; transform: rotateY(-90deg) translateZ(50px); }
-        .f-2 { background: #f5f5f5; transform: rotateX(90deg) translateZ(50px); }
-        .f-5 { background: #cfcfcf; transform: rotateX(-90deg) translateZ(50px); }
         
         .dot { 
-            background: var(--dot-color); border-radius: 50%; width: 18px; height: 18px; 
+            background: #1a1a1a; border-radius: 50%; width: 18px; height: 18px; 
             align-self: center; justify-self: center; 
-            box-shadow: inset 2px 2px 3px rgba(0,0,0,0.6), 0 0 2px rgba(255,255,255,0.2); 
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3); 
         }
+        .f-1 .dot { background: #ff3b30; width: 28px; height: 28px; box-shadow: inset 0 0 8px rgba(0,0,0,0.2); }
+
+        .f-1 { transform: rotateY(0deg) translateZ(50px); }
+        .f-6 { transform: rotateY(180deg) translateZ(50px); }
+        .f-3 { transform: rotateY(90deg) translateZ(50px); }
+        .f-4 { transform: rotateY(-90deg) translateZ(50px); }
+        .f-2 { transform: rotateX(90deg) translateZ(50px); }
+        .f-5 { transform: rotateX(-90deg) translateZ(50px); }
 
         /* UI */
-        .bet-input { 
-            width: 100%; background: #111; border: 2px solid #333; color: #fff; 
-            padding: 16px; border-radius: 20px; font-size: 1.5rem; font-weight: 900; 
-            text-align: center; margin-bottom: 15px; font-family: 'Orbitron';
-        }
-        
+        .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 16px; border-radius: 20px; font-size: 1.5rem; font-weight: 900; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
         .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .choice-btn { 
-            background: #000; border: 2px solid #222; color: #fff; padding: 15px; 
-            border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; 
-            font-family: 'Orbitron'; font-size: 0.9rem;
-        }
+        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 15px; border-radius: 18px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; font-size: 0.9rem; }
         .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); }
-
-        .main-btn { 
-            width: 100%; height: 80px; 
-            background: linear-gradient(180deg, var(--primary), #8a0db8); 
-            color: #fff; border: none; border-radius: 22px; 
-            font-weight: 900; font-size: 1.8rem; text-transform: uppercase; 
-            cursor: pointer; transition: 0.1s;
-        }
+        .main-btn { width: 100%; height: 80px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 22px; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
         .main-btn:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
+    <div class="aura"></div>
     <div class="logo-box"><span class="top">CUBES</span><span class="bot">SLEEPKIDD</span></div>
 
     <div class="container">
@@ -112,28 +104,22 @@
         <div class="scene">
             <div class="cube" id="cube">
                 <div class="dice-core"></div>
-                <!-- 1 -->
                 <div class="face f-1"><div class="dot" style="grid-area: 2/2"></div></div>
-                <!-- 6 -->
                 <div class="face f-6">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
                     <div class="dot" style="grid-area: 2/1"></div><div class="dot" style="grid-area: 2/3"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
-                <!-- 3 -->
                 <div class="face f-3">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 2/2"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
-                <!-- 4 -->
                 <div class="face f-4">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
-                <!-- 2 -->
                 <div class="face f-2">
                     <div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 3/1"></div>
                 </div>
-                <!-- 5 -->
                 <div class="face f-5">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
                     <div class="dot" style="grid-area: 2/2"></div>
@@ -143,12 +129,10 @@
         </div>
 
         <input type="number" id="bet" class="bet-input" value="50">
-
         <div class="choice-grid">
             <button class="choice-btn active" id="btn-even" onclick="setChoice('even')">ЧЕТНОЕ</button>
             <button class="choice-btn" id="btn-odd" onclick="setChoice('odd')">НЕЧЕТНОЕ</button>
         </div>
-
         <button class="main-btn" id="roll-btn" onclick="roll()">КРУТИТЬ</button>
     </div>
 
@@ -173,13 +157,11 @@
             let bet = parseInt(document.getElementById('bet').value);
             if(bet > balance || bet <= 0) return alert("Мало денег!");
             balance -= bet; updateUI();
-            const btn = document.getElementById('roll-btn');
-            btn.disabled = true;
+            const btn = document.getElementById('roll-btn'); btn.disabled = true;
 
             const res = Math.floor(Math.random() * 6) + 1;
             const cube = document.getElementById('cube');
             const exX = 360 * 4; const exY = 360 * 4;
-            
             cube.style.transform = `rotateX(${rots[res].x + exX}deg) rotateY(${rots[res].y + exY}deg)`;
 
             setTimeout(() => {
@@ -187,7 +169,6 @@
                 if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
                 else { addHistory(res, '#ff4d4d'); }
                 updateUI(); saveDB(); btn.disabled = false;
-                
                 setTimeout(() => {
                     cube.style.transition = 'none';
                     cube.style.transform = `rotateX(${rots[res].x}deg) rotateY(${rots[res].y}deg)`;
@@ -199,9 +180,8 @@
         function addHistory(n, c) {
             const h = document.getElementById('history');
             const div = document.createElement('div');
-            div.className = 'hist-item'; div.style.borderColor = c; div.style.color = c;
-            div.innerText = n;
-            h.prepend(div);
+            div.style.cssText = `background:#000; border:2px solid ${c}; color:${c}; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:900;`;
+            div.innerText = n; h.prepend(div);
             if(h.children.length > 4) h.lastChild.remove();
         }
 
