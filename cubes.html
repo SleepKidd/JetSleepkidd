@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES SLEEPKIDD — 8K SUPREME</title>
+    <title>CUBES SLEEPKIDD — 8K PRESTIGE</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #bc13fe; --bg: #000000; --win: #00ff88; --lose: #ff4d4d; }
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
         body { 
@@ -15,101 +15,95 @@
             min-height: 100vh; overflow-x: hidden; position: relative;
         }
 
-        /* ЭЛИТНЫЙ ЛОГОТИП */
-        .logo-box { margin: 40px 0 20px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
-        .logo-box .top { 
-            font-size: 28px; color: var(--primary); display: block; 
-            text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 2s infinite; 
+        .aura {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(188, 19, 254, 0.05) 0%, transparent 70%);
+            z-index: -1;
         }
-        .logo-box .bot { font-size: 44px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
-        @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-4px, 1px); } 94% { transform: translate(3px, -1px); } }
+
+        /* ЛОГОТИП С ГЛИТЧЕМ */
+        .logo-box { margin: 35px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
+        .logo-box .top { font-size: 26px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 2s infinite; }
+        .logo-box .bot { font-size: 42px; color: #fff; letter-spacing: -2px; }
+        @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
 
         .container { 
-            width: 92%; max-width: 420px; background: rgba(10, 10, 10, 0.95); 
-            border: 3px solid var(--primary); border-radius: 45px; padding: 25px; 
-            text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.3); 
+            width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.98); 
+            border: 2px solid var(--primary); border-radius: 45px; padding: 20px; 
+            text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.4); 
             backdrop-filter: blur(20px);
         }
         
-        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 15px; }
-        .back-nav { 
-            text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; 
-            padding: 8px 18px; border-radius: 12px; background: #111; 
-            border: 1.5px solid var(--primary); text-transform: uppercase; 
-        }
+        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
+        .back-nav { text-decoration: none; color: #fff; font-size: 0.7rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
 
-        .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; height: 45px; }
-        .hist-item { background: #000; border: 2.2px solid var(--primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; }
+        .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; height: 45px; }
+        .hist-item { background: #000; border: 2px solid var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; }
 
-        .bal-val { color: var(--win); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; }
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2.2rem; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,136,0.2); }
 
-        /* --- SUPREME MONOLITH DICE --- */
-        .scene { width: 100px; height: 100px; perspective: 1000px; margin: 50px auto; }
+        /* --- MONOLITHIC 3D DICE --- */
+        .scene { width: 100px; height: 100px; perspective: 1000px; margin: 30px auto 40px; }
         .cube { 
             width: 100%; height: 100%; position: relative; transform-style: preserve-3d; 
-            transition: transform 1.5s cubic-bezier(0.17, 0.67, 0.1, 1); 
-            transform: rotateX(-20deg) rotateY(25deg);
+            transition: transform 1.5s cubic-bezier(0.2, 0.8, 0.3, 1.1);
         }
-
-        /* Скрытое ядро, которое убирает дырки */
-        .cube::after {
-            content: ''; position: absolute; width: 98px; height: 98px; background: #fff;
-            transform: translate3d(1px, 1px, -49px); border-radius: 15px;
-        }
-
         .cube-face { 
-            position: absolute; width: 100px; height: 100px; 
-            background: #ffffff; border: none;
-            /* Outline заполняет стыки между гранями */
-            outline: 1px solid #ffffff;
-            border-radius: 20px; 
+            position: absolute; 
+            width: 102px; height: 102px; /* 102px для перекрытия щелей */
+            background: #fff; 
+            border-radius: 22px; 
             display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); 
-            padding: 12px; 
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.1); 
+            padding: 14px; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.08); 
             backface-visibility: hidden;
+            border: none;
         }
         
         .dot { 
-            background: #222; border-radius: 50%; width: 18px; height: 18px; 
+            background: #1a1a1a; border-radius: 50%; width: 18px; height: 18px; 
             align-self: center; justify-self: center; 
-            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.4); 
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3); 
         }
-        /* Красная единица */
-        .face-1 .dot { background: #ff3b30; width: 26px; height: 26px; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        /* Красная точка */
+        .f-1 .dot { background: #ff3b30; width: 28px; height: 28px; box-shadow: inset 0 0 8px rgba(0,0,0,0.2); }
 
-        .face-1 { transform: rotateY(0deg) translateZ(50px); }
-        .face-6 { transform: rotateY(180deg) translateZ(50px); }
-        .face-3 { transform: rotateY(90deg) translateZ(50px); }
-        .face-4 { transform: rotateY(-90deg) translateZ(50px); }
-        .face-2 { transform: rotateX(90deg) translateZ(50px); }
-        .face-5 { transform: rotateX(-90deg) translateZ(50px); }
+        /* Идеальные стыки */
+        .f-1 { transform: rotateY(0deg) translateZ(50px); }
+        .f-6 { transform: rotateY(180deg) translateZ(50px); }
+        .f-3 { transform: rotateY(90deg) translateZ(50px); }
+        .f-4 { transform: rotateY(-90deg) translateZ(50px); }
+        .f-2 { transform: rotateX(90deg) translateZ(50px); }
+        .f-5 { transform: rotateX(-90deg) translateZ(50px); }
 
-        /* УПРАВЛЕНИЕ */
+        /* UI */
         .bet-input { 
             width: 100%; background: #111; border: 2px solid #333; color: #fff; 
-            padding: 18px; border-radius: 20px; font-size: 1.6rem; font-weight: 900; 
-            text-align: center; margin-bottom: 20px; font-family: 'Orbitron';
+            padding: 16px; border-radius: 20px; font-size: 1.5rem; font-weight: 900; 
+            text-align: center; margin-bottom: 15px; font-family: 'Orbitron';
         }
         
-        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .choice-btn { 
-            background: #000; border: 2px solid #222; color: #fff; padding: 18px; 
+            background: #000; border: 2px solid #222; color: #fff; padding: 15px; 
             border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; 
-            font-family: 'Orbitron'; font-size: 1rem;
+            font-family: 'Orbitron'; font-size: 0.9rem;
         }
         .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); }
 
         .main-btn { 
-            width: 100%; height: 85px; 
+            width: 100%; height: 80px; 
             background: linear-gradient(180deg, var(--primary), #8a0db8); 
-            color: #fff; border: none; border-radius: 25px; 
-            font-weight: 900; font-size: 2rem; text-transform: uppercase; 
+            color: #fff; border: none; border-radius: 22px; 
+            font-weight: 900; font-size: 1.8rem; text-transform: uppercase; 
             cursor: pointer; transition: 0.1s;
         }
         .main-btn:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
+    <div class="aura"></div>
     <div class="logo-box"><span class="top">CUBES</span><span class="bot">SLEEPKIDD</span></div>
 
     <div class="container">
@@ -119,23 +113,23 @@
 
         <div class="scene">
             <div class="cube" id="cube">
-                <div class="cube-face face-1"><div class="dot" style="grid-area: 2/2"></div></div>
-                <div class="cube-face face-6">
+                <div class="cube-face f-1"><div class="dot" style="grid-area: 2/2"></div></div>
+                <div class="cube-face f-6">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
                     <div class="dot" style="grid-area: 2/1"></div><div class="dot" style="grid-area: 2/3"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
-                <div class="cube-face face-3">
+                <div class="cube-face f-3">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 2/2"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
-                <div class="cube-face face-4">
+                <div class="cube-face f-4">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
                 </div>
-                <div class="cube-face face-2">
+                <div class="cube-face f-2">
                     <div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 3/1"></div>
                 </div>
-                <div class="cube-face face-5">
+                <div class="cube-face f-5">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
                     <div class="dot" style="grid-area: 2/2"></div>
                     <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
@@ -155,7 +149,7 @@
 
     <script>
         let balance, user, users, currentChoice = 'even';
-        const rotations = { 1: {x:0, y:0}, 6: {x:0, y:180}, 3: {x:0, y:-90}, 4: {x:0, y:90}, 2: {x:-90, y:0}, 5: {x:90, y:0} };
+        const rots = { 1: {x:0, y:0}, 6: {x:0, y:180}, 3: {x:0, y:-90}, 4: {x:0, y:90}, 2: {x:-90, y:0}, 5: {x:90, y:0} };
 
         window.onload = () => {
             user = localStorage.getItem('current_user') || 'GUEST';
@@ -179,20 +173,21 @@
 
             const res = Math.floor(Math.random() * 6) + 1;
             const cube = document.getElementById('cube');
-            const exX = 360 * 3; const exY = 360 * 3;
+            const exX = 360 * 4; const exY = 360 * 4;
             
-            cube.style.transition = 'transform 1.5s cubic-bezier(0.17, 0.67, 0.1, 1)';
-            cube.style.transform = `rotateX(${rotations[res].x + exX}deg) rotateY(${rotations[res].y + exY}deg)`;
+            cube.style.transform = `rotateX(${rots[res].x + exX}deg) rotateY(${rots[res].y + exY}deg)`;
 
             setTimeout(() => {
                 const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
                 if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
                 else { addHistory(res, '#ff4d4d'); }
                 updateUI(); saveDB(); btn.disabled = false;
+                
                 setTimeout(() => {
                     cube.style.transition = 'none';
-                    cube.style.transform = `rotateX(${rotations[res].x}deg) rotateY(${rotations[res].y}deg)`;
-                }, 400);
+                    cube.style.transform = `rotateX(${rots[res].x}deg) rotateY(${rots[res].y}deg)`;
+                    setTimeout(() => cube.style.transition = '', 50);
+                }, 500);
             }, 1500);
         }
 
