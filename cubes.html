@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES SLEEPKIDD — THREE 8K</title>
+    <title>CUBES SLEEPKIDD</title>
     <link href="https://googleapis.com" rel="stylesheet">
+    <!-- Библиотека THREE.JS -->
     <script src="https://cloudflare.com"></script>
     <style>
         :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; }
@@ -16,41 +17,48 @@
         .logo-box .bot { font-size: 42px; color: #fff; letter-spacing: -2px; }
         @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
 
-        .container { width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.95); border: 2px solid var(--primary); border-radius: 45px; padding: 20px; text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.4); backdrop-filter: blur(20px); position: relative; }
+        .container { width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.98); border: 2.5px solid var(--primary); border-radius: 45px; padding: 20px; text-align: center; box-shadow: 0 0 60px rgba(188, 19, 254, 0.5); backdrop-filter: blur(25px); position: relative; }
         
         .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
-        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
+        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 10px 20px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
 
         .history-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; height: 45px; }
-        .bal-val { color: var(--win); font-weight: 900; font-size: 2.2rem; margin-bottom: 10px; }
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2.4rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0,255,136,0.3); }
 
         /* КОНТЕЙНЕР ДЛЯ THREE.JS */
-        #dice-container { width: 100%; height: 220px; margin: 5px 0; cursor: grab; position: relative; }
+        #dice-box { width: 100%; height: 230px; margin: 5px 0; cursor: grab; position: relative; }
         
-        .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 16px; border-radius: 20px; font-size: 1.5rem; font-weight: 900; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
+        .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 18px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
         .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 15px; border-radius: 18px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; font-size: 0.9rem; }
-        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); }
-        .main-btn { width: 100%; height: 80px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 22px; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer; }
+        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 18px; border-radius: 18px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; transition: 0.2s; }
+        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.15); box-shadow: 0 0 20px rgba(188, 19, 254, 0.3); }
+        
+        .main-btn { width: 100%; height: 85px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 25px; font-weight: 900; font-size: 2.2rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
+        .main-btn:active { transform: scale(0.96); }
     </style>
 </head>
 <body>
 
-    <div class="logo-box"><span class="top">CUBES</span><span class="bot">SLEEPKIDD</span></div>
+    <div class="logo-box">
+        <span class="top">CUBES</span>
+        <span class="bot">SLEEPKIDD</span>
+    </div>
 
     <div class="container">
         <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
         <div id="history" class="history-line"></div>
         <div class="bal-val"><span id="u-bal">0</span> ₽</div>
 
-        <!-- КУБИК ТУТ -->
-        <div id="dice-container"></div>
+        <!-- КАНВАС ДЛЯ 3D КУБИКА -->
+        <div id="dice-box"></div>
 
         <input type="number" id="bet" class="bet-input" value="50">
+        
         <div class="choice-grid">
             <button class="choice-btn active" id="btn-even" onclick="setChoice('even')">ЧЕТНОЕ</button>
             <button class="choice-btn" id="btn-odd" onclick="setChoice('odd')">НЕЧЕТНОЕ</button>
         </div>
+
         <button class="main-btn" id="roll-btn" onclick="roll()">КРУТИТЬ</button>
     </div>
 
@@ -58,69 +66,72 @@
         let balance, user, users, currentChoice = 'even';
         let scene, camera, renderer, cube;
 
-        function createDiceTexture(number) {
+        // ГЕНЕРАЦИЯ ТЕКСТУРЫ ГРАНИ (8K СТИЛЬ)
+        function getTexture(num) {
+            const size = 512;
             const canvas = document.createElement('canvas');
-            canvas.width = 512; canvas.height = 512;
+            canvas.width = size; canvas.height = size;
             const ctx = canvas.getContext('2d');
-            
-            // Фон грани с эффектом скругления
+
+            // Белый фон со скруглением
             ctx.fillStyle = "#ffffff";
             ctx.beginPath();
-            ctx.roundRect(10, 10, 492, 492, 80);
+            ctx.roundRect(10, 10, 492, 492, 90);
             ctx.fill();
 
-            // Координаты точек
-            const p = 512;
-            const center = p/2, l = p/4, r = p*0.75, t = p/4, b = p*0.75;
-            
+            // Точки
+            const c = size / 2, l = size / 4, r = size * 0.75, t = size / 4, b = size * 0.75;
             const dots = {
-                1: [[center, center]],
+                1: [[c, c]],
                 2: [[l, t], [r, b]],
-                3: [[l, t], [center, center], [r, b]],
+                3: [[l, t], [c, c], [r, b]],
                 4: [[l, t], [r, t], [l, b], [r, b]],
-                5: [[l, t], [r, t], [center, center], [l, b], [r, b]],
-                6: [[l, t], [r, t], [l, center], [r, center], [l, b], [r, b]]
+                5: [[l, t], [r, t], [c, c], [l, b], [r, b]],
+                6: [[l, t], [r, t], [l, c], [r, c], [l, b], [r, b]]
             };
 
-            ctx.fillStyle = number === 1 ? "#ff3b30" : "#111111";
-            dots[number].forEach(dot => {
+            ctx.fillStyle = (num === 1) ? "#ff3b30" : "#111111";
+            dots[num].forEach(d => {
                 ctx.beginPath();
-                ctx.arc(dot[0], dot[1], number === 1 ? 55 : 42, 0, Math.PI * 2);
+                ctx.arc(d[0], d[1], num === 1 ? 55 : 45, 0, Math.PI * 2);
                 ctx.fill();
             });
 
             return new THREE.CanvasTexture(canvas);
         }
 
+        // ИНИЦИАЛИЗАЦИЯ 3D
         function init3D() {
-            const container = document.getElementById('dice-container');
+            const box = document.getElementById('dice-box');
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(35, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            camera = new THREE.PerspectiveCamera(35, box.offsetWidth / box.offsetHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.offsetWidth, container.offsetHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
+            renderer.setSize(box.offsetWidth, box.offsetHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            box.appendChild(renderer.domElement);
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
-            scene.add(ambientLight);
+            const ambient = new THREE.AmbientLight(0xffffff, 1.5);
+            scene.add(ambient);
+            const sun = new THREE.DirectionalLight(0xffffff, 1);
+            sun.position.set(5, 5, 5);
+            scene.add(sun);
 
-            const pointLight = new THREE.PointLight(0xbc13fe, 1.5);
-            pointLight.position.set(5, 5, 5);
-            scene.add(pointLight);
-
-            const geometry = new THREE.BoxGeometry(2.2, 2.2, 2.2);
+            const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
             const materials = [
-                new THREE.MeshStandardMaterial({ map: createDiceTexture(3) }), // Right
-                new THREE.MeshStandardMaterial({ map: createDiceTexture(4) }), // Left
-                new THREE.MeshStandardMaterial({ map: createDiceTexture(2) }), // Top
-                new THREE.MeshStandardMaterial({ map: createDiceTexture(5) }), // Bottom
-                new THREE.MeshStandardMaterial({ map: createDiceTexture(1) }), // Front
-                new THREE.MeshStandardMaterial({ map: createDiceTexture(6) })  // Back
+                new THREE.MeshStandardMaterial({ map: getTexture(3) }),
+                new THREE.MeshStandardMaterial({ map: getTexture(4) }),
+                new THREE.MeshStandardMaterial({ map: getTexture(2) }),
+                new THREE.MeshStandardMaterial({ map: getTexture(5) }),
+                new THREE.MeshStandardMaterial({ map: getTexture(1) }),
+                new THREE.MeshStandardMaterial({ map: getTexture(6) })
             ];
 
             cube = new THREE.Mesh(geometry, materials);
             scene.add(cube);
-            camera.position.z = 8;
+            camera.position.z = 9;
+            
+            // Начальный поворот для красоты
+            cube.rotation.set(0.5, 0.5, 0);
             animate();
         }
 
@@ -129,17 +140,17 @@
             renderer.render(scene, camera);
         }
 
+        // ЛОГИКА ИГРЫ
         window.onload = () => {
             user = localStorage.getItem('current_user') || 'GUEST';
-            users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
+            const db = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
+            users = db;
             balance = users[user].bal;
             document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
             init3D();
-            // Начальный наклон для красоты
-            cube.rotation.set(0.4, 0.4, 0);
         };
 
-        const finalRots = {
+        const finalPos = {
             1: { x: 0, y: 0 },
             6: { x: 0, y: Math.PI },
             3: { x: 0, y: -Math.PI/2 },
@@ -154,38 +165,36 @@
             
             balance -= bet; 
             document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
-            const btn = document.getElementById('roll-btn');
-            btn.disabled = true;
+            document.getElementById('roll-btn').disabled = true;
 
             const res = Math.floor(Math.random() * 6) + 1;
             const startTime = performance.now();
             const duration = 2000;
-            const startRotX = cube.rotation.x, startRotY = cube.rotation.y, startRotZ = cube.rotation.z;
-            const target = finalRots[res];
-            const extra = Math.PI * 10; // 5 полных оборотов
+            const startX = cube.rotation.x, startY = cube.rotation.y, startZ = cube.rotation.z;
+            const target = finalPos[res];
+            const extra = Math.PI * 12; // Много оборотов
 
             function update(time) {
                 const elapsed = time - startTime;
                 const t = Math.min(elapsed / duration, 1);
-                const ease = 1 - Math.pow(1 - t, 4); // Quartic Out
+                const ease = 1 - Math.pow(1 - t, 4); // Плавная остановка
 
-                cube.rotation.x = startRotX + (target.x + extra - startRotX) * ease;
-                cube.rotation.y = startRotY + (target.y + extra - startRotY) * ease;
-                cube.rotation.z = startRotZ + (extra/2) * ease;
+                cube.rotation.x = startX + (target.x + extra - startX) * ease;
+                cube.rotation.y = startY + (target.y + extra - startY) * ease;
+                cube.rotation.z = startZ + (extra/2) * ease;
 
                 if (t < 1) requestAnimationFrame(update);
-                else finish(res, bet);
+                else {
+                    const isEven = res % 2 === 0;
+                    const won = (currentChoice === 'even' && isEven) || (currentChoice === 'odd' && !isEven);
+                    if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
+                    else { addHistory(res, '#ff4d4d'); }
+                    document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
+                    saveDB();
+                    document.getElementById('roll-btn').disabled = false;
+                }
             }
             requestAnimationFrame(update);
-        }
-
-        function finish(res, bet) {
-            const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
-            if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
-            else { addHistory(res, '#ff4d4d'); }
-            document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
-            saveDB();
-            document.getElementById('roll-btn').disabled = false;
         }
 
         function setChoice(t) {
@@ -206,4 +215,3 @@
     </script>
 </body>
 </html>
-
