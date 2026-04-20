@@ -7,7 +7,7 @@
     <link href="https://googleapis.com" rel="stylesheet">
     
     <style>
-        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --glass: rgba(255, 255, 255, 0.02); }
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; }
         * { box-sizing: border-box; outline: none; }
         body { background: #000; color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; position: relative; }
         
@@ -15,7 +15,6 @@
         .aura { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 800px; background: radial-gradient(circle, rgba(188, 19, 254, 0.08) 0%, transparent 70%); z-index: -1; animation: auraMove 15s infinite alternate ease-in-out; }
         @keyframes auraMove { from { transform: translate(-55%, -45%); } to { transform: translate(-45%, -55%); } }
 
-        /* ЛОГОТИП */
         .logo-box { margin: 60px 0 30px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; }
         .logo-box .top { font-size: 32px; color: var(--primary); display: block; text-shadow: 0 0 15px var(--primary); animation: hyperGlitch 1.5s infinite; }
         .logo-box .bot { font-size: 48px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
@@ -23,22 +22,40 @@
 
         .container { width: 95%; max-width: 850px; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; z-index: 10; }
 
-        /* ОКНО ВХОДА - ТЕПЕРЬ ВИДИМО СРАЗУ */
-        #scr-auth { width: 100%; max-width: 400px; background: rgba(10, 10, 10, 0.9); padding: 45px; border-radius: 50px; border: 2px solid var(--primary); text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.2); backdrop-filter: blur(30px); margin-top: 30px; }
-        .btn-google { background: #fff; color: #000; border: none; padding: 20px; border-radius: 18px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
-        .btn-google:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+        /* --- НОВАЯ КРАСИВАЯ КНОПКА GOOGLE --- */
+        #scr-auth { 
+            width: 100%; max-width: 400px; 
+            background: rgba(255, 255, 255, 0.03); 
+            padding: 50px 30px; border-radius: 40px; 
+            border: 1px solid rgba(188, 19, 254, 0.3); 
+            text-align: center; backdrop-filter: blur(20px); 
+            box-shadow: 0 0 40px rgba(188, 19, 254, 0.15);
+            margin-top: 30px;
+        }
+
+        .btn-google { 
+            background: #ffffff; color: #000; 
+            border: none; padding: 18px 25px; 
+            border-radius: 20px; font-weight: 900; 
+            width: 100%; cursor: pointer; 
+            text-transform: uppercase; font-size: 1rem; 
+            display: flex; align-items: center; justify-content: center; gap: 15px; 
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .btn-google:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(188, 19, 254, 0.4); }
+        .btn-google:active { transform: scale(0.95); }
+        
+        .google-icon { width: 24px; height: 24px; }
 
         /* ЛОББИ */
         #scr-lobby { display: none; width: 100%; }
-        .reveal { opacity: 0; transform: translateY(30px); animation: revealUp 0.6s forwards; }
-        @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
-
-        .user-bar { width: 100%; background: var(--glass); padding: 25px 40px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; backdrop-filter: blur(25px); }
-        .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; width: 100%; }
-        .game-card { background: rgba(10, 10, 10, 0.6); border-radius: 45px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; transition: 0.5s; text-decoration: none; color: #fff; backdrop-filter: blur(15px); }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-10px); box-shadow: 0 0 40px rgba(188, 19, 254, 0.3); }
+        .user-bar { width: 100%; background: rgba(255,255,255,0.03); padding: 25px 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; backdrop-filter: blur(25px); }
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; width: 100%; }
+        .game-card { background: rgba(10, 10, 10, 0.6); border-radius: 40px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; transition: 0.4s; text-decoration: none; color: #fff; backdrop-filter: blur(15px); }
+        .game-card:hover { border-color: var(--primary); transform: translateY(-10px); box-shadow: 0 0 30px rgba(188, 19, 254, 0.3); }
         .preview { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 6rem; background: radial-gradient(circle, #0f0f0f, #000); }
-        .logout { margin-top: 60px; color: #444; font-size: 0.95rem; cursor: pointer; text-transform: uppercase; font-weight: 900; }
+        .logout { margin-top: 50px; color: #444; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; font-weight: 900; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -54,31 +71,38 @@
     <div class="container">
         <!-- ОКНО ВХОДА -->
         <div id="scr-auth">
+            <h2 style="font-size: 0.7rem; color: #666; margin-bottom: 25px; letter-spacing: 2px;">ДОБРО ПОЖАЛОВАТЬ</h2>
             <button class="btn-google" onclick="loginWithGoogle()">
-                <img src="https://gstatic.com" width="20">
+                <svg class="google-icon" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
                 Войти через Google
             </button>
         </div>
 
         <!-- ЛОББИ -->
         <div id="scr-lobby">
-            <div class="user-bar reveal">
+            <div class="user-bar">
                 <div>
-                    <small style="color: #666; display: block; font-size: 0.8rem; font-weight: 900;">ВАШЕ ИМЯ</small>
+                    <small style="color: #666; display: block; font-size: 0.8rem; font-weight: 900;">ИГРОК:</small>
                     <span id="u-name" style="font-weight: 900; font-size: 1.5rem; color: var(--primary);">---</span>
                 </div>
                 <div style="color: var(--win); font-weight: 900; font-size: 2.2rem;" id="u-bal">0 ₽</div>
             </div>
 
             <div class="games-grid">
-                <a href="jet.html" class="game-card reveal" style="animation-delay: 0.2s;"><div class="preview">🚀</div><div style="padding:30px;"><h3>JET ENGINE</h3><p>Множители до 500x.</p></div></a>
-                <a href="mines.html" class="game-card reveal" style="animation-delay: 0.4s;"><div class="preview">💣</div><div style="padding:30px;"><h3>MINES PRO</h3><p>Найди путь сквозь 25 секторов.</p></div></a>
-                <a href="cubes.html" class="game-card reveal" style="animation-delay: 0.6s;"><div class="preview">🎲</div><div style="padding:30px;"><h3>CUBES 3D</h3><p>Испытай удачу в 3D броске.</p></div></a>
+                <a href="jet.html" class="game-card"><div class="preview">🚀</div><div style="padding:30px;"><h3>JET ENGINE</h3><p>Множители до 500x.</p></div></a>
+                <a href="mines.html" class="game-card"><div class="preview">💣</div><div style="padding:30px;"><h3>MINES PRO</h3><p>Найди путь.</p></div></a>
+                <a href="cubes.html" class="game-card"><div class="preview">🎲</div><div style="padding:30px;"><h3>CUBES 3D</h3><p>Испытай удачу.</p></div></a>
             </div>
-            <div class="logout reveal" onclick="logout()">ВЫЙТИ ИЗ АККАУНТА</div>
+            <div class="logout" onclick="logout()">ВЫЙТИ</div>
         </div>
     </div>
 
+    <!-- FIREBASE LOGIC -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://gstatic.com";
@@ -98,30 +122,36 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
+        // Исправленная функция входа
         window.loginWithGoogle = async () => {
             try {
+                // Если с поп-апом беда, Firebase сам предложит другой вариант
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
                 const userRef = doc(db, "users", user.uid);
                 const userSnap = await getDoc(userRef);
-                if (!userSnap.exists()) { await setDoc(userRef, { name: user.displayName, bal: 10000 }); }
-            } catch (e) { alert("Ошибка авторизации! Проверь Authorized Domains в Firebase."); }
+
+                if (!userSnap.exists()) {
+                    await setDoc(userRef, { name: user.displayName, bal: 10000 });
+                }
+            } catch (e) { 
+                console.error(e);
+                alert("Попробуйте еще раз. Если не заходит — проверьте Authorized Domains в Firebase.");
+            }
         };
 
         onAuthStateChanged(auth, async (user) => {
-            const authScr = document.getElementById('scr-auth');
-            const lobbyScr = document.getElementById('scr-lobby');
             if (user) {
                 const userSnap = await getDoc(doc(db, "users", user.uid));
                 const data = userSnap.data();
-                authScr.style.display = 'none';
-                lobbyScr.style.display = 'block';
+                document.getElementById('scr-auth').style.display = 'none';
+                document.getElementById('scr-lobby').style.display = 'block';
                 document.getElementById('u-name').innerText = user.displayName.toUpperCase();
                 document.getElementById('u-bal').innerText = Math.floor(data.bal).toLocaleString() + ' ₽';
                 localStorage.setItem('uid', user.uid);
             } else {
-                authScr.style.display = 'block';
-                lobbyScr.style.display = 'none';
+                document.getElementById('scr-auth').style.display = 'block';
+                document.getElementById('scr-lobby').style.display = 'none';
             }
         });
 
