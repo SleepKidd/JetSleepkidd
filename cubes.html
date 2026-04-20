@@ -3,131 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES SLEEPKIDD — 8K MONOLITH</title>
+    <title>CUBES SLEEPKIDD — 8K SUPREME</title>
     <link href="https://googleapis.com" rel="stylesheet">
+    <!-- Библиотека THREE.JS -->
+    <script src="https://jsdelivr.net"></script>
     <style>
-        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --dice-bg: #ffffff; }
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
-        body { 
-            background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; 
-            margin: 0; display: flex; flex-direction: column; align-items: center; 
-            min-height: 100vh; overflow-x: hidden; position: relative;
-        }
+        body { background: #000; color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
 
-        .aura {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 700px; height: 700px;
-            background: radial-gradient(circle, rgba(188, 19, 254, 0.05) 0%, transparent 70%);
-            z-index: -1;
-        }
-
-        /* ЛОГОТИП */
-        .logo-box { margin: 35px 0 15px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
+        .logo-box { margin: 30px 0 10px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
         .logo-box .top { font-size: 26px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 2s infinite; }
         .logo-box .bot { font-size: 42px; color: #fff; letter-spacing: -2px; }
         @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
 
-        .container { 
-            width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.98); 
-            border: 2px solid var(--primary); border-radius: 45px; padding: 25px; 
-            text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.4); 
-            backdrop-filter: blur(20px);
-        }
+        .container { width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.98); border: 2.5px solid var(--primary); border-radius: 45px; padding: 20px; text-align: center; box-shadow: 0 0 60px rgba(188, 19, 254, 0.5); backdrop-filter: blur(25px); position: relative; z-index: 10; }
+        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 5px; }
+        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 10px 20px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
+
+        /* КОНТЕЙНЕР ДЛЯ 3D */
+        #dice-zone { width: 100%; height: 260px; margin: 0; background: transparent; }
         
-        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
-        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
-
-        .bal-val { color: var(--win); font-weight: 900; font-size: 2.2rem; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,136,0.2); }
-
-        /* --- ИДЕАЛЬНЫЙ МОНОЛИТНЫЙ КУБИК 8K --- */
-        .scene { width: 100px; height: 100px; perspective: 1000px; margin: 40px auto 60px; }
-        .cube { 
-            width: 100%; height: 100%; position: relative; transform-style: preserve-3d; 
-            transition: transform 1.5s cubic-bezier(0.17, 0.67, 0.1, 1);
-            transform: rotateX(-20deg) rotateY(25deg);
-        }
-
-        /* ЯДРО: Закрывает щели на углах */
-        .dice-core {
-            position: absolute; width: 92px; height: 92px; background: var(--dice-bg);
-            top: 4px; left: 4px; border-radius: 30%; transform: translateZ(0px);
-        }
-
-        .face { 
-            position: absolute; 
-            width: 101px; height: 101px; /* Нахлест для бесшовности */
-            background: var(--dice-bg); 
-            border-radius: 26px; /* Пухлое скругление */
-            display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); 
-            padding: 15px; 
-            backface-visibility: hidden;
-            border: none;
-            /* Убираем "зубцы" через outline и тень */
-            outline: 1px solid var(--dice-bg);
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.05); 
-        }
-        
-        .dot { 
-            background: #111; border-radius: 50%; width: 18px; height: 18px; 
-            align-self: center; justify-self: center; 
-            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.4); 
-        }
-        /* КРАСНАЯ ТОЧКА */
-        .f-1 .dot { background: #ff3b30; width: 28px; height: 28px; box-shadow: inset 0 0 8px rgba(0,0,0,0.2); }
-
-        /* Позиции граней */
-        .f-1 { transform: rotateY(0deg) translateZ(50px); }
-        .f-6 { transform: rotateY(180deg) translateZ(50px); }
-        .f-3 { transform: rotateY(90deg) translateZ(50px); }
-        .f-4 { transform: rotateY(-90deg) translateZ(50px); }
-        .f-2 { transform: rotateX(90deg) translateZ(50px); }
-        .f-5 { transform: rotateX(-90deg) translateZ(50px); }
-
-        /* ИСТОРИЯ */
-        #history { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; min-height: 40px; }
-        .hist-item { width: 40px; height: 40px; background: #000; border: 1.5px solid var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; color: var(--win); }
-
-        /* UI */
-        .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 16px; border-radius: 20px; font-size: 1.5rem; font-weight: 900; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2.4rem; margin-bottom: 10px; }
+        .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 18px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
         .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 15px; border-radius: 18px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; font-size: 0.9rem; transition: 0.2s; }
-        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); }
-        .main-btn { width: 100%; height: 80px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 22px; font-weight: 900; font-size: 1.8rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
-        .main-btn:active { transform: scale(0.97); }
+        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 18px; border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; font-family: 'Orbitron'; }
+        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.15); box-shadow: 0 0 20px rgba(188, 19, 254, 0.3); }
+        .main-btn { width: 100%; height: 85px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 25px; font-weight: 900; font-size: 2.2rem; text-transform: uppercase; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="aura"></div>
-    <div class="logo-box"><span class="top">CUBES</span><span class="bot">SLEEPKIDD</span></div>
+
+    <div class="logo-box">
+        <span class="top">CUBES</span>
+        <span class="bot">SLEEPKIDD</span>
+    </div>
 
     <div class="container">
         <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
-        <div id="history"></div>
-        <div class="bal-val"><span id="bal">0</span> ₽</div>
+        <div class="bal-val"><span id="u-bal">0</span> ₽</div>
 
-        <div class="scene">
-            <div class="cube" id="cube">
-                <!-- Ядро для закрытия щелей -->
-                <div class="dice-core"></div>
-                <!-- 1 -->
-                <div class="face f-1"><div class="dot" style="grid-area: 2/2"></div></div>
-                <!-- 6 -->
-                <div class="face f-6">
-                    <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
-                    <div class="dot" style="grid-area: 2/1"></div><div class="dot" style="grid-area: 2/3"></div>
-                    <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
-                </div>
-                <!-- 3 -->
-                <div class="face f-3"><div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 2/2"></div><div class="dot" style="grid-area: 3/3"></div></div>
-                <!-- 4 -->
-                <div class="face f-4"><div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div></div>
-                <!-- 2 -->
-                <div class="face f-2"><div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 3/1"></div></div>
-                <!-- 5 -->
-                <div class="face f-5"><div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 2/2"></div><div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div></div>
-            </div>
-        </div>
+        <!-- СЮДА РИСУЕТСЯ 8K КУБИК -->
+        <div id="dice-zone"></div>
 
         <input type="number" id="bet" class="bet-input" value="50">
         <div class="choice-grid">
@@ -139,14 +56,116 @@
 
     <script>
         let balance, user, users, currentChoice = 'even';
-        const rots = { 1: {x:0, y:0}, 6: {x:0, y:180}, 3: {x:0, y:-90}, 4: {x:0, y:90}, 2: {x:-90, y:0}, 5: {x:90, y:0} };
+        let scene, camera, renderer, cube, isRolling = false;
 
-        window.onload = () => {
-            user = localStorage.getItem('current_user') || 'GUEST';
-            users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
-            balance = users[user].bal;
-            document.getElementById('bal').innerText = Math.floor(balance).toLocaleString();
+        // Генерация текстур высокого качества
+        function createTexture(num) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024; canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            // Рисуем точки (1 - красная, остальные - черные)
+            const c = 512, l = 250, r = 774, t = 250, b = 774;
+            const dots = {
+                1: [[c, c]],
+                2: [[l, t], [r, b]],
+                3: [[l, t], [c, c], [r, b]],
+                4: [[l, t], [r, t], [l, b], [r, b]],
+                5: [[l, t], [r, t], [c, c], [l, b], [r, b]],
+                6: [[l, t], [r, t], [l, 512], [r, 512], [l, b], [r, b]]
+            };
+
+            ctx.fillStyle = (num === 1) ? "#ff3b30" : "#111";
+            dots[num].forEach(d => {
+                ctx.beginPath();
+                ctx.arc(d[0], d[1], num === 1 ? 120 : 90, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function init3D() {
+            const container = document.getElementById('dice-zone');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(40, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            const ambient = new THREE.AmbientLight(0xffffff, 1.5);
+            scene.add(ambient);
+            const sun = new THREE.DirectionalLight(0xffffff, 1);
+            sun.position.set(5, 5, 5);
+            scene.add(sun);
+
+            // Создаем монолитный кубик
+            const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+            const materials = [
+                new THREE.MeshStandardMaterial({ map: createTexture(3) }), // right
+                new THREE.MeshStandardMaterial({ map: createTexture(4) }), // left
+                new THREE.MeshStandardMaterial({ map: createTexture(2) }), // top
+                new THREE.MeshStandardMaterial({ map: createTexture(5) }), // bottom
+                new THREE.MeshStandardMaterial({ map: createTexture(1) }), // front
+                new THREE.MeshStandardMaterial({ map: createTexture(6) })  // back
+            ];
+
+            cube = new THREE.Mesh(geometry, materials);
+            scene.add(cube);
+            camera.position.z = 8;
+            cube.rotation.set(0.4, 0.4, 0);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                if(!isRolling) { cube.rotation.y += 0.005; }
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        const rotations = {
+            1: { x: 0, y: 0 }, 6: { x: 0, y: Math.PI },
+            3: { x: 0, y: -Math.PI/2 }, 4: { x: 0, y: Math.PI/2 },
+            2: { x: Math.PI/2, y: 0 }, 5: { x: -Math.PI/2, y: 0 }
         };
+
+        function roll() {
+            if(isRolling) return;
+            let bet = parseInt(document.getElementById('bet').value);
+            if(bet > balance || bet <= 0) return alert("Мало кэша!");
+            
+            balance -= bet; 
+            document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
+            isRolling = true;
+
+            const res = Math.floor(Math.random() * 6) + 1;
+            const startTime = performance.now();
+            const startX = cube.rotation.x, startY = cube.rotation.y;
+            const target = rotations[res];
+            const extra = Math.PI * 10;
+
+            function update(time) {
+                const t = Math.min((time - startTime) / 2000, 1);
+                const ease = 1 - Math.pow(1 - t, 4);
+                cube.rotation.x = startX + (target.x + extra - startX) * ease;
+                cube.rotation.y = startY + (target.y + extra - startY) * ease;
+
+                if (t < 1) requestAnimationFrame(update);
+                else {
+                    isRolling = false;
+                    const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
+                    if(won) balance += bet * 1.95;
+                    document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
+                    save();
+                }
+            }
+            requestAnimationFrame(update);
+        }
 
         function setChoice(t) {
             currentChoice = t;
@@ -154,43 +173,20 @@
             document.getElementById('btn-odd').classList.toggle('active', t === 'odd');
         }
 
-        function roll() {
-            let bet = parseInt(document.getElementById('bet').value);
-            if(bet > balance || bet <= 0) return alert("Мало денег!");
-            balance -= bet; 
-            document.getElementById('bal').innerText = Math.floor(balance).toLocaleString();
-            const btn = document.getElementById('roll-btn'); btn.disabled = true;
-
-            const res = Math.floor(Math.random() * 6) + 1;
-            const cube = document.getElementById('cube');
-            const exX = 360 * 4; const exY = 360 * 4;
-            
-            cube.style.transform = `rotateX(${rots[res].x + exX}deg) rotateY(${rots[res].y + exY}deg)`;
-
-            setTimeout(() => {
-                const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
-                if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
-                else { addHistory(res, '#ff4d4d'); }
-                document.getElementById('bal').innerText = Math.floor(balance).toLocaleString();
-                save(); btn.disabled = false;
-                
-                setTimeout(() => {
-                    cube.style.transition = 'none';
-                    cube.style.transform = `rotateX(${rots[res].x}deg) rotateY(${rots[res].y}deg)`;
-                    setTimeout(() => cube.style.transition = '', 50);
-                }, 500);
-            }, 1500);
+        function save() {
+            if(users[user]) {
+                users[user].bal = balance;
+                localStorage.setItem('users_jet', JSON.stringify(users));
+            }
         }
 
-        function addHistory(n, c) {
-            const h = document.getElementById('history');
-            const div = document.createElement('div');
-            div.className = 'hist-item'; div.style.borderColor = c; div.style.color = c;
-            div.innerText = n; h.prepend(div);
-            if(h.children.length > 5) h.lastChild.remove();
-        }
-
-        function save() { if(users[user]) { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); } }
+        window.onload = () => {
+            user = localStorage.getItem('current_user') || 'GUEST';
+            users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
+            balance = users[user].bal;
+            document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
+            init3D();
+        };
     </script>
 </body>
 </html>
