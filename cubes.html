@@ -3,48 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES SLEEPKIDD — VECTOR 8K</title>
+    <title>CUBES SLEEPKIDD — 8K FIX</title>
     <link href="https://googleapis.com" rel="stylesheet">
-    <!-- Микро-движок для идеального 3D -->
-    <script src="https://unpkg.com"></script>
     <style>
-        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; }
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: #000; color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
-
-        .logo-box { margin: 30px 0 10px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
-        .logo-box .top { font-size: 26px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); animation: hyperGlitch 2s infinite; }
-        .logo-box .bot { font-size: 42px; color: #fff; letter-spacing: -2px; }
-        @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
-
-        .container { width: 94%; max-width: 420px; background: rgba(10, 10, 10, 0.98); border: 2.5px solid var(--primary); border-radius: 45px; padding: 20px; text-align: center; box-shadow: 0 0 60px rgba(188, 19, 254, 0.5); backdrop-filter: blur(25px); position: relative; z-index: 10; }
-        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 5px; }
-        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 10px 20px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
-
-        /* Контейнер для кубика */
-        .dice-canvas { cursor: grab; margin: 10px 0; }
         
-        .bal-val { color: var(--win); font-weight: 900; font-size: 2.4rem; margin-bottom: 10px; }
-        .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 18px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 15px; font-family: 'Orbitron'; }
-        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 18px; border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; font-family: 'Orbitron'; }
-        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.15); box-shadow: 0 0 20px rgba(188, 19, 254, 0.3); }
-        .main-btn { width: 100%; height: 85px; background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; border: none; border-radius: 25px; font-weight: 900; font-size: 2.2rem; text-transform: uppercase; cursor: pointer; }
+        body { 
+            background: #050505; color: #fff; font-family: 'Orbitron', sans-serif; 
+            margin: 0; display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* ЛОГОТИП */
+        .logo-box { margin: 35px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
+        .logo-box .top { font-size: 26px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); animation: glitch 2s infinite; }
+        .logo-box .bot { font-size: 42px; color: #fff; letter-spacing: -2px; }
+        @keyframes glitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
+
+        /* ОСНОВНОЙ КОНТЕЙНЕР */
+        .container { 
+            width: 92%; max-width: 420px; background: #0a0a0a; 
+            border: 3px solid var(--primary); border-radius: 45px; padding: 25px; 
+            text-align: center; box-shadow: 0 0 60px rgba(188, 19, 254, 0.4); 
+            position: relative;
+        }
+        
+        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
+        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
+
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2.8rem; margin: 10px 0 30px; text-shadow: 0 0 20px rgba(0,255,136,0.4); }
+
+        /* --- МОНОЛИТНЫЙ CSS КУБИК --- */
+        .scene { width: 100px; height: 100px; perspective: 1000px; margin: 50px auto 70px; }
+        .cube { 
+            width: 100%; height: 100%; position: relative; transform-style: preserve-3d; 
+            transition: transform 1.5s cubic-bezier(0.17, 0.67, 0.1, 1);
+            transform: rotateX(-20deg) rotateY(25deg);
+        }
+        .face { 
+            position: absolute; width: 102px; height: 102px; 
+            background: #fff; border-radius: 22px; 
+            display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); 
+            padding: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+            backface-visibility: visible; border: none; outline: 1px solid #fff;
+        }
+        .dot { background: #111; border-radius: 50%; width: 18px; height: 18px; align-self: center; justify-self: center; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.4); }
+        .f-1 .dot { background: #ff3b30; width: 28px; height: 28px; box-shadow: inset 0 0 8px rgba(0,0,0,0.2); }
+
+        /* Позиции граней */
+        .f-1 { transform: rotateY(0deg) translateZ(50px); }
+        .f-6 { transform: rotateY(180deg) translateZ(50px); }
+        .f-3 { transform: rotateY(90deg) translateZ(50px); }
+        .f-4 { transform: rotateY(-90deg) translateZ(50px); }
+        .f-2 { transform: rotateX(90deg) translateZ(50px); }
+        .f-5 { transform: rotateX(-90deg) translateZ(50px); }
+
+        /* ИСТОРИЯ */
+        #history { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; height: 35px; }
+        .hist-item { width: 35px; height: 35px; background: #000; border: 1.5px solid var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; color: var(--win); }
+
+        /* КНОПКИ И ВВОД */
+        .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 18px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 20px; font-family: 'Orbitron'; }
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 15px; border-radius: 18px; font-weight: 900; cursor: pointer; font-size: 0.8rem; }
+        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); }
+        
+        .main-btn { 
+            width: 100%; height: 85px; 
+            background: linear-gradient(180deg, var(--primary), #8a0db8); 
+            color: #fff; border: none; border-radius: 25px; 
+            font-weight: 900; font-size: 2.2rem; text-transform: uppercase; 
+            cursor: pointer; transition: 0.1s;
+        }
+        .main-btn:active { transform: scale(0.96); }
     </style>
 </head>
 <body>
 
-    <div class="logo-box">
-        <span class="top">CUBES</span>
-        <span class="bot">SLEEPKIDD</span>
-    </div>
+    <div class="logo-box"><span class="top">CUBES</span><span class="bot">SLEEPKIDD</span></div>
 
     <div class="container">
         <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
-        <div class="bal-val"><span id="u-bal">0</span> ₽</div>
+        <div id="history"></div>
+        <div class="bal-val"><span id="u-bal">1,000</span> ₽</div>
 
-        <!-- КАНВАС ДЛЯ ZDOG -->
-        <canvas class="dice-canvas" width="240" height="240"></canvas>
+        <div class="scene">
+            <div class="cube" id="cube">
+                <div class="face f-1"><div class="dot" style="grid-area: 2/2"></div></div>
+                <div class="face f-6">
+                    <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
+                    <div class="dot" style="grid-area: 2/1"></div><div class="dot" style="grid-area: 2/3"></div>
+                    <div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div>
+                </div>
+                <div class="face f-3"><div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 2/2"></div><div class="dot" style="grid-area: 3/3"></div></div>
+                <div class="face f-4"><div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div></div>
+                <div class="face f-2"><div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 3/1"></div></div>
+                <div class="face f-5"><div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div><div class="dot" style="grid-area: 2/2"></div><div class="dot" style="grid-area: 3/1"></div><div class="dot" style="grid-area: 3/3"></div></div>
+            </div>
+        </div>
 
         <input type="number" id="bet" class="bet-input" value="50">
         <div class="choice-grid">
@@ -56,113 +113,18 @@
 
     <script>
         let balance, user, users, currentChoice = 'even';
-        let isRolling = false;
+        const rots = { 1: {x:0, y:0}, 6: {x:0, y:180}, 3: {x:0, y:-90}, 4: {x:0, y:90}, 2: {x:-90, y:0}, 5: {x:90, y:0} };
 
-        // 1. СОЗДАНИЕ ИДЕАЛЬНОГО КУБИКА
-        const illo = new Zdog.Illustration({
-            element: '.dice-canvas',
-            dragRotate: true,
-        });
-
-        const diceGroup = new Zdog.Group({ addTo: illo });
-
-        // Сам корпус кубика (Box)
-        const box = new Zdog.Box({
-            addTo: diceGroup,
-            width: 80, height: 80, depth: 80,
-            stroke: 20, // ЭТО СКРУГЛЕНИЕ УГЛОВ (Bevel)
-            color: '#fff',
-            leftFace: '#eee', rightFace: '#eee', topFace: '#fff', bottomFace: '#ddd',
-        });
-
-        // ТОЧКИ (Dots)
-        const dotSize = 12;
-        const dotColor = '#111';
-        const redColor = '#ff3b30';
-
-        // 1 (Front) - КРАСНАЯ
-        new Zdog.Ellipse({ addTo: box, diameter: 18, stroke: 4, fill: true, color: redColor, translate: { z: 40 } });
-        // 6 (Back)
-        [ {x:-20,y:-25}, {x:20,y:-25}, {x:-20,y:0}, {x:20,y:0}, {x:-20,y:25}, {x:20,y:25} ].forEach(p => {
-            new Zdog.Ellipse({ addTo: box, diameter: dotSize, fill: true, color: dotColor, translate: { x: p.x, y: p.y, z: -40 } });
-        });
-        // 3 (Right)
-        [ {x:-20,y:-20}, {x:0,y:0}, {x:20,y:20} ].forEach(p => {
-            new Zdog.Ellipse({ addTo: box, diameter: dotSize, fill: true, color: dotColor, translate: { z: p.x, y: p.y, x: 40 }, rotate: { y: Zdog.TAU/4 } });
-        });
-        // 4 (Left)
-        [ {x:-20,y:-20}, {x:20,y:-20}, {x:-20,y:20}, {x:20,y:20} ].forEach(p => {
-            new Zdog.Ellipse({ addTo: box, diameter: dotSize, fill: true, color: dotColor, translate: { z: p.x, y: p.y, x: -40 }, rotate: { y: Zdog.TAU/4 } });
-        });
-        // 2 (Top)
-        [ {x:-20,y:-20}, {x:20,y:20} ].forEach(p => {
-            new Zdog.Ellipse({ addTo: box, diameter: dotSize, fill: true, color: dotColor, translate: { x: p.x, z: p.y, y: -40 }, rotate: { x: Zdog.TAU/4 } });
-        });
-        // 5 (Bottom)
-        [ {x:-20,y:-20}, {x:20,y:-20}, {x:0,y:0}, {x:-20,y:20}, {x:20,y:20} ].forEach(p => {
-            new Zdog.Ellipse({ addTo: box, diameter: dotSize, fill: true, color: dotColor, translate: { x: p.x, z: p.y, y: 40 }, rotate: { x: Zdog.TAU/4 } });
-        });
-
-        function animate() {
-            if (!isRolling) {
-                diceGroup.rotate.y += 0.01;
-                diceGroup.rotate.x += 0.005;
-            }
-            illo.updateRenderGraph();
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // 2. ЛОГИКА ИГРЫ
-        const results = {
-            1: { x: 0, y: 0 },
-            6: { x: 0, y: Zdog.TAU/2 },
-            3: { x: 0, y: -Zdog.TAU/4 },
-            4: { x: 0, y: Zdog.TAU/4 },
-            2: { x: Zdog.TAU/4, y: 0 },
-            5: { x: -Zdog.TAU/4, y: 0 }
-        };
-
-        function roll() {
-            if (isRolling) return;
-            let bet = parseInt(document.getElementById('bet').value);
-            if (bet > balance || bet <= 0) return alert("Мало кэша!");
-
-            balance -= bet; 
+        // СИНХРОНИЗАЦИЯ БАЛАНСА
+        function sync() {
+            user = localStorage.getItem('current_user') || 'test';
+            users = JSON.parse(localStorage.getItem('users_jet')) || { "test": { pass: "test", bal: 5000 } };
+            if(!users[user]) { users[user] = { pass: "123", bal: 500 }; }
+            balance = users[user].bal;
             document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
-            isRolling = true;
-            document.getElementById('roll-btn').disabled = true;
-
-            const res = Math.floor(Math.random() * 6) + 1;
-            const target = results[res];
-            
-            // Анимация вращения
-            let start = Date.now();
-            let duration = 2000;
-            let startRot = { x: diceGroup.rotate.x, y: diceGroup.rotate.y };
-            let extra = Zdog.TAU * 4;
-
-            function step() {
-                let progress = (Date.now() - start) / duration;
-                if (progress > 1) progress = 1;
-                let ease = 1 - Math.pow(1 - progress, 4);
-
-                diceGroup.rotate.x = startRot.x + (target.x + extra - startRot.x) * ease;
-                diceGroup.rotate.y = startRot.y + (target.y + extra - startRot.y) * ease;
-
-                if (progress < 1) {
-                    requestAnimationFrame(step);
-                } else {
-                    isRolling = false;
-                    const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
-                    if (won) balance += bet * 1.95;
-                    document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
-                    save();
-                    document.getElementById('roll-btn').disabled = false;
-                }
-            }
-            step();
         }
+
+        window.onload = sync;
 
         function setChoice(t) {
             currentChoice = t;
@@ -170,14 +132,42 @@
             document.getElementById('btn-odd').classList.toggle('active', t === 'odd');
         }
 
-        function save() { if(users[user]) { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); } }
+        function roll() {
+            let bet = parseInt(document.getElementById('bet').value);
+            if(bet > balance || bet <= 0) return alert("Мало кэша!");
+            
+            balance -= bet; updateUI();
+            const btn = document.getElementById('roll-btn'); btn.disabled = true;
 
-        window.onload = () => {
-            user = localStorage.getItem('current_user') || 'GUEST';
-            users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
-            balance = users[user].bal;
-            document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
-        };
+            const res = Math.floor(Math.random() * 6) + 1;
+            const cube = document.getElementById('cube');
+            const exX = 360 * 4; const exY = 360 * 4;
+            
+            cube.style.transform = `rotateX(${rots[res].x + exX}deg) rotateY(${rots[res].y + exY}deg)`;
+
+            setTimeout(() => {
+                const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
+                if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
+                else { addHistory(res, '#ff4d4d'); }
+                updateUI(); save(); btn.disabled = false;
+                setTimeout(() => {
+                    cube.style.transition = 'none';
+                    cube.style.transform = `rotateX(${rots[res].x}deg) rotateY(${rots[res].y}deg)`;
+                    setTimeout(() => cube.style.transition = '', 50);
+                }, 500);
+            }, 1500);
+        }
+
+        function addHistory(n, c) {
+            const h = document.getElementById('history');
+            const div = document.createElement('div');
+            div.className = 'hist-item'; div.style.borderColor = c; div.style.color = c;
+            div.innerText = n; h.prepend(div);
+            if(h.children.length > 5) h.lastChild.remove();
+        }
+
+        function updateUI() { document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString(); }
+        function save() { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); }
     </script>
 </body>
 </html>
