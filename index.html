@@ -3,40 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET SLEEPKIDD — ELITE CLOUD</title>
+    <title>JET SLEEPKIDD — CASINO</title>
+    <title>JET SLEEPKIDD — ELITE LOBBY</title>
     <link href="https://googleapis.com" rel="stylesheet">
-    
     <style>
-        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; }
-        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-        body { background: #000; color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; position: relative; }
-        
-        /* ВИЗУАЛ 8K */
+        :root { 
+            --primary: #bc13fe; 
+            --bg: #000000; 
+            --win: #00ff88; 
+            --lose: #ff4d4d; 
+            --glass: rgba(255, 255, 255, 0.02);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Orbitron', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+            position: relative;
+        }
+
+        /* ЖИВОЙ КОСМОС И АУРА */
+        /* 8K ЧИСТЫЙ КОСМОС */
         #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        .aura { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 800px; background: radial-gradient(circle, rgba(188, 19, 254, 0.08) 0%, transparent 70%); z-index: -1; animation: auraMove 15s infinite alternate ease-in-out; }
+        .aura {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(188, 19, 254, 0.1) 0%, transparent 70%);
+            z-index: -1; animation: auraMove 10s infinite alternate ease-in-out;
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(188, 19, 254, 0.08) 0%, transparent 70%);
+            z-index: -1; animation: auraMove 15s infinite alternate ease-in-out;
+        }
+        @keyframes auraMove { from { transform: translate(-60%, -40%); } to { transform: translate(-40%, -60%); } }
         @keyframes auraMove { from { transform: translate(-55%, -45%); } to { transform: translate(-45%, -55%); } }
 
-        /* ЛОГОТИП */
-        .logo-box { margin: 60px 0 30px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; }
-        .logo-box .top { font-size: 32px; color: var(--primary); display: block; text-shadow: 0 0 15px var(--primary); animation: hyperGlitch 1.5s infinite; }
+        /* ГИПЕР-ГЛИТЧ ЛОГОТИП */
+        .logo-box { margin: 45px 0 30px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; position: relative; }
+        
+        .logo-box .top { 
+            font-size: 32px; color: var(--primary); display: block; 
+            text-shadow: 0 0 15px var(--primary); 
+            position: relative;
+            animation: hyperGlitch 1.5s infinite;
+        }
+
+        .logo-box .top::before, .logo-box .top::after {
+            content: 'JET'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;
+        }
+        .logo-box .top::before { color: #00f6ff; z-index: -1; animation: rgbSplit 1.5s infinite; }
+        .logo-box .top::after { color: #ff00de; z-index: -2; animation: rgbSplit 1.5s infinite reverse; }
+
+        @keyframes hyperGlitch {
+            0%, 15%, 45%, 80%, 100% { transform: translate(0); }
+            16% { transform: translate(-4px, 2px); }
+            18% { transform: translate(4px, -2px); }
+            81% { transform: translate(2px, 2px); }
+            83% { transform: translate(-2px, -2px); }
+        }
+        @keyframes rgbSplit {
+            0%, 15%, 19%, 80%, 84%, 100% { opacity: 0; transform: translate(0); }
+            16%, 18% { opacity: 1; transform: translate(-8px, 0); }
+            81%, 83% { opacity: 1; transform: translate(8px, 0); }
+        }
+
         .logo-box .bot { font-size: 48px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
-        @keyframes hyperGlitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
 
         .container { width: 95%; max-width: 850px; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; z-index: 10; }
 
-        /* ЭКРАН ВХОДА */
-        #scr-auth { display: none; width: 100%; max-width: 400px; background: rgba(10, 10, 10, 0.9); padding: 50px 30px; border-radius: 50px; border: 1px solid rgba(188, 19, 254, 0.3); text-align: center; backdrop-filter: blur(30px); margin-top: 30px; box-shadow: 0 0 50px rgba(188, 19, 254, 0.15); }
-        .btn-google { background: #ffffff; color: #000; border: none; padding: 20px; border-radius: 20px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-        .btn-google:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(188, 19, 254, 0.4); }
-        
+        /* ВХОД */
+        #scr-auth { 
+            width: 100%; max-width: 400px; background: rgba(10, 10, 10, 0.8); 
+            width: 100%; max-width: 400px; background: rgba(10, 10, 10, 0.85); 
+            padding: 45px; border-radius: 50px; border: 1px solid rgba(188, 19, 254, 0.2); 
+            text-align: center; box-shadow: 0 0 40px rgba(188, 19, 254, 0.1); 
+            backdrop-filter: blur(25px); margin-top: 30px;
+        }
+
+        .btn-go { 
+            background: linear-gradient(180deg, var(--primary), #8a0db8); 
+            border: none; color: #fff; padding: 22px; border-radius: 20px; 
+            font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; 
+            font-size: 1.8rem; transition: 0.3s;
+            text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.1); 
+            backdrop-filter: blur(30px); margin-top: 30px;
+        }
+        .btn-go:active { transform: scale(0.96); }
+
+        input { 
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: #fff; padding: 20px; width: 100%; border-radius: 15px; 
+            margin-bottom: 20px; text-align: center; font-family: 'Orbitron'; 
+            font-size: 1.3rem; font-weight: 900;
+        }
+        .btn-go { 
+            background: linear-gradient(180deg, var(--primary), #8a0db8); 
+            border: none; color: #fff; padding: 22px; border-radius: 18px; 
+            font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; 
+            font-size: 1.8rem; transition: 0.3s;
+        }
+        .btn-go:active { transform: scale(0.96); }
+
         /* ЛОББИ */
         #scr-lobby { display: none; width: 100%; }
-        .user-bar { width: 100%; background: rgba(255,255,255,0.03); padding: 25px 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; backdrop-filter: blur(25px); }
-        .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; width: 100%; }
-        .game-card { background: rgba(10, 10, 10, 0.6); border-radius: 40px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; transition: 0.4s; text-decoration: none; color: #fff; backdrop-filter: blur(15px); }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-10px); box-shadow: 0 0 30px rgba(188, 19, 254, 0.3); }
-        .preview { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 5rem; background: radial-gradient(circle, #0f0f0f, #000); }
-        .logout { margin-top: 60px; color: #444; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; font-weight: 900; transition: 0.3s; }
+        .reveal { opacity: 0; transform: translateY(30px); animation: revealUp 0.6s forwards; }
+        @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
+
+        .user-bar { 
+            width: 100%; background: rgba(255, 255, 255, 0.02); 
+            width: 100%; background: var(--glass); 
+            padding: 25px 40px; border-radius: 30px; 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 40px; backdrop-filter: blur(20px); 
+            margin-bottom: 40px; backdrop-filter: blur(25px); 
+        }
+
+        /* КАРТОЧКИ ИГР */
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; width: 100%; }
+        
+        .game-card { 
+            background: rgba(10, 10, 10, 0.6); border-radius: 45px; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            overflow: hidden; transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1); 
+            text-decoration: none; color: #fff; backdrop-filter: blur(15px);
+        }
+        .game-card:hover { 
+            border-color: var(--primary); transform: translateY(-10px); 
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.2);
+        }
+        
+        .preview { 
+            height: 190px; display: flex; align-items: center; justify-content: center; 
+            font-size: 6.5rem; background: radial-gradient(circle, #0f0f0f, #000); 
+            border-color: var(--primary); transform: translateY(-10px) scale(1.02); 
+            box-shadow: 0 0 40px rgba(188, 19, 254, 0.2);
+            background: rgba(20, 20, 20, 0.85);
+        }
+        .preview { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 6rem; background: radial-gradient(circle, #0f0f0f, #000); }
+
+        .logout { 
+            margin-top: 60px; color: #444; font-size: 0.95rem; cursor: pointer; 
+            text-transform: uppercase; font-weight: 900; transition: 0.3s; 
+            letter-spacing: 1px; 
+        }
+        .logout { margin-top: 60px; color: #333; font-size: 1rem; cursor: pointer; text-transform: uppercase; font-weight: 900; transition: 0.3s; }
+        .logout:hover { color: var(--lose); letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -50,117 +169,132 @@
     </div>
 
     <div class="container">
-        <!-- БЛОК ВХОДА -->
+        <!-- ВХОД РУССКИЙ -->
+        <!-- АВТОРИЗАЦИЯ -->
         <div id="scr-auth">
-            <h2 style="font-size: 0.7rem; color: #555; margin-bottom: 25px; letter-spacing: 2px; font-weight: 900;">СИСТЕМА ОБЛАЧНОЙ СИНХРОНИЗАЦИИ</h2>
-            <button class="btn-google" id="btn-login-google">
-                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                Войти через Google
-            </button>
-            <p id="info-text" style="margin-top:20px; font-size:0.6rem; color:#333;">V2.0 CLOUD ACTIVE</p>
+            <input type="text" id="log" placeholder="ЛОГИН">
+            <input type="password" id="pas" placeholder="ПАРОЛЬ">
+            <button class="btn-go" onclick="login()">ВОЙТИ</button>
         </div>
 
-        <!-- БЛОК ЛОББИ -->
-        <div id="scr-lobby">
+        <!-- ЛОББИ РУССКИЙ -->
+        <div id="scr-lobby" style="display:none; width: 100%;">
             <div class="user-bar">
+        <!-- ЛОББИ -->
+        <div id="scr-lobby">
+            <div class="user-bar reveal" style="animation-delay: 0.1s;">
                 <div>
-                    <small style="color: #666; display: block; font-size: 0.8rem; font-weight: 900;">ИГРОК</small>
-                    <span id="u-name" style="font-weight: 900; font-size: 1.5rem; color: var(--primary);">---</span>
+                    <small style="color: #666; display: block; font-size: 0.8rem; font-weight: 900;">ВАШЕ ИМЯ</small>
+                    <span id="u-name" style="font-weight: 900; font-size: 1.6rem; color: var(--primary);">---</span>
+                    <span id="u-name" style="font-weight: 900; font-size: 1.6rem; color: var(--primary); text-shadow: 0 0 10px rgba(188, 19, 254, 0.4);">---</span>
                 </div>
-                <div style="color: var(--win); font-weight: 900; font-size: 2.2rem;" id="u-bal">0 ₽</div>
+                <div style="color: var(--win); font-weight: 900; font-size: 2.2rem;" id="u-bal">0₽</div>
             </div>
 
             <div class="games-grid">
-                <a href="jet.html" class="game-card"><div class="preview">🚀</div><div style="padding:30px;"><h3>JET</h3><p>До 500x.</p></div></a>
-                <a href="mines.html" class="game-card"><div class="preview">💣</div><div style="padding:30px;"><h3>MINES</h3><p>Найди путь.</p></div></a>
-                <a href="cubes.html" class="game-card"><div class="preview">🎲</div><div style="padding:30px;"><h3>CUBES</h3><p>Кидай кости.</p></div></a>
+                <a href="jet.html" class="game-card">
+                <!-- 1. JET -->
+                <a href="jet.html" class="game-card reveal" style="animation-delay: 0.3s;">
+                    <div class="preview">🚀</div>
+                    <div style="padding:35px;">
+                        <h3 style="margin:0; font-size:2rem; color:var(--primary);">LUCKY ROCKET</h3>
+                        <h3 style="margin:0; font-size:2rem; color:var(--primary); text-transform: uppercase;">JET GAME</h3>
+                        <p style="color:#777; font-size:1rem; margin-top:10px;">Множители до 500x. Полетели!</p>
+                    </div>
+                </a>
+                <a href="mines.html" class="game-card">
+                
+                <!-- 2. MINES -->
+                <a href="mines.html" class="game-card reveal" style="animation-delay: 0.5s;">
+                    <div class="preview">💣</div>
+                    <div style="padding:35px;">
+                        <h3 style="margin:0; font-size:2rem; color:var(--primary);">MINES </h3>
+                        <h3 style="margin:0; font-size:2rem; color:var(--primary); text-transform: uppercase;">MINES PRO</h3>
+                        <p style="color:#777; font-size:1rem; margin-top:10px;">Найди путь сквозь 25 секторов.</p>
+                    </div>
+                </a>
+
+                <!-- 3. CUBES -->
+                <a href="cubes.html" class="game-card reveal" style="animation-delay: 0.7s;">
+                    <div class="preview">🎲</div>
+                    <div style="padding:35px;">
+                        <h3 style="margin:0; font-size:2rem; color:var(--primary); text-transform: uppercase;">CUBES 3D</h3>
+                        <p style="color:#777; font-size:1rem; margin-top:10px;">Испытай удачу в 3D броске костей.</p>
+                    </div>
+                </a>
             </div>
-            <div class="logout" id="btn-logout">ВЫЙТИ ИЗ АККАУНТА</div>
+
+            <div class="logout" onclick="logout()">ВЫЙТИ ИЗ АККАУНТА</div>
+            <div class="logout reveal" style="animation-delay: 0.9s;" onclick="logout()">ВЫЙТИ ИЗ АККАУНТА</div>
         </div>
     </div>
 
-    <!-- FIREBASE МОДУЛЬ -->
-    <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getAuth, signInWithRedirect, GoogleAuthProvider, getRedirectResult, onAuthStateChanged, signOut } from "https://gstatic.com";
-        import { getFirestore, doc, getDoc, setDoc } from "https://gstatic.com";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCbuze00_buewrMCBDxn7FRv3COFuIxHK_0",
-            authDomain: "://firebaseapp.com",
-            projectId: "jetsleepkidd",
-            storageBucket: "jetsleepkidd.firebasestorage.app",
-            messagingSenderId: "234214215216",
-            appId: "1:234214215216:web:6db8f3186723a7d4c7e7f5"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
-
-        // ОБРАБОТКА КЛИКА ПО КНОПКЕ
-        const loginBtn = document.getElementById('btn-login-google');
-        if(loginBtn) {
-            loginBtn.addEventListener('click', () => {
-                document.getElementById('info-text').innerText = "ПЕРЕХОД К GOOGLE...";
-                signInWithRedirect(auth, provider);
-            });
-        }
-
-        // ВЫХОД
-        document.getElementById('btn-logout').addEventListener('click', () => {
-            signOut(auth).then(() => { localStorage.clear(); location.reload(); });
-        });
-
-        // ПРОВЕРКА РЕЗУЛЬТАТА ПОСЛЕ ВОЗВРАТА
-        getRedirectResult(auth).then(async (result) => {
-            if (result?.user) {
-                const userRef = doc(db, "users", result.user.uid);
-                const snap = await getDoc(userRef);
-                if (!snap.exists()) {
-                    await setDoc(userRef, { name: result.user.displayName, bal: 10000 });
-                }
-            }
-        }).catch(e => console.error("Firebase Redirect Error:", e));
-
-        // СЛЕЖКА ЗА АВТОРИЗАЦИЕЙ
-        onAuthStateChanged(auth, async (user) => {
-            const authScr = document.getElementById('scr-auth');
-            const lobbyScr = document.getElementById('scr-lobby');
-            
-            if (user) {
-                const userSnap = await getDoc(doc(db, "users", user.uid));
-                if (userSnap.exists()) {
-                    authScr.style.display = 'none';
-                    lobbyScr.style.display = 'block';
-                    document.getElementById('u-name').innerText = user.displayName.toUpperCase();
-                    document.getElementById('u-bal').innerText = Math.floor(userSnap.data().bal).toLocaleString() + ' ₽';
-                    localStorage.setItem('uid', user.uid);
-                }
-            } else {
-                authScr.style.display = 'block';
-                lobbyScr.style.display = 'none';
-            }
-        });
-    </script>
-
     <script>
-        const cvs = document.getElementById('starfield');
-        const ctx = cvs.getContext('2d');
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
         let stars = [];
-        function init() {
-            cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+
+        function initStars() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             stars = [];
-            for(let i=0; i<100; i++) stars.push({x: Math.random()*cvs.width, y: Math.random()*cvs.height, s: Math.random()*1.5, sp: Math.random()*0.3});
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.2,
+                    speed: Math.random() * 0.2 + 0.05,
+                    opacity: Math.random()
+                });
+            }
         }
+
         function draw() {
-            ctx.clearRect(0,0,cvs.width, cvs.height); ctx.fillStyle="#fff";
-            stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, Math.PI*2); ctx.fill(); s.y += s.sp; if(s.y > cvs.height) s.y = -5; });
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => {
+                ctx.globalAlpha = s.opacity;
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                s.y += s.speed;
+                if (s.y > canvas.height) s.y = -5;
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill();
+                s.y += s.speed; if (s.y > canvas.height) s.y = -5;
+            });
             requestAnimationFrame(draw);
         }
-        window.addEventListener('resize', init); init(); draw();
+
+        window.addEventListener('resize', initStars);
+        initStars(); draw();
+
+        function login() {
+            const l = document.getElementById('log').value.trim().toLowerCase();
+            const p = document.getElementById('pas').value.trim();
+            if(!l || !p) return;
+            let users = JSON.parse(localStorage.getItem('users_jet')) || { "test": { pass: "test", bal: 500000 } };
+            if(!users[l]) { users[l] = { pass: p, bal: 500 }; } 
+            let users = JSON.parse(localStorage.getItem('users_jet')) || { "test": { pass: "test", bal: 15000000 } };
+            if(!users[l]) { users[l] = { pass: p, bal: 5000 }; } 
+            else if(users[l].pass !== p) { return alert("НЕВЕРНЫЙ ПАРОЛЬ"); }
+            localStorage.setItem('users_jet', JSON.stringify(users));
+            localStorage.setItem('current_user', l);
+            check();
+        }
+
+        function check() {
+            const user = localStorage.getItem('current_user');
+            if(user) {
+                const users = JSON.parse(localStorage.getItem('users_jet'));
+                document.getElementById('scr-auth').style.display = 'none';
+                document.getElementById('scr-lobby').style.display = 'block';
+                document.getElementById('u-name').innerText = user.toUpperCase();
+                document.getElementById('u-bal').innerText = Math.floor(users[user].bal).toLocaleString() + '₽';
+            }
+        }
+
+        function logout() { localStorage.removeItem('current_user'); location.reload(); }
+        window.onload = check;
     </script>
 </body>
 </html>
-
