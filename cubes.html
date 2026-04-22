@@ -3,55 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES SLEEPKIDD — 8K FIX</title>
+    <title>CUBES SLEEPKIDD — NUCLEAR EDITION</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; }
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; --neon: 0 0 30px rgba(188, 19, 254, 0.6); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
         body { 
-            background: #050505; color: #fff; font-family: 'Orbitron', sans-serif; 
+            background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; 
             margin: 0; display: flex; flex-direction: column; align-items: center; 
-            min-height: 100vh; overflow-x: hidden;
+            min-height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* ЛОГОТИП */
-        .logo-box { margin: 35px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1; }
-        .logo-box .top { font-size: 26px; color: var(--primary); display: block; text-shadow: 0 0 20px var(--primary); animation: glitch 2s infinite; }
-        .logo-box .bot { font-size: 42px; color: #fff; letter-spacing: -2px; }
-        @keyframes glitch { 0%, 90% { transform: translate(0); } 92% { transform: translate(-3px, 1px); } 94% { transform: translate(3px, -1px); } }
+        /* КАНВАС ДЛЯ ИСКР */
+        #fx-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
 
-        /* ОСНОВНОЙ КОНТЕЙНЕР */
+        /* ГИПЕР-ГЛИТЧ ЛОГО */
+        .logo-box { margin: 25px 0 10px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; position: relative; z-index: 10; }
+        .logo-box .top { font-size: 24px; color: var(--primary); display: block; text-shadow: var(--neon); animation: hyperGlitch 1.5s infinite; }
+        .logo-box .top::before, .logo-box .top::after { content: 'CUBES'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; }
+        .logo-box .top::before { color: #00f6ff; z-index: -1; animation: rgbSplit 1.5s infinite; }
+        .logo-box .top::after { color: #ff00de; z-index: -2; animation: rgbSplit 1.5s infinite reverse; }
+
+        @keyframes hyperGlitch { 0%, 100% { transform: translate(0); } 16% { transform: translate(-4px, 2px); } 81% { transform: translate(2px, 2px); } }
+        @keyframes rgbSplit { 0%, 15%, 19%, 80%, 84%, 100% { opacity: 0; transform: translate(0); } 16%, 18% { opacity: 1; transform: translate(-8px, 0); } }
+        .logo-box .bot { font-size: 38px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
+
+        /* ПЛЕЕР */
+        .player-bar { 
+            width: 95%; max-width: 400px; background: rgba(188, 19, 254, 0.1); 
+            border: 1px solid var(--primary); border-radius: 100px; 
+            padding: 8px 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; box-shadow: var(--neon);
+        }
+        .disk { width: 22px; height: 22px; border: 2px solid var(--primary); border-radius: 50%; animation: spin 4s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* КОНТЕЙНЕР С ГЛУБОКОЙ ТЕНЬЮ */
         .container { 
-            width: 92%; max-width: 420px; background: #0a0a0a; 
-            border: 3px solid var(--primary); border-radius: 45px; padding: 25px; 
-            text-align: center; box-shadow: 0 0 60px rgba(188, 19, 254, 0.4); 
-            position: relative;
+            width: 92%; max-width: 420px; background: rgba(5, 5, 5, 0.95); 
+            border: 2px solid var(--primary); border-radius: 50px; padding: 25px; 
+            text-align: center; box-shadow: 0 0 80px rgba(188, 19, 254, 0.4); 
+            position: relative; z-index: 10; backdrop-filter: blur(15px);
         }
         
-        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 10px; }
-        .back-nav { text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid var(--primary); text-transform: uppercase; }
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .btn-menu {
+            text-decoration: none; color: #fff; background: rgba(188, 19, 254, 0.15);
+            border: 1px solid var(--primary); padding: 8px 18px; border-radius: 12px;
+            font-size: 11px; font-weight: 900; text-transform: uppercase; transition: 0.3s;
+        }
+        .btn-menu:hover { background: var(--primary); box-shadow: 0 0 20px var(--primary); }
 
-        .bal-val { color: var(--win); font-weight: 900; font-size: 2.8rem; margin: 10px 0 30px; text-shadow: 0 0 20px rgba(0,255,136,0.4); }
+        .bal-val { color: var(--win); font-weight: 900; font-size: 2.2rem; margin-bottom: 15px; text-shadow: 0 0 20px var(--win); }
 
-        /* --- МОНОЛИТНЫЙ CSS КУБИК --- */
+        /* 3D КУБИК С НЕОНОВОЙ ПОДСВЕТКОЙ */
         .scene { width: 100px; height: 100px; perspective: 1000px; margin: 50px auto 70px; }
         .cube { 
             width: 100%; height: 100%; position: relative; transform-style: preserve-3d; 
             transition: transform 1.5s cubic-bezier(0.17, 0.67, 0.1, 1);
-            transform: rotateX(-20deg) rotateY(25deg);
         }
         .face { 
-            position: absolute; width: 102px; height: 102px; 
-            background: #fff; border-radius: 22px; 
+            position: absolute; width: 100px; height: 100px; 
+            background: #fff; border-radius: 20px; 
             display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); 
-            padding: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
-            backface-visibility: visible; border: none; outline: 1px solid #fff;
+            padding: 12px; box-shadow: inset 0 0 25px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.5);
+            border: 3px solid #eee;
         }
-        .dot { background: #111; border-radius: 50%; width: 18px; height: 18px; align-self: center; justify-self: center; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.4); }
-        .f-1 .dot { background: #ff3b30; width: 28px; height: 28px; box-shadow: inset 0 0 8px rgba(0,0,0,0.2); }
+        .dot { background: #111; border-radius: 50%; width: 16px; height: 16px; align-self: center; justify-self: center; box-shadow: 0 0 5px #000; }
+        .f-1 .dot { background: var(--lose); width: 24px; height: 24px; box-shadow: 0 0 15px var(--lose); }
 
-        /* Позиции граней */
         .f-1 { transform: rotateY(0deg) translateZ(50px); }
         .f-6 { transform: rotateY(180deg) translateZ(50px); }
         .f-3 { transform: rotateY(90deg) translateZ(50px); }
@@ -59,34 +79,54 @@
         .f-2 { transform: rotateX(90deg) translateZ(50px); }
         .f-5 { transform: rotateX(-90deg) translateZ(50px); }
 
-        /* ИСТОРИЯ */
-        #history { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; height: 35px; }
-        .hist-item { width: 35px; height: 35px; background: #000; border: 1.5px solid var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; color: var(--win); }
+        /* УПРАВЛЕНИЕ */
+        .h-line { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
+        .h-dot { width: 35px; height: 35px; background: #000; border: 1.5px solid var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--win); font-weight: 900; }
 
-        /* КНОПКИ И ВВОД */
-        .bet-input { width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 18px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 20px; font-family: 'Orbitron'; }
+        input { width: 100%; background: #000; border: 2px solid #222; color: #fff; padding: 15px; border-radius: 20px; font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 15px; box-shadow: inset 0 0 15px #000; }
+        
         .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 15px; border-radius: 18px; font-weight: 900; cursor: pointer; font-size: 0.8rem; }
-        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.1); }
+        .choice-btn { background: #000; border: 2px solid #222; color: #fff; padding: 16px; border-radius: 20px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .choice-btn.active { border-color: var(--primary); background: rgba(188, 19, 254, 0.2); box-shadow: var(--neon); transform: scale(1.05); }
         
         .main-btn { 
-            width: 100%; height: 85px; 
+            width: 100%; height: 80px; 
             background: linear-gradient(180deg, var(--primary), #8a0db8); 
             color: #fff; border: none; border-radius: 25px; 
-            font-weight: 900; font-size: 2.2rem; text-transform: uppercase; 
-            cursor: pointer; transition: 0.1s;
+            font-weight: 900; font-size: 2rem; text-transform: uppercase; 
+            cursor: pointer; box-shadow: 0 0 40px rgba(188, 19, 254, 0.6);
+            position: relative; overflow: hidden;
         }
-        .main-btn:active { transform: scale(0.96); }
+        .main-btn::after {
+            content: ''; position: absolute; top: -50%; left: -100%; width: 50%; height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg); animation: scan 3s infinite;
+        }
+        @keyframes scan { 0% { left: -100%; } 100% { left: 150%; } }
     </style>
 </head>
 <body>
 
-    <div class="logo-box"><span class="top">CUBES</span><span class="bot">SLEEPKIDD</span></div>
+    <canvas id="fx-canvas"></canvas>
+    <audio id="track" loop><source src="6utra.mp3" type="audio/mpeg"></audio>
+
+    <div class="logo-box">
+        <span class="top">CUBES</span>
+        <span class="bot">SLEEPKIDD</span>
+    </div>
+
+    <div class="player-bar">
+        <div class="disk"></div>
+        <marquee style="font-size: 10px; color: var(--primary); font-weight: 900; flex: 1;">QUANTUM_LINK_ACTIVE: 6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
+    </div>
 
     <div class="container">
-        <div class="nav-bar"><a href="index.html" class="back-nav">МЕНЮ</a></div>
-        <div id="history"></div>
-        <div class="bal-val"><span id="u-bal">1,000</span> ₽</div>
+        <div class="top-nav">
+            <a href="index.html" class="btn-menu">МЕНЮ</a>
+            <div class="h-line" id="history"></div>
+        </div>
+        
+        <div class="bal-val" id="u-bal">5 000 ₽</div>
 
         <div class="scene">
             <div class="cube" id="cube">
@@ -103,7 +143,7 @@
             </div>
         </div>
 
-        <input type="number" id="bet" class="bet-input" value="50">
+        <input type="number" id="bet" value="100">
         <div class="choice-grid">
             <button class="choice-btn active" id="btn-even" onclick="setChoice('even')">ЧЕТНОЕ</button>
             <button class="choice-btn" id="btn-odd" onclick="setChoice('odd')">НЕЧЕТНОЕ</button>
@@ -112,19 +152,18 @@
     </div>
 
     <script>
-        let balance, user, users, currentChoice = 'even';
+        let balance, currentChoice = 'even';
+        const cube = document.getElementById('cube');
+        const canvas = document.getElementById('fx-canvas');
+        const ctx = canvas.getContext('2d');
         const rots = { 1: {x:0, y:0}, 6: {x:0, y:180}, 3: {x:0, y:-90}, 4: {x:0, y:90}, 2: {x:-90, y:0}, 5: {x:90, y:0} };
+        let particles = [];
 
-        // СИНХРОНИЗАЦИЯ БАЛАНСА
-        function sync() {
-            user = localStorage.getItem('current_user') || 'test';
-            users = JSON.parse(localStorage.getItem('users_jet')) || { "test": { pass: "test", bal: 5000 } };
-            if(!users[user]) { users[user] = { pass: "123", bal: 500 }; }
-            balance = users[user].bal;
-            document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString();
-        }
-
-        window.onload = sync;
+        window.onload = () => {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            balance = parseInt(localStorage.getItem('bal')?.replace(/\s/g, '') || 5000);
+            updateUI(); loadHistory(); renderFX();
+        };
 
         function setChoice(t) {
             currentChoice = t;
@@ -133,41 +172,68 @@
         }
 
         function roll() {
+            document.getElementById('track').play().catch(() => {});
             let bet = parseInt(document.getElementById('bet').value);
-            if(bet > balance || bet <= 0) return alert("Мало кэша!");
-            
-            balance -= bet; updateUI();
-            const btn = document.getElementById('roll-btn'); btn.disabled = true;
+            if(bet > balance || bet <= 0) return;
 
-            const res = Math.floor(Math.random() * 6) + 1;
-            const cube = document.getElementById('cube');
-            const exX = 360 * 4; const exY = 360 * 4;
+            balance -= bet; updateUI();
+            const result = Math.floor(Math.random() * 6) + 1;
             
-            cube.style.transform = `rotateX(${rots[res].x + exX}deg) rotateY(${rots[res].y + exY}deg)`;
+            // Запуск искр
+            for(let i=0; i<30; i++) spawnParticle();
+
+            cube.style.transform = `rotateX(${rots[result].x + 1440}deg) rotateY(${rots[result].y + 1440}deg)`;
 
             setTimeout(() => {
-                const won = (currentChoice === 'even' && res % 2 === 0) || (currentChoice === 'odd' && res % 2 !== 0);
-                if(won) { balance += bet * 1.95; addHistory(res, '#00ff88'); }
-                else { addHistory(res, '#ff4d4d'); }
-                updateUI(); save(); btn.disabled = false;
-                setTimeout(() => {
-                    cube.style.transition = 'none';
-                    cube.style.transform = `rotateX(${rots[res].x}deg) rotateY(${rots[res].y}deg)`;
-                    setTimeout(() => cube.style.transition = '', 50);
-                }, 500);
+                const isEven = result % 2 === 0;
+                const win = (currentChoice === 'even' && isEven) || (currentChoice === 'odd' && !isEven);
+                if(win) { 
+                    balance += bet * 2; 
+                    for(let i=0; i<100; i++) spawnParticle(true);
+                }
+                updateUI(); addHistory(result);
             }, 1500);
         }
 
-        function addHistory(n, c) {
-            const h = document.getElementById('history');
-            const div = document.createElement('div');
-            div.className = 'hist-item'; div.style.borderColor = c; div.style.color = c;
-            div.innerText = n; h.prepend(div);
-            if(h.children.length > 5) h.lastChild.remove();
+        function spawnParticle(isWin = false) {
+            particles.push({
+                x: window.innerWidth / 2,
+                y: window.innerHeight / 2,
+                vx: (Math.random() - 0.5) * 20,
+                vy: (Math.random() - 0.5) * 20,
+                life: 1,
+                color: isWin ? '#00ff88' : '#bc13fe'
+            });
         }
 
-        function updateUI() { document.getElementById('u-bal').innerText = Math.floor(balance).toLocaleString(); }
-        function save() { users[user].bal = balance; localStorage.setItem('users_jet', JSON.stringify(users)); }
+        function renderFX() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+                ctx.fillStyle = p.color; ctx.globalAlpha = p.life;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+                if(p.life <= 0) particles.splice(i, 1);
+            });
+            requestAnimationFrame(renderFX);
+        }
+
+        function updateUI() {
+            document.getElementById('u-bal').innerText = balance.toLocaleString() + " ₽";
+            localStorage.setItem('bal', balance.toLocaleString());
+        }
+
+        function addHistory(res) {
+            let h = JSON.parse(localStorage.getItem('cubes_h') || '[]');
+            h.unshift(res); if(h.length > 4) h.pop();
+            localStorage.setItem('cubes_h', JSON.stringify(h));
+            loadHistory();
+        }
+
+        function loadHistory() {
+            let h = JSON.parse(localStorage.getItem('cubes_h') || '[]');
+            document.getElementById('history').innerHTML = h.map(x => `<div class="h-dot">${x}</div>`).join('');
+        }
     </script>
 </body>
 </html>
+
