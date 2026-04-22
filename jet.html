@@ -3,199 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title> SLEEPKIDD LUCKY ROCKET</title>
+    <title>SLEEPKIDD LUCKY ROCKET</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         body { background: #050505; margin: 0; display: flex; flex-direction: column; align-items: center; font-family: 'Orbitron', sans-serif; color: #fff; min-height: 100vh; overflow-x: hidden; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
+        /* ГЛОБАЛЬНЫЙ НЕОНОВЫЙ ФИЛЬТР */
+        #game-container { transition: filter 0.3s; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
         /* СТИЛЬ КНОПОК */
         .game-btn {
-            width: 100% !important;
-            height: 85px !important;
-            border: none !important;
-            border-radius: 25px !important;
-            font-weight: 900 !important;
-            font-size: 1.7rem !important;
-            text-transform: uppercase !important;
-            cursor: pointer !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            line-height: 1 !important;
+            width: 100% !important; height: 85px !important; border: none !important;
+            border-radius: 25px !important; font-weight: 900 !important;
+            font-size: 1.7rem !important; text-transform: uppercase !important;
+            cursor: pointer !important; display: flex !important;
+            flex-direction: column !important; align-items: center !important;
+            justify-content: center !important; line-height: 1 !important;
         }
 
-        #btn-cash { display: none !important; background: linear-gradient(180deg, #00ff88, #00b35f); color: #000; }
-        #btn-start { display: flex !important; background: linear-gradient(180deg, #bc13fe, #8a0db8); color: #fff; }
+        #btn-cash { display: none !important; background: linear-gradient(180deg, #00ff88, #00b35f); color: #000; box-shadow: 0 0 30px rgba(0, 255, 136, 0.4); }
+        #btn-start { display: flex !important; background: linear-gradient(180deg, #bc13fe, #8a0db8); color: #fff; box-shadow: 0 0 30px rgba(188, 19, 254, 0.4); }
+
+        /* МИНИ ПЛЕЕР В ИГРЕ */
+        .mini-player {
+            width: 92%; max-width: 420px; background: rgba(188, 19, 254, 0.05);
+            border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 15px;
+            padding: 8px 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+        }
+        .disk-min { width: 18px; height: 18px; border: 2px solid #bc13fe; border-radius: 50%; animation: spin 3s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
-<body style="background: #050505;">
+<body>
 
-    <!-- ЛОГОТИП -->
-    <div style="margin: 30px 0 15px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center; line-height: 1;">
-        <span style="font-size: 26px; color: #bc13fe; display: block; text-shadow: 0 0 20px #bc13fe; margin-bottom: -5px;">ROCKET</span>
-        <span style="font-size: 42px; color: #fff; letter-spacing: -2px; display: block;">SLEEPKIDD</span>
-    </div>
-    
-    <div style="width: 92%; max-width: 420px; background: #0a0a0a; border: 3px solid #bc13fe; border-radius: 40px; padding: 20px; box-shadow: 0 0 50px rgba(188, 19, 254, 0.6); position: relative;">
+    <!-- АУДИО (Тот же файл что в лобби) -->
+    <audio id="track" loop><source src="6utra.mp3" type="audio/mpeg"></audio>
+
+    <div id="game-container">
+        <!-- ЛОГОТИП -->
+        <div style="margin: 25px 0 10px 0; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-15deg); text-align: center;">
+            <span style="font-size: 20px; color: #bc13fe; display: block; text-shadow: 0 0 20px #bc13fe;">ROCKET</span>
+            <span style="font-size: 36px; color: #fff; letter-spacing: -2px; display: block;">SLEEPKIDD</span>
+        </div>
+
+        <!-- МИНИ ПЛЕЕР -->
+        <div class="mini-player">
+            <div class="disk-min"></div>
+            <marquee style="font-size: 9px; color: #bc13fe;">ON AIR: 6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
+        </div>
         
-        <!-- МЕНЮ -->
-        <div style="width: 100%; display: flex; margin-bottom: 15px;">
-            <a href="index.html" style="text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: 900; padding: 8px 18px; border-radius: 12px; background: #111; border: 1.5px solid #bc13fe; text-transform: uppercase;">МЕНЮ</a>
-        </div>
-
-        <!-- ИСТОРИЯ (4 ИКСА) -->
-        <div id="history" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; height: 40px; overflow: hidden;"></div>
-        
-        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:1rem; font-weight: 900;">
-            <span id="nick" style="color: #bc13fe;">USER</span>
-            <span id="bal" style="color: #00ff88;">0₽</span>
-        </div>
-
-        <!-- ИГРОВОЕ ПОЛЕ -->
-        <div id="area" style="height: 230px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 1px solid #333; margin-bottom: 15px;">
-            <canvas id="star-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
-            <div id="mult" style="font-size: 4.5rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00ff88; z-index: 10;">1.00x</div>
-            <div id="hero" style="position: absolute; bottom: 20px; left: 20px; z-index: 5; transition: 0.1s linear;">
-                <div style="font-size: 55px; filter: drop-shadow(0 0 15px #bc13fe);">🚀</div>
+        <div style="width: 92%; max-width: 420px; background: #0a0a0a; border: 2px solid #bc13fe; border-radius: 40px; padding: 20px; box-shadow: 0 0 40px rgba(188, 19, 254, 0.3); position: relative;">
+            
+            <div style="width: 100%; display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <a href="index.html" style="text-decoration: none; color: #fff; font-size: 0.7rem; font-weight: 900; padding: 8px 15px; border-radius: 10px; background: #111; border: 1px solid #bc13fe;">ВЕРНУТЬСЯ В ЛОББИ</a>
             </div>
-        </div>
 
-        <input type="number" id="bet" value="50" style="width: 100%; background: #111; border: 2px solid #333; color: #fff; padding: 15px; border-radius: 18px; font-size: 1.6rem; font-weight: 900; text-align: center; margin-bottom: 15px;">
-
-        <!-- АВТО ПАНЕЛЬ -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-            <div style="background: #000; padding: 10px; border-radius: 15px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center;">
-                <span style="font-size: 0.65rem; color: #666; margin-bottom: 5px;">АВТОСТАВКА</span>
-                <input type="checkbox" id="auto-bet" style="width: 24px; height: 24px; accent-color: #bc13fe;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:1rem; font-weight: 900;">
+                <span id="nick" style="color: #bc13fe;">USER</span>
+                <span id="bal" style="color: #00ff88;">5 000₽</span>
             </div>
-            <div style="background: #000; padding: 10px; border-radius: 15px; border: 1px solid #222; display: flex; flex-direction: column; align-items: center;">
-                <span style="font-size: 0.65rem; color: #666; margin-bottom: 5px;">АВТОВЫВОД</span>
-                <div style="display:flex; align-items:center; gap:5px;">
-                    <input type="number" id="auto-cash-val" value="2.0" style="width: 45px; background: #111; color: #fff; border: 1px solid #333; text-align: center; border-radius: 5px; font-weight: 900;">
-                    <input type="checkbox" id="auto-cash-check" style="width: 24px; height: 24px; accent-color: #bc13fe;">
+
+            <!-- ИГРОВОЕ ПОЛЕ -->
+            <div id="area" style="height: 200px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 1px solid #222; margin-bottom: 15px;">
+                <canvas id="star-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
+                <div id="mult" style="font-size: 4rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00ff88; z-index: 10; text-shadow: 0 0 20px rgba(0,255,136,0.5);">1.00x</div>
+                <div id="hero" style="position: absolute; bottom: 20px; left: 20px; z-index: 5; transition: 0.1s linear;">
+                    <div style="font-size: 50px; filter: drop-shadow(0 0 15px #bc13fe);">🚀</div>
                 </div>
             </div>
-        </div>
 
-        <button id="btn-start" class="game-btn" onclick="fly()">СТАВКА</button>
-        <button id="btn-cash" class="game-btn" onclick="collect()">
-            ЗАБРАТЬ
-            <span id="win-sum" style="font-size: 1.4rem;">0₽</span>
-        </button>
+            <input type="number" id="bet" value="100" style="width: 100%; background: #000; border: 2px solid #222; color: #fff; padding: 15px; border-radius: 18px; font-size: 1.5rem; font-weight: 900; text-align: center; margin-bottom: 15px;">
+
+            <button id="btn-start" class="game-btn" onclick="fly()">СТАВКА</button>
+            <button id="btn-cash" class="game-btn" onclick="collect()">
+                ЗАБРАТЬ
+                <span id="win-sum" style="font-size: 1.3rem; opacity: 0.8;">0₽</span>
+            </button>
+        </div>
     </div>
 
     <script>
-        let balance = 1000, currentBet, isFlying = false, currentX = 1.00, timer, crashAt;
-        const canvas = document.getElementById('star-canvas');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
+        let balance = 5000, currentBet, isFlying = false, currentX = 1.00, timer, crashAt;
+        const audio = document.getElementById('track');
 
         window.onload = () => {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            const user = localStorage.getItem('current_user') || 'GUEST';
-            const users = JSON.parse(localStorage.getItem('users_jet')) || {'GUEST': {bal: 1000}};
-            balance = users[user].bal;
-            document.getElementById('nick').innerText = user.toUpperCase();
-            document.getElementById('bal').innerText = Math.floor(balance) + "₽";
-            drawStars();
+            // Подгружаем данные из лобби
+            const savedUser = localStorage.getItem('user') || 'GUEST';
+            const savedBal = localStorage.getItem('bal') || '5 000';
+            balance = parseInt(savedBal.replace(/\s/g, ''));
+            
+            document.getElementById('nick').innerText = savedUser.toUpperCase();
+            document.getElementById('bal').innerText = balance.toLocaleString() + "₽";
+            
+            // Автостарт музыки (если разрешено)
+            audio.play().catch(() => console.log("Ожидание клика"));
+            audio.volume = 0.3;
         };
 
         function fly() {
             if (isFlying) return;
             currentBet = parseInt(document.getElementById('bet').value);
-            if(currentBet > balance || currentBet <= 0) return alert("Мало денег!");
+            if(currentBet > balance || currentBet <= 0) return alert("Недостаточно средств!");
             
             balance -= currentBet;
-            document.getElementById('bal').innerText = Math.floor(balance) + "₽";
-            isFlying = true; currentX = 1.00;
+            saveData();
+            
+            isFlying = true; 
+            currentX = 1.00;
+            crashAt = (Math.random() * 5 + 1.1).toFixed(2); // Рандом для теста
 
-            // Переключение кнопок
             document.getElementById('btn-start').style.setProperty('display', 'none', 'important');
             document.getElementById('btn-cash').style.setProperty('display', 'flex', 'important');
 
-            // НОВАЯ ЛОГИКА РАНДОМА
-            let r = Math.random() * 100;
-            if (r < 40) crashAt = (Math.random() * 0.2 + 1.01).toFixed(2); // Слив
-            else if (r < 90) crashAt = (Math.random() * 1.8 + 1.2).toFixed(2); // Средний
-            else if (r < 98) crashAt = (Math.random() * 7 + 3).toFixed(2); // Хороший
-            else crashAt = (Math.random() * 490 + 10).toFixed(2); // Легендарный
-
-            document.getElementById('mult').style.color = '#00ff88';
-            
             timer = setInterval(() => {
                 currentX += 0.01;
                 document.getElementById('mult').innerText = currentX.toFixed(2) + "x";
                 document.getElementById('win-sum').innerText = Math.floor(currentBet * currentX) + "₽";
                 
-                let moveX = Math.min(20 + (currentX - 1) * 60, 280);
-                let moveY = Math.min(20 + (currentX - 1) * 45, 140);
-                document.getElementById('hero').style.left = moveX + 'px';
-                document.getElementById('hero').style.bottom = moveY + 'px';
+                // Визуальный эффект: меняем цвет контейнера при росте икса
+                document.getElementById('game-container').style.filter = `hue-rotate(${currentX * 10}deg)`;
 
-                if(document.getElementById('auto-cash-check').checked && currentX >= parseFloat(document.getElementById('auto-cash-val').value)) collect();
                 if(currentX >= crashAt) crash();
             }, 80);
         }
 
-        function crash() {
-            clearInterval(timer); isFlying = false;
-            addHistory(currentX, '#ff4d4d');
-            document.getElementById('mult').style.color = '#ff4d4d';
-            setTimeout(reset, 2000);
-        }
-
         function collect() {
-            if(!isFlying) return;
-            clearInterval(timer);
-            balance += Math.floor(currentBet * currentX);
-            document.getElementById('bal').innerText = Math.floor(balance) + "₽";
-            addHistory(currentX, '#00ff88');
-            isFlying = false;
-            setTimeout(reset, 1000);
+            if (!isFlying) return;
+            let win = Math.floor(currentBet * currentX);
+            balance += win;
+            saveData();
+            resetGame("WIN! +" + win + "₽");
         }
 
-        function reset() {
+        function crash() {
+            resetGame("CRASH!");
+        }
+
+        function resetGame(msg) {
+            clearInterval(timer);
+            isFlying = false;
             document.getElementById('btn-start').style.setProperty('display', 'flex', 'important');
             document.getElementById('btn-cash').style.setProperty('display', 'none', 'important');
-            document.getElementById('mult').innerText = "1.00x";
-            document.getElementById('mult').style.color = '#00ff88';
-            document.getElementById('hero').style.left = "20px";
-            document.getElementById('hero').style.bottom = "20px";
-            if(document.getElementById('auto-bet').checked) setTimeout(fly, 1500);
-            saveDB();
+            document.getElementById('game-container').style.filter = "none";
+            if(msg.includes("CRASH")) document.getElementById('mult').style.color = "#ff4d4d";
         }
 
-        function addHistory(x, color) {
-            const h = document.getElementById('history');
-            const div = document.createElement('div');
-            div.style.cssText = `background: #000; border: 2.5px solid ${color}; color: ${color}; padding: 8px 0; border-radius: 12px; font-weight: 900; text-align: center; font-size: 0.85rem;`;
-            div.innerText = parseFloat(x).toFixed(2) + 'x';
-            h.prepend(div);
-            if(h.children.length > 4) h.lastChild.remove();
-        }
-
-        function saveDB() {
-            const user = localStorage.getItem('current_user') || 'GUEST';
-            let stored = JSON.parse(localStorage.getItem('users_jet')) || {};
-            if(!stored[user]) stored[user] = {};
-            stored[user].bal = balance;
-            localStorage.setItem('users_jet', JSON.stringify(stored));
-        }
-
-        function drawStars() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.fillStyle = "#fff";
-            if(isFlying && stars.length < 35) stars.push({x: canvas.width+10, y: Math.random()*canvas.height, s: Math.random()*2, sp: Math.random()*12+5});
-            stars.forEach((s, i) => {
-                s.x -= isFlying ? s.sp : 0.5;
-                ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, 7); ctx.fill();
-                if(s.x < -10) stars.splice(i,1);
-            });
-            requestAnimationFrame(drawStars);
+        function saveData() {
+            document.getElementById('bal').innerText = balance.toLocaleString() + "₽";
+            localStorage.setItem('bal', balance.toLocaleString());
         }
     </script>
 </body>
 </html>
+
