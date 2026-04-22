@@ -8,100 +8,86 @@
     <style>
         :root { 
             --primary: #bc13fe; 
-            --bg: #000000; 
+            --bg: #000; 
             --win: #00ff88; 
-            --lose: #ff4d4d; 
-            --glass: rgba(255, 255, 255, 0.02);
+            --glass: rgba(188, 19, 254, 0.05);
+            --neon-shadow: 0 0 20px rgba(188, 19, 254, 0.5);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body { 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: 'Orbitron', sans-serif; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh; 
-            overflow-x: hidden; 
-            position: relative;
+            background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; 
+            margin: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        /* КОСМИЧЕСКИЙ ФОН */
+        /* ГЛУБОКИЙ КОСМОС */
         #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .aura {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 800px; height: 800px;
-            background: radial-gradient(circle, rgba(188, 19, 254, 0.08) 0%, transparent 70%);
-            z-index: -1; animation: auraMove 15s infinite alternate ease-in-out;
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle, rgba(188, 19, 254, 0.1) 0%, transparent 80%);
+            z-index: -1; pointer-events: none;
         }
-        @keyframes auraMove { from { transform: translate(-55%, -45%); } to { transform: translate(-45%, -55%); } }
 
-        /* ЛОГОТИП */
-        .logo-box { margin: 45px 0 30px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; position: relative; }
-        .logo-box .top { 
-            font-size: 32px; color: var(--primary); display: block; 
-            text-shadow: 0 0 15px var(--primary); animation: hyperGlitch 1.5s infinite;
-        }
-        @keyframes hyperGlitch { 0%, 100% { transform: translate(0); } 20% { transform: translate(-2px, 1px); } 40% { transform: translate(2px, -1px); } }
-        .logo-box .bot { font-size: 48px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
+        /* ГИПЕР-ГЛИТЧ ЛОГО */
+        .logo-box { margin: 40px 0 20px; text-align: center; cursor: default; }
+        .logo-box .top { font-size: 30px; color: var(--primary); font-family: 'Rubik Mono One'; text-shadow: var(--neon-shadow); animation: glitch 2s infinite; }
+        .logo-box .bot { font-size: 45px; letter-spacing: -2px; line-height: 0.8; }
 
-        .container { width: 95%; max-width: 850px; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; z-index: 10; }
+        @keyframes glitch { 0%, 100% { transform: skew(0); } 50% { transform: skew(-10deg); filter: hue-rotate(90deg); } }
 
-        /* АВТОРИЗАЦИЯ */
+        .container { width: 95%; max-width: 900px; z-index: 10; display: flex; flex-direction: column; align-items: center; }
+
+        /* ВХОД */
         #scr-auth { 
-            width: 100%; max-width: 400px; background: rgba(10, 10, 10, 0.85); 
-            padding: 45px; border-radius: 50px; border: 1px solid rgba(188, 19, 254, 0.2); 
-            text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.1); 
-            backdrop-filter: blur(30px); margin-top: 30px;
+            width: 100%; max-width: 380px; background: rgba(5, 5, 5, 0.9); 
+            padding: 40px; border-radius: 40px; border: 1px solid var(--primary); 
+            box-shadow: var(--neon-shadow); backdrop-filter: blur(20px); margin-top: 20px;
         }
         input { 
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: #fff; padding: 20px; width: 100%; border-radius: 15px; 
-            margin-bottom: 20px; text-align: center; font-family: 'Orbitron'; 
-            font-size: 1.3rem; font-weight: 900;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(188, 19, 254, 0.3); 
+            color: #fff; padding: 18px; width: 100%; border-radius: 12px; 
+            margin-bottom: 15px; text-align: center; font-family: 'Orbitron'; font-weight: 900;
         }
-        .btn-go { 
-            background: linear-gradient(180deg, var(--primary), #8a0db8); 
-            border: none; color: #fff; padding: 22px; border-radius: 18px; 
-            font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; 
-            font-size: 1.8rem; transition: 0.3s;
+        .btn-main { 
+            background: linear-gradient(180deg, var(--primary), #6a0dad); 
+            border: none; color: #fff; padding: 20px; border-radius: 12px; 
+            font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
         /* ЛОББИ */
-        #scr-lobby { display: none; width: 100%; }
-        .reveal { opacity: 0; transform: translateY(30px); animation: revealUp 0.6s forwards; }
-        @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
+        #scr-lobby { display: none; width: 100%; animation: fadeIn 0.8s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        /* ПЛЕЕР */
-        .music-player {
-            display: flex; align-items: center; gap: 15px;
-            background: rgba(188, 19, 254, 0.1); padding: 12px 25px;
-            border-radius: 100px; border: 1px solid var(--primary);
-            margin-bottom: 25px; backdrop-filter: blur(10px);
+        /* ПЛЕЕР СТИЛЬНЫЙ */
+        .neon-player {
+            width: 100%; background: var(--glass); border: 1px solid var(--primary);
+            border-radius: 100px; padding: 8px 20px; margin-bottom: 25px;
+            display: flex; align-items: center; gap: 15px; box-shadow: inset 0 0 10px rgba(188, 19, 254, 0.2);
         }
-        .disk { width: 30px; height: 30px; background: var(--primary); border-radius: 50%; animation: spin 3s linear infinite; }
+        .disk { width: 25px; height: 25px; border: 2px solid var(--primary); border-radius: 50%; animation: spin 4s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        .user-bar { 
-            width: 100%; background: var(--glass); 
-            padding: 25px 40px; border-radius: 30px; 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 40px;
+        .user-panel { 
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            background: var(--glass); padding: 20px 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px;
         }
 
-        .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; width: 100%; }
-        .game-card { 
-            background: rgba(10, 10, 10, 0.6); border-radius: 45px; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            overflow: hidden; transition: 0.5s; 
-            text-decoration: none; color: #fff;
+        /* СЕТКА ИГР */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; width: 100%; }
+        .card { 
+            background: rgba(10, 10, 10, 0.8); border-radius: 35px; border: 1px solid rgba(188, 19, 254, 0.1); 
+            overflow: hidden; transition: 0.4s; text-decoration: none; color: #fff; position: relative;
         }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-10px); }
-        .preview { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 6rem; background: #000; }
+        .card:hover { border-color: var(--primary); transform: translateY(-8px); box-shadow: var(--neon-shadow); }
+        .card .visual { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 4rem; background: #050505; }
+        .card .info { padding: 25px; }
+        .card h3 { margin: 0; color: var(--primary); text-transform: uppercase; }
+        .card p { color: #888; font-size: 0.85rem; margin: 10px 0 0; }
+
+        /* ВЫХОД */
+        .btn-exit { margin-top: 40px; color: #444; cursor: pointer; font-size: 0.8rem; text-transform: uppercase; transition: 0.3s; }
+        .btn-exit:hover { color: var(--primary); letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -109,98 +95,143 @@
     <canvas id="starfield"></canvas>
     <div class="aura"></div>
 
-    <!-- АУДИО (Файл 6utra.mp3 в корне GitHub) -->
-    <audio id="audio-track" loop>
-        <source src="6utra.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="track" loop><source src="6utra.mp3" type="audio/mpeg"></audio>
 
     <div class="logo-box">
-        <span class="top">JET</span>
-        <span class="bot">SLEEPKIDD</span>
+        <div class="top">JET</div>
+        <div class="bot">SLEEPKIDD</div>
     </div>
 
     <div class="container">
+        <!-- АВТОРИЗАЦИЯ -->
         <div id="scr-auth">
             <input type="text" id="log" placeholder="ЛОГИН">
             <input type="password" id="pas" placeholder="ПАРОЛЬ">
-            <button class="btn-go" onclick="login()">ВОЙТИ</button>
+            <button class="btn-main" onclick="auth()">ИНИЦИАЛИЗАЦИЯ</button>
         </div>
 
+        <!-- ГЛАВНОЕ ЛОББИ -->
         <div id="scr-lobby">
-            <div class="music-player reveal">
+            <div class="neon-player">
                 <div class="disk"></div>
-                <div style="font-size: 0.7rem; font-weight: 900;">
-                    PLAYING: <span style="color: var(--primary);">6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ</span>
-                </div>
+                <marquee style="font-size: 10px; color: var(--primary); flex: 1;">SYSTEM AUDIO: 6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
             </div>
 
-            <div class="user-bar reveal">
+            <div class="user-panel">
                 <div>
-                    <small style="color: #666; display: block; font-size: 0.8rem; font-weight: 900;">USER</small>
-                    <span id="u-name" style="font-weight: 900; font-size: 1.6rem; color: var(--primary);">---</span>
+                    <small style="color: #555; display: block; font-size: 10px;">OPERATOR</small>
+                    <span id="u-name" style="color: var(--primary); font-weight: 900; font-size: 20px;">---</span>
                 </div>
-                <div style="color: var(--win); font-weight: 900; font-size: 2.2rem;">50 000₽</div>
+                <div style="text-align: right;">
+                    <small style="color: #555; display: block; font-size: 10px;">CREDITS</small>
+                    <span id="u-bal" style="color: var(--win); font-weight: 900; font-size: 20px;">5 000₽</span>
+                </div>
             </div>
 
-            <div class="games-grid">
-                <a href="jet.html" class="game-card reveal" style="animation-delay: 0.2s;">
-                    <div class="preview">🚀</div>
-                    <div style="padding:30px;"><h3 style="margin:0; color:var(--primary);">JET GAME</h3></div>
+            <div class="grid">
+                <a href="jet.html" class="card">
+                    <div class="visual">🚀</div>
+                    <div class="info"><h3>Jet Game</h3><p>Множители до 500x. Успей забрать ставку до взрыва.</p></div>
                 </a>
-                <a href="mines.html" class="game-card reveal" style="animation-delay: 0.4s;">
-                    <div class="preview">💣</div>
-                    <div style="padding:30px;"><h3 style="margin:0; color:var(--primary);">MINES PRO</h3></div>
+                <a href="mines.html" class="card">
+                    <div class="visual">💣</div>
+                    <div class="info"><h3>Mines Pro</h3><p>25 секторов. Найди чистый путь среди минных полей.</p></div>
+                </a>
+                <a href="cubes.html" class="card">
+                    <div class="visual">🎲</div>
+                    <div class="info"><h3>Cubes Elite</h3><p>Классические кости. Твой шанс удвоить капитал за секунду.</p></div>
                 </a>
             </div>
+
+            <center><div class="btn-exit" onclick="logout()">LOGOUT SESSION</div></center>
         </div>
     </div>
 
     <script>
-        function login() {
-            const user = document.getElementById('log').value;
-            const audio = document.getElementById('audio-track');
+        // ЛОГИКА ВХОДА И БАЛАНСА
+        function auth() {
+            const l = document.getElementById('log').value;
+            const p = document.getElementById('pas').value;
+            const audio = document.getElementById('track');
 
-            if(user.length > 0) {
-                audio.play(); // Старт музыки
-                audio.volume = 0.5;
+            if(l.length > 2 && p.length > 2) {
+                audio.play();
+                audio.volume = 0.4;
+                
+                localStorage.setItem('user', l);
+                // Если баланса нет, ставим 5000
+                if(!localStorage.getItem('bal')) localStorage.setItem('bal', '5 000');
 
-                document.getElementById('scr-auth').style.display = 'none';
-                document.getElementById('scr-lobby').style.display = 'block';
-                document.getElementById('u-name').innerText = user.toUpperCase();
+                showLobby(l);
+            } else {
+                alert("ОШИБКА: Введите логин и пароль (мин. 3 символа)");
             }
         }
 
-        // КАНВАС ЗВЕЗД
+        function showLobby(name) {
+            document.getElementById('scr-auth').style.display = 'none';
+            document.getElementById('scr-lobby').style.display = 'block';
+            document.getElementById('u-name').innerText = name.toUpperCase();
+            document.getElementById('u-bal').innerText = localStorage.getItem('bal') + '₽';
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            location.reload();
+        }
+
+        // ПРОВЕРКА СЕССИИ ПРИ ЗАГРУЗКЕ
+        window.onload = () => {
+            const saved = localStorage.getItem('user');
+            if(saved) showLobby(saved);
+        };
+
+        // ГЛУБОКИЙ КАНВАС (ГИПЕРПРОСТРАНСТВО)
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        let stars = [];
 
-        class Star {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speed = Math.random() * 0.5;
+        function initStars() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    z: Math.random() * canvas.width,
+                    s: Math.random() * 2
+                });
             }
-            draw() {
-                ctx.fillStyle = "#bc13fe";
+        }
+
+        function drawStars() {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            stars.forEach(s => {
+                let x = (s.x - canvas.width/2) * (canvas.width/s.z);
+                x += canvas.width/2;
+                let y = (s.y - canvas.height/2) * (canvas.width/s.z);
+                y += canvas.height/2;
+                let sz = (1 - s.z/canvas.width) * 3;
+
+                ctx.fillStyle = "rgba(188, 19, 254, " + (1 - s.z/canvas.width) + ")";
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                ctx.arc(x, y, sz > 0 ? sz : 0, 0, Math.PI*2);
                 ctx.fill();
-                this.y += this.speed;
-                if(this.y > canvas.height) this.y = 0;
-            }
+
+                s.z -= 2;
+                if(s.z <= 0) s.z = canvas.width;
+            });
+            requestAnimationFrame(drawStars);
         }
 
-        let stars = Array.from({length: 100}, () => new Star());
-        function animate() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            stars.forEach(s => s.draw());
-            requestAnimationFrame(animate);
-        }
-        animate();
+        window.onresize = initStars;
+        initStars();
+        drawStars();
     </script>
 </body>
 </html>
+
 
