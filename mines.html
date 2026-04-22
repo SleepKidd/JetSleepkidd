@@ -3,17 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MINES SLEEPKIDD — ELITE</title>
+    <title>MINES SLEEPKIDD — ELITE EDITION</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; --shadow: 0 0 25px rgba(188, 19, 254, 0.4); }
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        
+        body { 
+            background: var(--bg); margin: 0; display: flex; flex-direction: column; 
+            align-items: center; font-family: 'Orbitron', sans-serif; color: #fff; 
+            min-height: 100vh; overflow-x: hidden;
+        }
 
-        /* ГИПЕР-ГЛИТЧ ЛОГО */
+        /* ГИПЕР-ГЛИТЧ ЛОГОТИП */
         .logo-box { margin: 25px 0 10px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; position: relative; }
-        .logo-box .top { font-size: 24px; color: var(--primary); display: block; text-shadow: 0 0 15px var(--primary); position: relative; animation: hyperGlitch 1.5s infinite; }
-        .logo-box .top::before, .logo-box .top::after { content: 'MINES'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; }
+        .logo-box .top { 
+            font-size: 24px; color: var(--primary); display: block; 
+            text-shadow: 0 0 15px var(--primary); position: relative;
+            animation: hyperGlitch 1.5s infinite;
+        }
+        .logo-box .top::before, .logo-box .top::after {
+            content: 'MINES'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;
+        }
         .logo-box .top::before { color: #00f6ff; z-index: -1; animation: rgbSplit 1.5s infinite; }
         .logo-box .top::after { color: #ff00de; z-index: -2; animation: rgbSplit 1.5s infinite reverse; }
 
@@ -24,77 +35,63 @@
         /* ПЛЕЕР */
         .player-bar { 
             width: 95%; max-width: 400px; background: rgba(188, 19, 254, 0.1); 
-            border: 1px solid var(--primary); border-radius: 100px; padding: 8px 20px; 
-            margin-bottom: 15px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow);
+            border: 1px solid var(--primary); border-radius: 100px; 
+            padding: 8px 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; 
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.2);
         }
         .disk { width: 22px; height: 22px; border: 2px solid var(--primary); border-radius: 50%; animation: spin 4s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* КОНТЕЙНЕР С ГЛУБИНОЙ */
+        /* КОНТЕЙНЕР */
         .container { 
-            width: 95%; max-width: 400px; background: rgba(10, 10, 10, 0.9); 
+            width: 95%; max-width: 400px; background: #0a0a0a; 
             border: 2px solid var(--primary); border-radius: 40px; 
             padding: 20px; text-align: center; 
-            box-shadow: 0 0 60px rgba(188, 19, 254, 0.3); position: relative; 
-            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(188, 19, 254, 0.3); position: relative; 
         }
         
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .btn-menu {
-            text-decoration: none; color: #fff; background: rgba(188, 19, 254, 0.1);
+            text-decoration: none; color: #fff; background: rgba(188, 19, 254, 0.2);
             border: 1px solid var(--primary); padding: 8px 18px; border-radius: 12px;
             font-size: 11px; font-weight: 900; text-transform: uppercase; transition: 0.3s;
         }
         .btn-menu:hover { background: var(--primary); box-shadow: 0 0 20px var(--primary); }
 
-        /* СЕТКА С НЕОНОМ */
-        .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 15px 0; }
+        /* СЕТКА */
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 15px 0; }
         .cell { 
-            aspect-ratio: 1/1; background: #080808; border-radius: 12px; border: 1px solid #1a1a1a; 
+            aspect-ratio: 1/1; background: #111; border-radius: 12px; border: 1px solid #222; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.5rem; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            position: relative; overflow: hidden;
+            font-size: 1.5rem; transition: 0.3s; 
         }
-        .cell:hover { border-color: var(--primary); background: #111; transform: scale(1.05); box-shadow: 0 0 15px rgba(188, 19, 254, 0.4); }
-        
-        /* ЭФФЕКТЫ ЯЧЕЕК */
-        .cell.open-win { background: rgba(0, 255, 136, 0.05); border-color: var(--win); color: var(--win); text-shadow: 0 0 15px var(--win); animation: winPulse 0.5s; }
-        .cell.open-lose { background: rgba(255, 77, 77, 0.05); border-color: var(--lose); color: var(--lose); text-shadow: 0 0 15px var(--lose); animation: shake 0.4s; }
-        
-        @keyframes winPulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .cell:hover { border-color: var(--primary); background: #1a1a1a; box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
+        .cell.win { background: rgba(0, 255, 136, 0.1); border-color: var(--win); color: var(--win); text-shadow: 0 0 10px var(--win); animation: pulse 0.4s; }
+        .cell.lose { background: rgba(255, 77, 77, 0.1); border-color: var(--lose); color: var(--lose); text-shadow: 0 0 10px var(--lose); }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
         /* УПРАВЛЕНИЕ */
-        .control-group { background: #050505; padding: 15px; border-radius: 25px; border: 1px solid #111; box-shadow: inset 0 0 20px #000; }
-        .mine-selector { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.7rem; color: #444; font-weight: 900; }
+        .controls { background: #050505; padding: 15px; border-radius: 25px; border: 1px solid #111; }
+        .setup { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.7rem; color: #555; font-weight: 900; }
         
-        select, input { background: #000; color: #fff; border: 1.5px solid #222; padding: 12px; border-radius: 15px; font-family: 'Orbitron'; font-weight: 900; text-align: center; transition: 0.3s; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
-        input { width: 100%; font-size: 1.5rem; margin-bottom: 15px; }
+        select, input { background: #000; color: #fff; border: 1.5px solid #222; padding: 10px; border-radius: 12px; font-family: 'Orbitron'; font-weight: 900; text-align: center; }
+        input { width: 100%; font-size: 1.4rem; margin-bottom: 15px; }
 
-        .action-btn {
+        .btn-action {
             width: 100%; height: 75px; border: none; border-radius: 20px;
-            font-weight: 900; font-size: 1.7rem; text-transform: uppercase; cursor: pointer;
+            font-weight: 900; font-size: 1.6rem; text-transform: uppercase; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 0.3s; position: relative; overflow: hidden;
         }
-        #btn-start { 
-            background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; 
-            box-shadow: 0 0 30px rgba(188, 19, 254, 0.5);
-        }
-        #btn-start::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg); animation: shine 3s infinite;
-        }
-        @keyframes shine { 0% { left: -100%; } 100% { left: 100%; } }
-
-        #btn-cash { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none; box-shadow: 0 0 30px rgba(0, 255, 136, 0.4); }
+        #btn-start { background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; box-shadow: 0 0 25px rgba(188, 19, 254, 0.4); }
+        #btn-cash { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none; box-shadow: 0 0 25px rgba(0, 255, 136, 0.4); }
     </style>
 </head>
 <body>
 
-    <audio id="track" loop><source src="6utra.mp3" type="audio/mpeg"></audio>
+    <!-- АУДИО ТЕГ -->
+    <audio id="track" loop preload="auto">
+        <source src="6utra.mp3" type="audio/mpeg">
+    </audio>
 
     <div class="logo-box">
         <span class="top">MINES</span>
@@ -103,43 +100,42 @@
 
     <div class="player-bar">
         <div class="disk"></div>
-        <marquee style="font-size: 10px; color: var(--primary); font-weight: 900; flex: 1;">SYSTEM_STATUS: 6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
+        <marquee style="font-size: 10px; color: var(--primary); font-weight: 900; flex: 1;">PLAYING: 6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
     </div>
     
     <div class="container">
         <div class="top-nav">
             <a href="index.html" class="btn-menu">МЕНЮ</a>
-            <span style="color:var(--win); font-weight: 900; font-size: 1.4rem; text-shadow: 0 0 10px var(--win);" id="u-bal">5 000₽</span>
+            <span style="color:var(--win); font-weight: 900; font-size: 1.3rem;" id="u-bal">5 000₽</span>
         </div>
         
-        <div class="mines-grid" id="grid"></div>
+        <div class="grid" id="grid"></div>
         
-        <div class="control-group">
-            <div class="mine-selector">
+        <div class="controls">
+            <div class="setup">
                 <span>ACTIVE_MINES:</span>
-                <select id="mines-count" style="width: 70px; border-color: var(--primary);">
+                <select id="mines-count" style="width: 70px;">
                     <option value="1">1</option><option value="3" selected>3</option>
                     <option value="5">5</option><option value="10">10</option>
-                    <option value="24">24</option>
+                    <option value="20">20</option>
                 </select>
             </div>
-            <input type="number" id="bet-amount" value="100">
+            <input type="number" id="bet" value="100">
             
-            <button class="action-btn" id="btn-start" onclick="startGame()">ИНИЦИАЛИЗАЦИЯ</button>
-            <button class="action-btn" id="btn-cash" onclick="cashOut()">
-                ВЫВОД<br><span id="win-preview" style="font-size: 1.1rem; opacity: 0.9;">0₽</span>
+            <button class="btn-action" id="btn-start" onclick="startGame()">ИНИЦИАЛИЗАЦИЯ</button>
+            <button class="btn-action" id="btn-cash" onclick="cashOut()">
+                ЗАБРАТЬ<br><span id="win-sum" style="font-size: 1.1rem; opacity: 0.8;">0₽</span>
             </button>
         </div>
     </div>
 
     <script>
-        let balance, currentBet, mines = [], opened = 0, active = false;
+        let balance, bet, mines = [], opened = 0, active = false;
         
         window.onload = () => {
             balance = parseInt(localStorage.getItem('bal')?.replace(/\s/g, '') || 5000);
             updateUI();
             createGrid();
-            document.getElementById('track').play().catch(() => {});
         };
 
         function createGrid() {
@@ -154,11 +150,15 @@
         }
 
         function startGame() {
-            currentBet = parseInt(document.getElementById('bet-amount').value);
-            if(currentBet > balance || currentBet <= 0) return;
+            // ЗАПУСК МУЗЫКИ ПРИ ПЕРВОМ КЛИКЕ
+            const audio = document.getElementById('track');
+            audio.play().catch(e => console.log("Audio waiting..."));
+            audio.volume = 0.5;
+
+            bet = parseInt(document.getElementById('bet').value);
+            if(bet > balance || bet <= 0) return alert("Мало кэша!");
             
-            balance -= currentBet;
-            save();
+            balance -= bet; save();
             active = true; opened = 0; mines = [];
             
             let mCount = parseInt(document.getElementById('mines-count').value);
@@ -171,25 +171,25 @@
             document.getElementById('btn-start').style.display = 'none';
             document.getElementById('btn-cash').style.display = 'flex';
             document.getElementById('mines-count').disabled = true;
-            document.getElementById('bet-amount').disabled = true;
-            updateWinPreview();
+            document.getElementById('bet').disabled = true;
+            updateWinSum();
         }
 
         function openCell(i, c) {
-            if(!active || c.classList.contains('open-win')) return;
+            if(!active || c.classList.contains('win')) return;
             
             if(mines.includes(i)) { 
-                c.classList.add('open-lose'); c.innerHTML = '💣'; 
+                c.classList.add('lose'); c.innerText = '💣'; 
                 active = false;
                 mines.forEach(m => {
                     const cell = document.getElementById('grid').children[m];
-                    cell.classList.add('open-lose'); cell.innerHTML = '💣';
+                    cell.classList.add('lose'); cell.innerText = '💣';
                 });
                 setTimeout(reset, 2000); 
             } else { 
-                c.classList.add('open-win'); c.innerHTML = '💎'; 
+                c.classList.add('win'); c.innerText = '💎'; 
                 opened++; 
-                updateWinPreview();
+                updateWinSum();
             }
         }
 
@@ -201,14 +201,14 @@
             return mult;
         }
 
-        function updateWinPreview() {
-            let win = Math.floor(currentBet * getMult());
-            document.getElementById('win-preview').innerText = win + "₽";
+        function updateWinSum() {
+            let win = Math.floor(bet * getMult());
+            document.getElementById('win-sum').innerText = win + "₽";
         }
 
         function cashOut() {
             if(!active || opened === 0) return;
-            balance += Math.floor(currentBet * getMult());
+            balance += Math.floor(bet * getMult());
             save(); reset();
         }
 
@@ -217,7 +217,7 @@
             document.getElementById('btn-start').style.display = 'flex';
             document.getElementById('btn-cash').style.display = 'none';
             document.getElementById('mines-count').disabled = false;
-            document.getElementById('bet-amount').disabled = false;
+            document.getElementById('bet').disabled = false;
             createGrid();
         }
 
@@ -225,7 +225,12 @@
             document.getElementById('u-bal').innerText = balance.toLocaleString() + "₽";
             localStorage.setItem('bal', balance.toLocaleString());
         }
+
+        function updateUI() {
+            document.getElementById('u-bal').innerText = balance.toLocaleString() + "₽";
+        }
     </script>
 </body>
 </html>
+
 
