@@ -3,97 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JET ELITE — ROCKET</title>
+    <title>ROCKET SLEEPKIDD</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #bc13fe; --win: #00ff88; --lose: #ff4d4d; --bg: #050505; }
+        :root { --primary: #bc13fe; --win: #00ff88; --lose: #ff4d4d; --bg: #000; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
         body { 
             background: var(--bg); margin: 0; display: flex; flex-direction: column; 
             align-items: center; font-family: 'Orbitron', sans-serif; color: #fff; 
-            min-height: 100vh; overflow: hidden;
+            min-height: 100vh; overflow-x: hidden;
         }
 
-        /* КОНТЕЙНЕР */
+        /* ГИПЕР-ЛОГО (КАК В ЛОББИ) */
+        .logo-box { margin: 30px 0 20px; text-align: center; transform: skewX(-12deg); }
+        .logo-box .top { font-size: 24px; color: var(--primary); font-family: 'Rubik Mono One'; text-shadow: 0 0 15px var(--primary); display: block; }
+        .logo-box .bot { font-size: 38px; color: #fff; font-family: 'Rubik Mono One'; letter-spacing: -2px; line-height: 0.8; }
+
         .main-frame { 
             width: 95%; max-width: 400px; background: #0a0a0a; 
             border: 2px solid var(--primary); border-radius: 40px; 
-            padding: 20px; box-shadow: 0 0 40px rgba(188, 19, 254, 0.3); 
-            margin-top: 20px; position: relative; /* Важно для позиционирования кнопки */
+            padding: 20px; box-shadow: 0 0 40px rgba(188, 19, 254, 0.2); 
+            position: relative;
         }
 
-        /* КНОПКА МЕНЮ В УГЛУ */
+        /* УПРАВЛЕНИЕ СЛЕВА */
+        .side-controls { position: absolute; top: 20px; left: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
         .back-btn {
-            position: absolute; top: 20px; left: 20px;
-            text-decoration: none; color: #fff; background: rgba(188, 19, 254, 0.15);
-            border: 1px solid var(--primary); padding: 6px 12px; border-radius: 10px;
-            font-size: 0.65rem; font-weight: 900; text-transform: uppercase;
-            z-index: 100; transition: 0.3s;
+            text-decoration: none; color: #fff; background: rgba(188, 19, 254, 0.2);
+            border: 1px solid var(--primary); padding: 5px 10px; border-radius: 8px;
+            font-size: 10px; font-weight: 900; text-transform: uppercase; text-align: center;
         }
-        .back-btn:hover { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        .history { display: flex; flex-direction: column; gap: 5px; }
+        .h-item { background: #000; border: 1px solid var(--primary); border-radius: 4px; padding: 2px 6px; font-size: 9px; color: var(--win); font-weight: 900; text-align: center; }
 
-        /* ИСТОРИЯ */
-        .history { display: flex; gap: 6px; margin: 0 0 15px 65px; height: 28px; justify-content: flex-start; }
-        .h-item { 
-            background: #111; border: 1px solid var(--primary); border-radius: 6px; 
-            padding: 2px 8px; font-size: 0.7rem; color: var(--win); font-weight: 900; 
-        }
-
-        /* ГРАФИКА */
-        #area { 
-            height: 230px; background: #000; border-radius: 25px; 
-            position: relative; overflow: hidden; border: 1px solid #222; margin-bottom: 15px; 
-        }
+        /* ИГРОВОЕ ПОЛЕ */
+        #area { height: 240px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 1px solid #111; }
         #mult { 
-            font-size: 4.5rem; font-weight: 900; position: absolute; 
+            font-size: 4rem; font-weight: 900; position: absolute; 
             top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            color: var(--win); z-index: 10; text-shadow: 0 0 25px var(--win); 
+            color: var(--win); z-index: 10; text-shadow: 0 0 10px var(--win); /* Меньше свечения */
         }
-        #hero { position: absolute; bottom: 20px; left: 20px; z-index: 5; font-size: 50px; transition: 0.1s linear; }
+        #hero { position: absolute; bottom: 20px; left: 20px; z-index: 5; font-size: 45px; }
 
-        /* УПРАВЛЕНИЕ */
-        .controls { position: relative; height: 85px; width: 100%; margin-top: 15px; }
-        .game-btn { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            border: none; border-radius: 20px; font-weight: 900; font-size: 1.6rem; 
-            cursor: pointer; text-transform: uppercase;
-        }
-        #btn-start { background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; z-index: 2; }
-        #btn-cash { 
-            background: linear-gradient(180deg, var(--win), #00b35f); 
-            color: #000; display: none; z-index: 3; flex-direction: column; 
-            align-items: center; justify-content: center; line-height: 1;
-        }
+        .controls { position: relative; height: 80px; margin-top: 15px; }
+        .game-btn { position: absolute; width: 100%; height: 100%; border: none; border-radius: 20px; font-weight: 900; font-size: 1.5rem; cursor: pointer; text-transform: uppercase; }
+        #btn-start { background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; }
+        #btn-cash { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none; flex-direction: column; align-items: center; justify-content: center; }
 
-        input { 
-            width: 100%; background: #000; border: 1.5px solid #222; color: #fff; 
-            padding: 15px; border-radius: 18px; font-size: 1.5rem; 
-            font-weight: 900; text-align: center;
-        }
+        input { width: 100%; background: #000; border: 1.5px solid #222; color: #fff; padding: 12px; border-radius: 15px; font-size: 1.4rem; font-weight: 900; text-align: center; margin-top: 15px; }
 
-        .mini-player { width: 95%; max-width: 400px; background: rgba(188, 19, 254, 0.05); border: 1px solid var(--primary); border-radius: 100px; padding: 8px 20px; margin-top: 15px; display: flex; align-items: center; gap: 10px; }
+        .player { width: 95%; max-width: 400px; background: rgba(188, 19, 254, 0.05); border: 1px solid var(--primary); border-radius: 100px; padding: 8px 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
     </style>
 </head>
 <body>
 
     <audio id="track" loop><source src="6utra.mp3" type="audio/mpeg"></audio>
 
-    <div class="mini-player">
-        <div style="width:12px; height:12px; background:var(--primary); border-radius:50%; animation: blink 1s infinite;"></div>
-        <marquee style="font-size: 9px; color: var(--primary); font-weight: 900;">6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
+    <div class="logo-box">
+        <span class="top">ROCKET</span>
+        <span class="bot">SLEEPKIDD</span>
+    </div>
+
+    <div class="player">
+        <div style="width:10px; height:10px; background:var(--primary); border-radius:50%; animation: pulse 1s infinite;"></div>
+        <marquee style="font-size: 9px; color: var(--primary); font-weight: 900;">PLAYING: 6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
     </div>
 
     <div class="main-frame">
-        <!-- КНОПКА ВЕРХНИЙ ЛЕВЫЙ УГОЛ -->
-        <a href="index.html" class="back-btn">МЕНЮ</a>
-
-        <!-- ИСТОРИЯ (СМЕЩЕНА ВПРАВО ОТ КНОПКИ) -->
-        <div class="history" id="history"></div>
+        <div class="side-controls">
+            <a href="index.html" class="back-btn">МЕНЮ</a>
+            <div class="history" id="history"></div>
+        </div>
         
-        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight: 900;">
-            <span id="nick" style="color: var(--primary);">USER</span>
-            <span id="bal" style="color: var(--win);">5 000₽</span>
+        <div style="text-align: right; margin-bottom: 10px;">
+            <span id="bal" style="color: var(--win); font-weight: 900; font-size: 1.2rem;">5 000₽</span>
         </div>
 
         <div id="area">
@@ -106,10 +90,7 @@
         
         <div class="controls">
             <button id="btn-start" class="game-btn" onclick="fly()">СТАВКА</button>
-            <button id="btn-cash" class="game-btn" onclick="collect()">
-                ЗАБРАТЬ
-                <span id="win-sum" style="font-size: 1.2rem; display: block;">0₽</span>
-            </button>
+            <button id="btn-cash" class="game-btn" onclick="collect()">ЗАБРАТЬ<br><span id="win-sum" style="font-size: 1rem;">0₽</span></button>
         </div>
     </div>
 
@@ -122,89 +103,53 @@
         window.onload = () => {
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
             balance = parseInt(localStorage.getItem('bal')?.replace(/\s/g, '') || 5000);
-            document.getElementById('nick').innerText = (localStorage.getItem('user') || 'GUEST').toUpperCase();
             updateUI(); loadHistory();
             document.getElementById('track').play().catch(() => {});
-            for(let i=0; i<60; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2});
+            for(let i=0; i<70; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2+1});
             drawStars();
         };
 
         function fly() {
             if (isFlying) return;
             currentBet = parseInt(document.getElementById('bet').value);
-            if(currentBet > balance || currentBet <= 0) return alert("НЕДОСТАТОЧНО СРЕДСТВ");
-            
+            if(currentBet > balance || currentBet <= 0) return;
             balance -= currentBet; updateUI();
             isFlying = true; currentX = 1.0;
-            crashAt = (Math.random() * 3.8 + 1.1).toFixed(2);
-
+            crashAt = (Math.random() * 4 + 1.1).toFixed(2);
             document.getElementById('btn-cash').style.display = 'flex';
             document.getElementById('mult').style.color = 'var(--win)';
-
             timer = setInterval(() => {
                 currentX += 0.01;
                 document.getElementById('mult').innerText = currentX.toFixed(2) + "x";
                 document.getElementById('win-sum').innerText = Math.floor(currentBet * currentX) + "₽";
-                
-                let p = Math.min((currentX - 1) / 2.8, 1); 
+                let p = Math.min((currentX - 1) / 3, 1); 
                 let hero = document.getElementById('hero');
-                hero.style.left = (20 + p * 220) + 'px';
-                hero.style.bottom = (20 + Math.sin(p * 1.5) * 130) + 'px';
-                hero.style.transform = `rotate(${-p * 35}deg)`;
-
+                hero.style.left = (20 + p * 240) + 'px';
+                hero.style.bottom = (20 + Math.sin(p * 1.5) * 140) + 'px';
                 if(currentX >= crashAt) crash();
             }, 60);
         }
 
-        function collect() {
-            if(!isFlying) return;
-            balance += Math.floor(currentBet * currentX);
-            addHistory(currentX.toFixed(2)); reset();
-        }
-
-        function crash() {
-            clearInterval(timer);
-            document.getElementById('mult').style.color = 'var(--lose)';
-            addHistory(currentX.toFixed(2));
-            setTimeout(() => reset(), 1200);
-        }
-
-        function reset() {
-            clearInterval(timer); isFlying = false;
-            document.getElementById('btn-cash').style.display = 'none';
-            document.getElementById('hero').style.left = '20px';
-            document.getElementById('hero').style.bottom = '20px';
-            document.getElementById('hero').style.transform = 'rotate(0deg)';
-            updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('bal').innerText = balance.toLocaleString() + "₽";
-            localStorage.setItem('bal', balance.toLocaleString());
-        }
-
-        function addHistory(v) {
-            let h = JSON.parse(localStorage.getItem('jet_h') || '[]');
-            h.unshift(v); if(h.length > 4) h.pop();
-            localStorage.setItem('jet_h', JSON.stringify(h));
-            loadHistory();
-        }
-
-        function loadHistory() {
-            let h = JSON.parse(localStorage.getItem('jet_h') || '[]');
-            document.getElementById('history').innerHTML = h.map(x => `<div class="h-item">${x}x</div>`).join('');
-        }
+        function collect() { if(!isFlying) return; balance += Math.floor(currentBet * currentX); addHistory(currentX.toFixed(2)); reset(); }
+        function crash() { clearInterval(timer); document.getElementById('mult').style.color = 'var(--lose)'; addHistory(currentX.toFixed(2)); setTimeout(() => reset(), 1000); }
+        function reset() { clearInterval(timer); isFlying = false; document.getElementById('btn-cash').style.display = 'none'; updateUI(); }
+        function updateUI() { document.getElementById('bal').innerText = balance.toLocaleString() + "₽"; localStorage.setItem('bal', balance.toLocaleString()); }
+        function addHistory(v) { let h = JSON.parse(localStorage.getItem('jet_h') || '[]'); h.unshift(v); if(h.length > 3) h.pop(); localStorage.setItem('jet_h', JSON.stringify(h)); loadHistory(); }
+        function loadHistory() { let h = JSON.parse(localStorage.getItem('jet_h') || '[]'); document.getElementById('history').innerHTML = h.map(x => `<div class="h-item">${x}x</div>`).join(''); }
 
         function drawStars() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
             stars.forEach(s => {
-                s.x -= isFlying ? currentX : 0.5;
+                s.x -= isFlying ? currentX * 2 : 0.5;
                 if(s.x < 0) s.x = canvas.width;
-                ctx.fillStyle = isFlying ? "var(--win)" : "#333";
-                ctx.fillRect(s.x, s.y, s.s, s.s);
+                ctx.fillStyle = "#fff"; // Белые яркие звезды
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.s, 0, Math.PI*2);
+                ctx.fill();
             });
             requestAnimationFrame(drawStars);
         }
     </script>
 </body>
 </html>
+
