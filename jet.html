@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROCKET SLEEPKIDD — JET</title>
+    <title>ROCKET SLEEPKIDD — AUTO EDITION</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { --primary: #bc13fe; --win: #00ff88; --lose: #ff4d4d; --bg: #000; }
@@ -15,10 +15,10 @@
             min-height: 100vh; overflow-x: hidden;
         }
 
-        /* ГИПЕР-ГЛИТЧ ЛОГОТИП */
-        .logo-box { margin: 30px 0 20px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; position: relative; }
+        /* ГЛИТЧ ЛОГО */
+        .logo-box { margin: 25px 0 15px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; position: relative; }
         .logo-box .top { 
-            font-size: 28px; color: var(--primary); display: block; 
+            font-size: 26px; color: var(--primary); display: block; 
             text-shadow: 0 0 15px var(--primary); position: relative;
             animation: hyperGlitch 1.5s infinite;
         }
@@ -29,27 +29,16 @@
         .logo-box .top::after { color: #ff00de; z-index: -2; animation: rgbSplit 1.5s infinite reverse; }
 
         @keyframes hyperGlitch {
-            0%, 15%, 45%, 80%, 100% { transform: translate(0); }
+            0%, 100% { transform: translate(0); }
             16% { transform: translate(-4px, 2px); }
-            18% { transform: translate(4px, -2px); }
             81% { transform: translate(2px, 2px); }
-            83% { transform: translate(-2px, -2px); }
         }
         @keyframes rgbSplit {
             0%, 15%, 19%, 80%, 84%, 100% { opacity: 0; transform: translate(0); }
             16%, 18% { opacity: 1; transform: translate(-8px, 0); }
-            81%, 83% { opacity: 1; transform: translate(8px, 0); }
         }
-        .logo-box .bot { font-size: 42px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
+        .logo-box .bot { font-size: 40px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
 
-        /* ПЛЕЕР */
-        .player { 
-            width: 95%; max-width: 400px; background: rgba(188, 19, 254, 0.05); 
-            border: 1px solid var(--primary); border-radius: 100px; 
-            padding: 8px 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; 
-        }
-
-        /* ОСНОВНОЙ КОНТЕЙНЕР */
         .main-frame { 
             width: 95%; max-width: 400px; background: #0a0a0a; 
             border: 2px solid var(--primary); border-radius: 40px; 
@@ -57,33 +46,37 @@
             position: relative;
         }
 
-        /* БЛОК МЕНЮ И ИСТОРИИ (ВЕРТИКАЛЬНЫЙ СТЕК СЛЕВА) */
-        .side-controls { position: absolute; top: 20px; left: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
+        .side-controls { position: absolute; top: 20px; left: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
         .back-btn {
             text-decoration: none; color: #fff; background: rgba(188, 19, 254, 0.2);
-            border: 1px solid var(--primary); padding: 5px 12px; border-radius: 8px;
-            font-size: 10px; font-weight: 900; text-transform: uppercase; text-align: center;
+            border: 1px solid var(--primary); padding: 4px 10px; border-radius: 6px;
+            font-size: 9px; font-weight: 900; text-transform: uppercase;
         }
-        /* ИСТОРИЯ ПО ГОРИЗОНТАЛИ */
-        .history { display: flex; gap: 5px; }
-        .h-item { background: #000; border: 1px solid var(--primary); border-radius: 5px; padding: 2px 7px; font-size: 9px; color: var(--win); font-weight: 900; }
+        .history { display: flex; gap: 4px; }
+        .h-item { background: #000; border: 1px solid var(--primary); border-radius: 4px; padding: 2px 6px; font-size: 9px; color: var(--win); font-weight: 900; }
 
         /* ИГРОВОЕ ПОЛЕ */
-        #area { height: 240px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 1px solid #111; }
+        #area { height: 230px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 1px solid #111; }
         #mult { 
-            font-size: 4.5rem; font-weight: 900; position: absolute; 
+            font-size: 4rem; font-weight: 900; position: absolute; 
             top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            color: var(--win); z-index: 10; text-shadow: 0 0 10px var(--win); 
+            color: #fff; z-index: 10; transition: 0.2s;
         }
-        #hero { position: absolute; bottom: 20px; left: 20px; z-index: 5; font-size: 50px; filter: drop-shadow(0 0 10px var(--primary)); }
+        #hero { position: absolute; bottom: 20px; left: 20px; z-index: 5; font-size: 45px; transition: 0.1s linear; }
 
-        /* УПРАВЛЕНИЕ */
+        /* АВТО-ПАНЕЛЬ */
+        .auto-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .auto-box { background: #050505; border: 1px solid #222; border-radius: 15px; padding: 8px; display: flex; flex-direction: column; align-items: center; }
+        .auto-box span { font-size: 8px; color: #666; margin-bottom: 5px; text-transform: uppercase; font-weight: 900; }
+        .auto-box input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+        .auto-box input[type="number"] { width: 45px; background: #000; border: 1px solid #333; color: #fff; text-align: center; border-radius: 5px; font-size: 10px; }
+
         .controls { position: relative; height: 80px; margin-top: 15px; }
-        .game-btn { position: absolute; width: 100%; height: 100%; border: none; border-radius: 20px; font-weight: 900; font-size: 1.6rem; cursor: pointer; text-transform: uppercase; }
+        .game-btn { position: absolute; width: 100%; height: 100%; border: none; border-radius: 20px; font-weight: 900; font-size: 1.5rem; cursor: pointer; text-transform: uppercase; }
         #btn-start { background: linear-gradient(180deg, var(--primary), #8a0db8); color: #fff; }
         #btn-cash { background: linear-gradient(180deg, var(--win), #00b35f); color: #000; display: none; flex-direction: column; align-items: center; justify-content: center; }
 
-        input { width: 100%; background: #000; border: 1.5px solid #222; color: #fff; padding: 14px; border-radius: 15px; font-size: 1.5rem; font-weight: 900; text-align: center; margin-top: 15px; }
+        #bet { width: 100%; background: #000; border: 1.5px solid #222; color: #fff; padding: 12px; border-radius: 15px; font-size: 1.4rem; font-weight: 900; text-align: center; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -95,20 +88,13 @@
         <span class="bot">SLEEPKIDD</span>
     </div>
 
-    <div class="player">
-        <div style="width:10px; height:10px; background:var(--primary); border-radius:50%; animation: pulse 1s infinite;"></div>
-        <marquee style="font-size: 9px; color: var(--primary); font-weight: 900;">PLAYING: 6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
-    </div>
-
     <div class="main-frame">
         <div class="side-controls">
             <a href="index.html" class="back-btn">МЕНЮ</a>
             <div class="history" id="history"></div>
         </div>
         
-        <div style="text-align: right; margin-bottom: 15px;">
-            <span id="bal" style="color: var(--win); font-weight: 900; font-size: 1.3rem;">5 000₽</span>
-        </div>
+        <div style="text-align: right; margin-bottom: 10px;"><span id="bal" style="color: var(--win); font-weight: 900; font-size: 1.2rem;">5 000₽</span></div>
 
         <div id="area">
             <canvas id="star-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
@@ -117,10 +103,25 @@
         </div>
 
         <input type="number" id="bet" value="100">
+
+        <!-- КНОПКИ АВТОМАТИЗАЦИИ -->
+        <div class="auto-panel">
+            <div class="auto-box">
+                <span>Автоставка</span>
+                <input type="checkbox" id="auto-bet-check">
+            </div>
+            <div class="auto-box">
+                <span>Автовывод</span>
+                <div style="display:flex; gap:5px; align-items:center;">
+                    <input type="number" id="auto-cash-val" value="2.0" step="0.1">
+                    <input type="checkbox" id="auto-cash-check">
+                </div>
+            </div>
+        </div>
         
         <div class="controls">
             <button id="btn-start" class="game-btn" onclick="fly()">СТАВКА</button>
-            <button id="btn-cash" class="game-btn" onclick="collect()">ЗАБРАТЬ<br><span id="win-sum" style="font-size: 1.1rem;">0₽</span></button>
+            <button id="btn-cash" class="game-btn" onclick="collect()">ЗАБРАТЬ<br><span id="win-sum" style="font-size: 1rem;">0₽</span></button>
         </div>
     </div>
 
@@ -128,6 +129,7 @@
         let balance, isFlying = false, currentX = 1.0, timer, crashAt, currentBet;
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
+        const multEl = document.getElementById('mult');
         let stars = [];
 
         window.onload = () => {
@@ -135,7 +137,6 @@
             balance = parseInt(localStorage.getItem('bal')?.replace(/\s/g, '') || 5000);
             updateUI(); loadHistory();
             document.getElementById('track').play().catch(() => {});
-            // Создаем яркие звезды
             for(let i=0; i<80; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2+1});
             drawStars();
         };
@@ -147,20 +148,28 @@
             
             balance -= currentBet; updateUI();
             isFlying = true; currentX = 1.0;
-            crashAt = (Math.random() * 5 + 1.1).toFixed(2);
+            crashAt = (Math.random() * 4.5 + 1.05).toFixed(2);
 
+            document.getElementById('btn-start').style.display = 'none';
             document.getElementById('btn-cash').style.display = 'flex';
-            document.getElementById('mult').style.color = 'var(--win)';
+            
+            multEl.style.color = 'var(--win)';
+            multEl.style.textShadow = '0 0 15px var(--win)';
 
             timer = setInterval(() => {
                 currentX += 0.01;
-                document.getElementById('mult').innerText = currentX.toFixed(2) + "x";
+                multEl.innerText = currentX.toFixed(2) + "x";
                 document.getElementById('win-sum').innerText = Math.floor(currentBet * currentX) + "₽";
                 
                 let p = Math.min((currentX - 1) / 3, 1); 
                 let hero = document.getElementById('hero');
                 hero.style.left = (20 + p * 240) + 'px';
                 hero.style.bottom = (20 + Math.sin(p * 1.5) * 140) + 'px';
+
+                // АВТОВЫВОД
+                if(document.getElementById('auto-cash-check').checked) {
+                    if(currentX >= parseFloat(document.getElementById('auto-cash-val').value)) collect();
+                }
 
                 if(currentX >= crashAt) crash();
             }, 60);
@@ -169,22 +178,35 @@
         function collect() {
             if(!isFlying) return;
             balance += Math.floor(currentBet * currentX);
-            addHistory(currentX.toFixed(2)); reset();
+            addHistory(currentX.toFixed(2));
+            reset("WIN");
         }
 
         function crash() {
             clearInterval(timer);
-            document.getElementById('mult').style.color = 'var(--lose)';
+            multEl.style.color = 'var(--lose)';
+            multEl.style.textShadow = '0 0 15px var(--lose)';
             addHistory(currentX.toFixed(2));
-            setTimeout(() => reset(), 1000);
+            setTimeout(() => reset("CRASH"), 1200);
         }
 
-        function reset() {
-            clearInterval(timer); isFlying = false;
+        function reset(type) {
+            clearInterval(timer);
+            isFlying = false;
             document.getElementById('btn-cash').style.display = 'none';
-            document.getElementById('hero').style.left = '20px';
-            document.getElementById('hero').style.bottom = '20px';
+            document.getElementById('btn-start').style.display = 'block';
+            
+            if(type !== "CRASH") {
+                multEl.style.color = '#fff';
+                multEl.style.textShadow = 'none';
+            }
+            
             updateUI();
+            
+            // АВТОСТАВКА
+            if(document.getElementById('auto-bet-check').checked) {
+                setTimeout(fly, 1000);
+            }
         }
 
         function updateUI() {
@@ -207,16 +229,15 @@
         function drawStars() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
             stars.forEach(s => {
-                s.x -= isFlying ? currentX * 2 : 0.6;
+                s.x -= isFlying ? currentX * 1.5 : 0.5;
                 if(s.x < 0) s.x = canvas.width;
                 ctx.fillStyle = "#fff";
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.s, 0, Math.PI*2);
-                ctx.fill();
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, Math.PI*2); ctx.fill();
             });
             requestAnimationFrame(drawStars);
         }
     </script>
 </body>
 </html>
+
 
