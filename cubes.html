@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CUBES ELITE — FINAL FIX</title>
+    <title>CUBES ELITE — MEDIA FIX</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; --neon: 0 0 30px rgba(188, 19, 254, 0.6); }
@@ -28,11 +28,16 @@
         @keyframes rgbSplit { 0%, 15%, 19%, 80%, 84%, 100% { opacity: 0; transform: translate(0); } 16%, 18% { opacity: 1; transform: translate(-8px, 0); } }
         .logo-box .bot { font-size: 38px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
 
+        /* ПЛЕЕР С КНОПКАМИ */
         .player-bar { 
             width: 95%; max-width: 400px; background: rgba(188, 19, 254, 0.1); 
             border: 1px solid var(--primary); border-radius: 100px; 
             padding: 8px 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; box-shadow: var(--neon);
         }
+        .p-btn { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 16px; font-weight: 900; transition: 0.3s; }
+        .p-btn:hover { transform: scale(1.2); text-shadow: 0 0 10px var(--primary); }
+        .disk { width: 22px; height: 22px; border: 2px solid var(--primary); border-radius: 50%; animation: spin 4s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .container { 
             width: 92%; max-width: 420px; background: rgba(5, 5, 5, 0.95); 
@@ -101,16 +106,19 @@
 <body>
 
     <canvas id="fx-canvas"></canvas>
-    <audio id="track" loop><source src="6utra.mp3" type="audio/mpeg"></audio>
+    <audio id="track" loop preload="auto"></audio>
 
     <div class="logo-box">
         <span class="top">CUBES</span>
         <span class="bot">SLEEPKIDD</span>
     </div>
 
+    <!-- ПЛЕЕР -->
     <div class="player-bar">
-        <div style="width:12px; height:12px; background:var(--primary); border-radius:50%; animation: pulse 1s infinite;"></div>
-        <marquee style="font-size: 10px; color: var(--primary); font-weight: 900; flex: 1;">QUANTUM_LINK_ACTIVE: 6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
+        <button class="p-btn" onclick="prevTrack()">◀</button>
+        <div class="disk"></div>
+        <button class="p-btn" onclick="nextTrack()">▶</button>
+        <marquee id="track-title" style="font-size: 10px; color: var(--primary); font-weight: 900; flex: 1; margin-left: 10px;">LOADING PLAYLIST...</marquee>
     </div>
 
     <div class="container">
@@ -123,7 +131,6 @@
 
         <div class="scene">
             <div class="cube" id="cube">
-                <!-- Грани куба -->
                 <div class="face f-1"><div class="dot" style="grid-area: 2/2"></div></div>
                 <div class="face f-6">
                     <div class="dot" style="grid-area: 1/1"></div><div class="dot" style="grid-area: 1/3"></div>
@@ -146,6 +153,25 @@
     </div>
 
     <script>
+        const playlist = [
+            { name: "6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ", src: "6utra.mp3" },
+            { name: "ТРИННАДЦАТЬ КАРАТ — ЖВАЧКА", src: "zhvachka.mp3" }
+        ];
+
+        let currentTrackIndex = localStorage.getItem('trackIdx') ? parseInt(localStorage.getItem('trackIdx')) : 0;
+        const audio = document.getElementById('track');
+
+        function updatePlayer(playNow = false) {
+            const track = playlist[currentTrackIndex];
+            document.getElementById('track-title').innerText = `SYSTEM_PLAYING: ${track.name}`;
+            if (!audio.src.includes(track.src)) { audio.src = track.src; }
+            if (playNow) audio.play();
+            localStorage.setItem('trackIdx', currentTrackIndex);
+        }
+
+        function nextTrack() { currentTrackIndex = (currentTrackIndex + 1) % playlist.length; updatePlayer(true); }
+        function prevTrack() { currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length; updatePlayer(true); }
+
         let balance, currentChoice = 'even';
         let rollCount = 0;
         const cube = document.getElementById('cube');
@@ -157,7 +183,7 @@
         window.onload = () => {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             balance = parseInt(localStorage.getItem('bal')?.replace(/\s/g, '') || 5000);
-            updateUI(); loadHistory(); renderFX();
+            updateUI(); loadHistory(); renderFX(); updatePlayer();
         };
 
         function setChoice(t) {
@@ -167,7 +193,7 @@
         }
 
         function roll() {
-            document.getElementById('track').play().catch(() => {});
+            audio.play().catch(() => {}); // Активация звука при клике
             let bet = parseInt(document.getElementById('bet').value);
             if(bet > balance || bet <= 0) return;
 
@@ -175,8 +201,6 @@
             rollCount++;
             
             const result = Math.floor(Math.random() * 6) + 1;
-            
-            // КРУТИТСЯ ЧЁТКО
             const xRot = rots[result].x + (1440 * rollCount);
             const yRot = rots[result].y + (1440 * rollCount);
             cube.style.transform = `rotateX(${xRot}deg) rotateY(${yRot}deg)`;
@@ -186,13 +210,11 @@
             setTimeout(() => {
                 const isEven = result % 2 === 0;
                 const win = (currentChoice === 'even' && isEven) || (currentChoice === 'odd' && !isEven);
-                
                 if(win) { 
                     balance += bet * 2; 
                     for(let i=0; i<60; i++) spawnParticle(true);
                 }
-                updateUI();
-                addHistory(result, win);
+                updateUI(); addHistory(result, win);
             }, 1500);
         }
 
@@ -222,9 +244,7 @@
 
         function addHistory(res, win) {
             let h = JSON.parse(localStorage.getItem('cubes_h') || '[]');
-            // Очистка если данные старого формата (не объекты)
-            if (h.length > 0 && typeof h[0] !== 'object') h = [];
-            
+            if (!Array.isArray(h)) h = [];
             h.unshift({ val: res, win: win });
             if(h.length > 4) h.pop();
             localStorage.setItem('cubes_h', JSON.stringify(h));
@@ -233,13 +253,14 @@
 
         function loadHistory() {
             let h = JSON.parse(localStorage.getItem('cubes_h') || '[]');
-            document.getElementById('history').innerHTML = h.map(x => {
-                // Защита от undefined
-                let val = x.val || '?';
-                let cls = x.win ? 'win' : 'lose';
-                return `<div class="h-dot ${cls}">${val}</div>`;
-            }).join('');
+            if (!Array.isArray(h)) h = [];
+            document.getElementById('history').innerHTML = h.map(x => 
+                `<div class="h-dot ${x.win ? 'win' : 'lose'}">${x.val}</div>`
+            ).join('');
         }
     </script>
+</body>
+</html>
+
 </body>
 </html>
