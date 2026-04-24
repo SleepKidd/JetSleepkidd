@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BLOCK BLAST — ELITE EDITION</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root { --primary: #bc13fe; --bg: #000; --win: #00ff88; --lose: #ff4d4d; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        body { 
+            background: #050505; color: #fff; font-family: 'Orbitron', sans-serif; 
+            margin: 0; display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* ГЛИТЧ ЛОГО */
+        .logo-box { margin: 20px 0 10px; font-family: 'Rubik Mono One', sans-serif; transform: skewX(-12deg); text-align: center; position: relative; }
+        .logo-box .top { font-size: 24px; color: var(--primary); display: block; text-shadow: 0 0 15px var(--primary); animation: hyperGlitch 1.5s infinite; }
+        .logo-box .bot { font-size: 38px; color: #fff; letter-spacing: -2px; line-height: 0.8; }
+        @keyframes hyperGlitch { 0%, 100% { transform: translate(0); } 16% { transform: translate(-4px, 2px); } 81% { transform: translate(2px, 2px); } }
+
+        .player-bar { 
+            width: 95%; max-width: 400px; background: rgba(188, 19, 254, 0.1); 
+            border: 1px solid var(--primary); border-radius: 100px; 
+            padding: 8px 20px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; 
+        }
+        .disk { width: 22px; height: 22px; border: 2px solid var(--primary); border-radius: 50%; animation: spin 4s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .container { 
+            width: 95%; max-width: 420px; background: #0a0a0a; 
+            border: 3px solid var(--primary); border-radius: 35px; padding: 15px; 
+            text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.3); position: relative; 
+        }
+
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .btn-menu { text-decoration: none; color: #fff; background: rgba(188, 19, 254, 0.15); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 10px; font-size: 10px; font-weight: 900; text-transform: uppercase; }
+
+        /* ИГРОВАЯ СЕТКА */
+        .board {
+            display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px;
+            background: #111; padding: 6px; border-radius: 15px; margin-bottom: 20px;
+        }
+        .cell { aspect-ratio: 1; background: #050505; border-radius: 4px; border: 1px solid #222; transition: 0.2s; }
+        .cell.filled { background: var(--primary); box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 10px var(--primary); border: none; }
+        .cell.preview { background: rgba(188, 19, 254, 0.3); border-color: var(--primary); }
+
+        /* ФИГУРЫ */
+        .piece-container { display: flex; justify-content: space-around; gap: 10px; min-height: 100px; }
+        .piece { display: grid; gap: 2px; cursor: grab; padding: 5px; transform: scale(0.8); }
+        .p-block { aspect-ratio: 1; background: var(--primary); border-radius: 3px; width: 18px; }
+
+        .stats { display: flex; justify-content: space-around; margin-bottom: 15px; font-weight: 900; }
+        .stat-box { background: #000; padding: 10px; border-radius: 12px; border: 1px solid #222; flex: 1; margin: 0 5px; }
+        .stat-label { font-size: 8px; color: #666; display: block; }
+        .stat-val { font-size: 14px; color: var(--win); }
+
+        .win-info { font-size: 10px; color: #444; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <audio id="track" loop><source src="6utra.mp3" type="audio/mpeg"></audio>
+
+    <div class="logo-box"><span class="top">BLOCK</span><span class="bot">SLEEPKIDD</span></div>
+
+    <div class="player-bar">
+        <div class="disk"></div>
+        <marquee style="font-size: 10px; color: var(--primary); font-weight: 900; flex: 1;">PLAYING: 6 УТРА — В КАБИНЕ ФОТОГРАФИЯ ТВОЯ...</marquee>
+    </div>
+
+    <div class="container">
+        <div class="top-nav">
+            <a href="index.html" class="btn-menu">МЕНЮ</a>
+            <span id="bal" style="color: var(--win); font-weight: 900; font-size: 1.1rem;">5 000₽</span>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box"><span class="stat-label">SCORE</span><span id="score" class="stat-val">0</span></div>
+            <div class="stat-box"><span class="stat-label">GOAL</span><span class="stat-val">50,000</span></div>
+            <div class="stat-box"><span class="stat-label">PRIZE</span><span class="stat-val">21,000₽</span></div>
+        </div>
+
+        <div class="board" id="board"></div>
+
+        <div class="piece-container" id="pieces">
+            <!-- Сюда JS вставит 3 случайные фигуры -->
+        </div>
+
+        <div class="win-info">ДОСТИГНИ 50,000 ОЧКОВ И ПОЛУЧИ ВЫПЛАТУ</div>
+    </div>
+
+    <script>
+        let balance, score = 0, board = Array(64).fill(0);
+        const boardEl = document.getElementById('board');
+        const scoreEl = document.getElementById('score');
+
+        window.onload = () => {
+            balance = parseInt(localStorage.getItem('bal')?.replace(/\s/g, '') || 5000);
+            updateUI();
+            initBoard();
+            generatePieces();
+            document.getElementById('track').play().catch(() => {});
+        };
+
+        function initBoard() {
+            boardEl.innerHTML = '';
+            for(let i=0; i<64; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.id = `c-${i}`;
+                boardEl.appendChild(cell);
+            }
+        }
+
+        // Это упрощенная логика Block Blast для примера
+        function generatePieces() {
+            const piecesEl = document.getElementById('pieces');
+            piecesEl.innerHTML = '<div style="color:#333; font-size:12px">ПЕРЕТАЩИТЕ БЛОКИ (DEMO)</div>';
+            // В полной версии здесь будет Drag and Drop логика
+        }
+
+        function addScore(points) {
+            score += points;
+            scoreEl.innerText = score.toLocaleString();
+            
+            if(score >= 50000) {
+                balance += 21000;
+                score = 0;
+                alert("CONGRATS! ВЫ ЗАРАБОТАЛИ 21,000₽");
+                save();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('bal').innerText = balance.toLocaleString() + "₽";
+            scoreEl.innerText = score.toLocaleString();
+        }
+
+        function save() {
+            localStorage.setItem('bal', balance.toLocaleString());
+            updateUI();
+        }
+
+        // Фейковая накрутка счета для теста логики
+        setInterval(() => { if(Math.random() > 0.8) addScore(150); }, 2000);
+    </script>
+</body>
+</html>
